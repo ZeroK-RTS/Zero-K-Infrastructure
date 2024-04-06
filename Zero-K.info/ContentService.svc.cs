@@ -12,7 +12,7 @@ using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
 
-namespace ZeroKWeb
+namespace PlasmaShared
 {
     [ServiceContract]
     [Obsolete("Use ContentServiceClient instead")]
@@ -52,18 +52,18 @@ namespace ZeroKWeb
 
         [OperationContract]
         ReturnValue RegisterResource(int apiVersion,
-                                                                  string springVersion,
-                                                                  string md5,
-                                                                  int length,
-                                                                  ResourceType resourceType,
-                                                                  string archiveName,
-                                                                  string internalName,
-                                                                  byte[] serializedData,
-                                                                  List<string> dependencies,
-                                                                  byte[] minimap,
-                                                                  byte[] metalMap,
-                                                                  byte[] heightMap,
-                                                                  byte[] torrentData);
+            string springVersion,
+            string md5,
+            int length,
+            ResourceType resourceType,
+            string archiveName,
+            string internalName,
+            byte[] serializedData,
+            List<string> dependencies,
+            byte[] minimap,
+            byte[] metalMap,
+            byte[] heightMap,
+            byte[] torrentData);
 
         [OperationContract]
         void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars = "");
@@ -81,8 +81,10 @@ namespace ZeroKWeb
         [OperationContract]
         SpringBattleInfo GetSpringBattleInfo(string gameid);
     }
+}
 
-    
+namespace ZeroKWeb
+{
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "ContentService" in code, svc and config file together.
     // NOTE: In order to launch WCF Test Client for testing this service, please select ContentService.svc or ContentService.svc.cs at the Solution Explorer and start debugging.
     [Obsolete("Use ContenServiceClient instead!")]

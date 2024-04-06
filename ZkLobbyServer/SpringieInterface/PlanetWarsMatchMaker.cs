@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
 using Newtonsoft.Json;
+using PlasmaShared;
 using ZkData;
 using ZkLobbyServer;
 

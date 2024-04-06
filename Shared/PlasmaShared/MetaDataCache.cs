@@ -343,5 +343,13 @@ namespace ZkData
             if (File.Exists(file)) return GetModMetadata(File.ReadAllBytes(file));
             return null;
         }
+        
+        public static Map ServerGetMap(string internalName)
+        {
+            var file = Path.Combine(GlobalConst.SiteDiskPath, "resources", $"{internalName.EscapePath()}.metadata.xml.gz");
+            if (File.Exists(file)) return GetMapMetadata(File.ReadAllBytes(file));
+            return null;
+        }
+        
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 using TasClient = LobbyClient.Legacy.TasClient;
 using TasEventArgs = LobbyClient.Legacy.TasEventArgs;

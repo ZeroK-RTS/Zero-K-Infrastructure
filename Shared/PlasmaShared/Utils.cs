@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -19,12 +18,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using PlasmaShared;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
 
-namespace ZkData
+namespace PlasmaShared
 {
     /// <summary>
     /// General purpose static functions here
@@ -202,6 +200,35 @@ namespace ZkData
         }
 
 
+        public static int LowerBoundIndex<T>(this IReadOnlyList<T> list, T value) where T : IComparable<T>
+        {
+            //Requires:
+            //  list is sorted
+
+            //Returns:
+            //  Smallest value of i for which: !(list[i] < value)
+            //  or list.Count, if there is no such value.
+
+            int first = 0;
+            int len = list.Count;
+
+            while (len > 0)
+            {
+                var half = len / 2;
+                var mid = first + half;
+                if (list[mid].CompareTo(value) < 0)
+                {
+                    first = mid + 1;
+                    len = len - half - 1;
+                }
+                else
+                {
+                    len = half;
+                }
+            }
+
+            return first;
+        }
 
 
         public static bool CanRead(string filename)
@@ -762,11 +789,16 @@ namespace ZkData
             }
         }
 
-        public static readonly string[] SupportedAssemblies = new[] {"PlasmaShared", "PlasmaDownloader", "ChobbyLauncher"};
-
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
         {
-            return from a in AppDomain.CurrentDomain.GetAssemblies().Where(x=> SupportedAssemblies.Contains(x.GetName().Name)).ToList().AsParallel()
+            var allowedAssemblies = new string[]
+            {
+                typeof(T).Assembly.GetName().Name,
+                Assembly.GetEntryAssembly()?.GetName().Name, Assembly.GetExecutingAssembly().GetName().Name,
+                Assembly.GetCallingAssembly().GetName().Name
+            };
+            
+            return from a in AppDomain.CurrentDomain.GetAssemblies().Where(x=> allowedAssemblies.Contains(x.GetName().Name)).ToList().AsParallel()
                    from t in a.GetLoadableTypes()
                    let attributes = t.GetCustomAttributes(typeof(T), true)
                    where attributes != null && attributes.Length > 0
@@ -969,22 +1001,19 @@ namespace ZkData
             }
             catch
             {
-                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+                
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
                     Process.Start("xdg-open", url);
                 }
-                else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+                else if (Environment.OSVersion.Platform ==PlatformID.MacOSX)
                 {
                     Process.Start("open", url);
                 }
-                else
+                else 
                 {
-                    throw;
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 }
             }
         }        

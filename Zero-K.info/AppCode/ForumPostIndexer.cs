@@ -3,8 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using PlasmaShared;
 using ZeroKWeb.ForumParser;
 using ZkData;
 
@@ -28,18 +31,31 @@ namespace ZeroKWeb
         int GetWordID(string word) {
             int id;
             if (wordIDs.TryGetValue(word, out id)) return id;
-            using (var db = new ZkDataContext())
+            
+            for (int i = 0; i < 3; i++) // try 3 times
             {
-                var entry = db.IndexWords.FirstOrDefault(x => x.Text == word);
-                if (entry == null)
+                try
                 {
-                    entry = new Word { Text = word };
-                    db.IndexWords.Add(entry);
-                    db.SaveChanges();
+                    using (var db = new ZkDataContext())
+                    {
+                        var entry = db.IndexWords.FirstOrDefault(x => x.Text == word);
+                        if (entry == null)
+                        {
+                            entry = new Word { Text = word };
+                            db.IndexWords.Add(entry);
+                            db.SaveChanges();
+                        }
+
+                        wordIDs[entry.Text] = entry.WordID;
+                        return entry.WordID;
+                    }
                 }
-                wordIDs[entry.Text] = entry.WordID;
-                return entry.WordID;
+                catch (SqlException ex)
+                {
+                    Trace.TraceWarning("Problem indexing word {0}: {1}", word, ex.Message);
+                }
             }
+            throw new Exception("Failed to index word " + word);
         }
 
         public IQueryable<ForumPost> FilterPosts(IQueryable<ForumPost> input, string term) {
@@ -54,7 +70,21 @@ namespace ZeroKWeb
 
         void ZkDataContextOnAfterEntityChange(object sender, ZkDataContext.EntityEntry dbEntityEntry) {
             var post = dbEntityEntry.Entity as ForumPost;
-            if (post != null && (dbEntityEntry.State == EntityState.Added || dbEntityEntry.State == EntityState.Modified)) IndexPost(post);
+            if (post != null && (dbEntityEntry.State == EntityState.Added || dbEntityEntry.State == EntityState.Modified))
+            {
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        IndexPost(post);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("Problem indexing post {0}: {1}", post.ForumPostID, ex.Message);
+                    }
+                });
+
+            }
         }
 
         public static string SanitizeWord(string word) {

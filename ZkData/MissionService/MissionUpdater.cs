@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO.Compression;
 using MonoTorrent.Common;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 
 namespace ZkData

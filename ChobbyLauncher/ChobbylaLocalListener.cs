@@ -8,15 +8,19 @@ using System.Linq;
 using System.Media;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
+using Newtonsoft.Json;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
+using ZkData.UnitSyncLib;
 using Timer = System.Threading.Timer;
 
 namespace ChobbyLauncher
@@ -58,6 +62,7 @@ namespace ChobbyLauncher
             discordController.OnSpectate += DiscordOnSpectateCallback;
 
             timer = new Timer((o) => OnTimerTick(), this, 500, 500);
+            unitSyncLazy = new Lazy<UnitSync>(() => new UnitSync(chobbyla.paths, chobbyla.engine), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
 
@@ -774,9 +779,45 @@ namespace ChobbyLauncher
         private async Task Process(EncryptStringRequest args)
         {
             SendCommand(new EncryptStringDone() { StringToEncrypt = args.StringToEncrypt, EncryptedString = RsaSignatures.Encrypt(args.StringToEncrypt, args.ServerPubKey)});
-        }        
-        
-        
+        }
+
+
+
+        Lazy<UnitSync> unitSyncLazy;
+
+        private async Task Process(GetResourceInfo args)
+        {
+            Task.Run(() => { GetResourceInfo(args); });
+        }
+
+        [HandleProcessCorruptedStateExceptions]
+        void GetResourceInfo(GetResourceInfo args)
+        {
+            try
+            {
+                var unitSync = unitSyncLazy.Value;
+                ResourceInfo ri = null;
+                if (!string.IsNullOrEmpty(args.ArchiveName)) ri = unitSync.GetResourceFromFileName(args.ArchiveName);
+                if (!string.IsNullOrEmpty(args.InternalName)) ri = ri ?? unitSync.GetArchiveEntryByInternalName(args.InternalName);
+
+                if (ri.ModType == 0 || ri.ModType == 1) ri = unitSync.GetMod(ri);
+                else if (ri.ModType == 3) ri = unitSync.GetMap(ri);
+
+                SendCommand(new GetResourceInfoDone()
+                {
+                    InternalName = args.InternalName ?? ri?.Name,
+                    ArchiveName = args.ArchiveName ?? ri?.ArchiveName,
+                    Data = JsonConvert.SerializeObject(ri)
+                });
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error running unitsync for {0} {1} : {2}", args.InternalName, args.ArchiveName, ex);
+                SendCommand(new GetResourceInfoDone() { InternalName = args.InternalName, ArchiveName = args.ArchiveName, });
+            }
+        }
+
+
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");

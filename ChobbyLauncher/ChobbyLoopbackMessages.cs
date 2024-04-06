@@ -499,7 +499,23 @@ namespace ChobbyLauncher
         public string StringToEncrypt { get; set; }
        
         public string EncryptedString { get; set; }
-    }    
+    }
+
+
+    [ChobbyMessage]
+    public class GetResourceInfo
+    {
+        public string InternalName;
+        public string ArchiveName;
+    }
+
+    [ChobbyMessage]
+    public class GetResourceInfoDone
+    {
+        public string InternalName;
+        public string ArchiveName;
+        public string Data;
+    }
     
     
 }

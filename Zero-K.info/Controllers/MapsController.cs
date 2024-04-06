@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Xml.Serialization;
 using AutoRegistrator;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZkData;
 

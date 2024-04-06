@@ -56,6 +56,12 @@ namespace LobbyClient
                 script.AppendFormat("  GameType={0};\n", context.LobbyStartContext.Mod);
                 script.AppendFormat("  ModHash=1;\n");
                 script.AppendFormat("  MapHash=1;\n");
+                
+                // send desync to server
+                script.AppendFormat("  DumpGameStateOnDesync=1;\n");
+
+                // set the "connecting to: xyz" message during early engine load
+                script.AppendFormat("  ShowServerName={0};\n", context.LobbyStartContext.Title.Replace(';', ' '));
 
                 if (loopbackListenPort >0) script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                 script.AppendLine();
@@ -144,13 +150,20 @@ namespace LobbyClient
 
             script.AppendFormat("    startboxes={0};\n", startboxes.ToString());
 
-
             // write final options to script
             foreach (var kvp in setup?.LobbyStartContext?.ModOptions) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
-
+            
             script.AppendLine("  }");
 
-            script.AppendLine("}");
+
+            // write map options to script
+            script.AppendLine("  [MAPOPTIONS]");
+            script.AppendLine("  {");
+            foreach (var kvp in setup?.LobbyStartContext?.MapOptions) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
+            script.AppendLine("  }");
+
+            
+            script.AppendLine("}");            
         }
 
 

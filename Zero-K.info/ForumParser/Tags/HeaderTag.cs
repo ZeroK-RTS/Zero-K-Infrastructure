@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using System.Web;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.ForumParser

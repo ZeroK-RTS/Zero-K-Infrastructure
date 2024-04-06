@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -44,6 +45,7 @@ namespace ZkLobbyServer
         public Resource HostedMod;
 
         public Mod HostedModInfo;
+        public Map HostedMapInfo;
 
         private int hostingPort;
         private int? dbAutohostIndex;
@@ -87,9 +89,7 @@ namespace ZkLobbyServer
                     .Cast<BattleCommand>()
                     .ToDictionary(x => x.Shortcut, x => x);
 
-            hostingIp =
-                Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ??
-                "127.0.0.1";
+            hostingIp = IpHelpers.GetMyIpAddress();
         }
 
         public ServerBattle(ZkLobbyServer server, string founder)
@@ -322,7 +322,8 @@ namespace ZkLobbyServer
                     BattleID = BattleID,
                     Players = Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList(),
                     Bots = Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList(),
-                    Options = ModOptions
+                    Options = ModOptions,
+                    MapOptions = MapOptions
                 });
 
             if (ActivePoll != null) await user.SendCommand(ActivePoll.GetBattlePoll());
@@ -507,6 +508,14 @@ namespace ZkLobbyServer
             ModOptions = options;
             await server.Broadcast(Users.Keys, new SetModOptions() { Options = options });
         }
+        
+        
+        public async Task SetMapOptions(Dictionary<string, string> options)
+        {
+            MapOptions = options;
+            await server.Broadcast(Users.Keys, new SetMapOptions() { Options = options });
+        }
+        
         public void SetApplicableRating(RatingCategory rating)
         {
             ApplicableRating = rating;
@@ -690,6 +699,7 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
+            SaveToDb();
         }
 
         public async Task SwitchGameType(AutohostMode type)
@@ -705,10 +715,19 @@ namespace ZkLobbyServer
         public async Task SwitchMap(string internalName)
         {
             MapName = internalName;
+
             ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
+            
+            if (MapOptions.Any())
+            {
+                MapOptions = new Dictionary<string, string>();
+                await server.Broadcast(Users.Keys, new SetMapOptions() { Options = MapOptions });
+            }
+
+            SaveToDb();
         }
 
         public async Task SwitchMaxPlayers(int cnt)
@@ -914,8 +933,21 @@ namespace ZkLobbyServer
                 {
                     Trace.TraceWarning("Error loading mod metadata for {0} : {1}", HostedMod.InternalName, ex);
                 }
+
+            if (!string.IsNullOrEmpty(MapName))
+            {
+                try
+                {
+                    HostedMapInfo = MetaDataCache.ServerGetMap(MapName);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error loading map metadata for {0} : {1}", MapName, ex);
+                }
+            }
         }
 
+        
         public virtual void ValidateBattleStatus(UserBattleStatus ubs)
         {
             if (Mode != AutohostMode.None) ubs.AllyNumber = 0;
@@ -1045,12 +1077,14 @@ namespace ZkLobbyServer
             pickedMaps.Add(HostedMap?.ResourceID ?? 0);
             using (var db = new ZkDataContext())
             {
+                var popularMapCount = Math.Round(NumberOfMapChoices * DynamicConfig.Instance.MapVoteFractionOfPopularMaps).Clamp(0, NumberOfMapChoices - 1);
+                
                 for (int i = 0; i < NumberOfMapChoices; i++)
                 {
                     Resource map = null;
-                    if (i < NumberOfMapChoices / 2)
+                    if (i < popularMapCount)
                     {
-                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Supported) ? MapSupportLevel.Supported : MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
+                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Supported) ? MapSupportLevel.Supported : MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose the popular maps
                     }
                     if (map == null)
                     {
@@ -1296,4 +1330,6 @@ namespace ZkLobbyServer
             public DateTime TimeOfKicked = DateTime.UtcNow;
         }
     }
+
+
 }

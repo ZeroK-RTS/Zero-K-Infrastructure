@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using PlasmaShared;
 using ZkData;
 
 namespace ChobbyLauncher

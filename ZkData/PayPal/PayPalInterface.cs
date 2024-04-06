@@ -189,7 +189,13 @@ namespace ZkData
                     Account acc = null;
                     ContributionJar jar;
                     if (jarID == null) jar = db.ContributionJars.FirstOrDefault(x => x.IsDefault);
-                    else jar = db.ContributionJars.FirstOrDefault(x => x.ContributionJarID == jarID);
+                    else {
+                        jar = db.ContributionJars.FirstOrDefault(x => x.ContributionJarID == jarID);
+                        if (jar == null) {
+                            Trace.TraceError("jarID was invalid? {0}", jarID);
+                            jar = db.ContributionJars.FirstOrDefault(x => x.IsDefault);
+                        }
+                    }
 
                     if (accountID != null) acc = db.Accounts.Find(accountID.Value);
 

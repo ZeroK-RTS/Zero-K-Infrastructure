@@ -167,7 +167,7 @@ namespace ZkLobbyServer
                     if (banPenalty != null)
                         return
                             BlockLogin(
-                                $"Banned until {banPenalty.BanExpires} (match to {banPenalty.AccountByAccountID.Name}), reason: {banPenalty.Reason}",
+                                $"Banned until {banPenalty.BanExpires} UTC, reason: {banPenalty.Reason}",
                                 acc,
                                 ip,
                                 userID,
@@ -383,47 +383,11 @@ namespace ZkLobbyServer
             return false;
         }
 
-        private static bool CheckMask(IPAddress address, IPAddress mask, IPAddress target)
-        {
-            if (mask == null) return false;
-
-            var ba = address.GetAddressBytes();
-            var bm = mask.GetAddressBytes();
-            var bb = target.GetAddressBytes();
-
-            if ((ba.Length != bm.Length) || (bm.Length != bb.Length)) return false;
-
-            for (var i = 0; i < ba.Length; i++)
-            {
-                int m = bm[i];
-
-                var a = ba[i] & m;
-                var b = bb[i] & m;
-
-                if (a != b) return false;
-            }
-
-            return true;
-        }
-
-        private static bool IsLanIP(string ip)
-        {
-            var address = IPAddress.Parse(ip);
-            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var iface in interfaces)
-            {
-                var properties = iface.GetIPProperties();
-                foreach (var ifAddr in properties.UnicastAddresses)
-                    if ((ifAddr.IPv4Mask != null) && (ifAddr.Address.AddressFamily == AddressFamily.InterNetwork) &&
-                        CheckMask(ifAddr.Address, ifAddr.IPv4Mask, address)) return true;
-            }
-            return false;
-        }
 
 
         private static void LogIP(ZkDataContext db, Account acc, string ip)
         {
-            if (IsLanIP(ip)) return;
+            if (IpHelpers.IsMyLanIp(ip) || IpHelpers.IsPrivateAddressSpace(ip)) return;
             var entry = acc.AccountIPs.FirstOrDefault(x => x.IP == ip);
             if (entry == null)
             {
@@ -452,7 +416,7 @@ namespace ZkLobbyServer
 
         private string ResolveCountry(string ip)
         {
-            if (IsLanIP(ip)) return "CZ";
+            if (IpHelpers.IsMyLanIp(ip)) return "CZ";
             else
                 try
                 {

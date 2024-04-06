@@ -209,7 +209,7 @@ namespace ZeroKLobby
                 // speed up spring start
                 SpringPaths.SpringVersionChanged += (sender, engine) =>
                 {
-                    ZkData.Utils.StartAsync(
+                    PlasmaShared.Utils.StartAsync(
                         () =>
                         {
                             UnitSync unitSync = null;

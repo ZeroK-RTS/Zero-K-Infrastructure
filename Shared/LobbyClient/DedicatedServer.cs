@@ -191,6 +191,10 @@ namespace LobbyClient
         public void Kick(string name)
         {
             SayGame("/kick " + name);
+
+            /* Kick doesn't prevent rejoin, so also resign the target
+             * so they can't just come back and control stuff again */
+            SayGame("/luarules resignteam " + name);
         }
 
         public event EventHandler<SpringLogEventArgs> PlayerDisconnected;

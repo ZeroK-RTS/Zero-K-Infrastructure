@@ -4,9 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using ZkData;
+using ZkLobbyServer;
 
 namespace ZeroKWeb.Controllers
 {
@@ -15,14 +18,10 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Battles/
 
-        /// <summary>
-        ///     Returns the page of the <see cref="SpringBattle" /> with the specified ID
-        /// </summary>
-        public ActionResult Detail(int id, bool showWinners = false) {
-            var db = new ZkDataContext();
-            ViewBag.ShowWinners = showWinners;
-            var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == id);
-            if (bat == null) return Content("No such battle exists");
+        private ActionResult DetailFromSpringBattle(SpringBattle bat, ZkDataContext db, bool showWinners) {
+            if (bat == null) {
+                return Content("No such battle exists");
+            }
 
             if (bat.ForumThread != null)
             {
@@ -30,9 +29,31 @@ namespace ZeroKWeb.Controllers
                 db.SaveChanges();
             }
 
-            if (Global.AccountID != 0 && !showWinners && bat.SpringBattlePlayers.Any(y => y.AccountID == Global.AccountID && !y.IsSpectator)) ViewBag.ShowWinners = true; // show winners if player played thatbattle
+            if (Global.AccountID != 0 && bat.SpringBattlePlayers.Any(y => y.AccountID == Global.AccountID && !y.IsSpectator)) {
+                ViewBag.ShowWinners = true; // show winners if player played that battle
+            } else {
+                ViewBag.ShowWinners = showWinners;
+            }
 
             return View("BattleDetail", bat);
+        }
+
+        /// <summary>
+        ///     Returns the page of the <see cref="SpringBattle" /> with the specified ID
+        /// </summary>
+        public ActionResult Detail(int id, bool showWinners = false) {
+            var db = new ZkDataContext();
+            var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == id);
+            return DetailFromSpringBattle(bat, db, showWinners);
+        }
+        
+        /// <summary>
+        ///     Returns the page of the <see cref="SpringBattle" /> with the specified engine-generated GameID (not the numerical ZKLS ID)
+        /// </summary>
+        public ActionResult EngineDetail(string id, bool showWinners = false) {
+            var db = new ZkDataContext();
+            var bat = db.SpringBattles.FirstOrDefault(x => x.EngineGameID == id);
+            return DetailFromSpringBattle(bat, db, showWinners);
         }
 
         public class BattleSearchModel
@@ -179,8 +200,8 @@ namespace ZeroKWeb.Controllers
             using (var db = new ZkDataContext())
             {
                 var bat = db.SpringBattles.Single(x => x.SpringBattleID == id);
-                return Content(System.IO.File.ReadAllText(string.Format(GlobalConst.InfologPathFormat, bat.EngineGameID)), "text/plain");
-                    //,string.Format("infolog_{0}.txt", bat.SpringBattleID)
+                var content = ReplayStorage.Instance.GetFileContent($"infolog_{bat.EngineGameID}.txt").ConfigureAwait(false).GetAwaiter().GetResult();
+                return Content(Encoding.UTF8.GetString(content), "text/plain");
             }
         }
 

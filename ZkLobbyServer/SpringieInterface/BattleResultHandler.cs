@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
 using Ratings;
+using ZkLobbyServer;
 
 namespace ZeroKWeb.SpringieInterface
 {
@@ -45,6 +46,11 @@ namespace ZeroKWeb.SpringieInterface
                 var text = new StringBuilder();
 
                 var sb = SaveSpringBattle(result, db);
+
+                // find and upload replay (async)
+                ReplayStorage.Instance.UploadAndDeleteFileAsync(Path.Combine(server.SpringPaths.WritableDirectory,"demos-server", sb.ReplayFileName));
+                // store infolog
+                ReplayStorage.Instance.UploadAndDeleteFileAsync(Path.Combine(server.SpringPaths.WritableDirectory, $"infolog_{sb.EngineGameID}.txt"));
 
                 if (isValidGame)
                 {

@@ -7,10 +7,6 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch: 
   
-  workflow_run:
-    workflows: ["Auto-update PR from master"]
-    types:
-      - completed
 
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,12 +18,10 @@ jobs:
     runs-on: zk
 
     steps:
-      #- name: Setup MSBuild Path
-       # uses: microsoft/setup-msbuild@v1.1  
-       # with:
-       #   msbuild-architecture: x64
-      - name: Try set up path
-        run: echo "c:\Program Files (x86)\MSBuild\14.0\Bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Setup MSBuild Path
+        uses: microsoft/setup-msbuild@v1.1  
+        with:
+          msbuild-architecture: x64
         
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5        
@@ -38,14 +32,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with: 
-          clean: false
+          clean: true
       
       - name: Restore NuGet Packages
         run: nuget restore Zero-K.sln
  
       - name: Build entire Zero-K
         run: >
-          msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x86 
+          msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x64 
           /p:DeployOnBuild=true /p:PublishProfile=Profile1
           /p:DefineConstants="RELEASE"
           /p:DefineConstants="TRACE" 
@@ -53,12 +47,12 @@ jobs:
           Zero-K.sln
 
       - name: Run VSTest
-        run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/Tests.dll
+        run: vstest.console.exe /Platform:x64 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/release/net48/Tests.dll
         shell: cmd
         
       - name: Test Report C#
+        if: (github.event.pull_request.head.repo.full_name == github.repository) && (success() || failure()) # run this step even if previous step failed but not on PR from forked repo
         uses: dorny/test-reporter@v1
-        if: success() || failure()    # run this step even if previous step failed
         with:
           name: Test results C#           # Name of the check run which will be created
           path: TestResults/test-results.trx

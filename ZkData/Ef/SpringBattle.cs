@@ -40,9 +40,6 @@ namespace ZkData
             get { return string.Format("B{0} {1} on {2} ({3})", SpringBattleID, PlayerCount, ResourceByMapResourceID.InternalName, BattleType); }
         }
 
-
-        [StringLength(250)]
-        public string GlacierArchiveID { get; set; }
         public bool HasBots { get; set; }
         public int? HostAccountID { get; set; }
         public bool IsEloProcessed { get; set; }

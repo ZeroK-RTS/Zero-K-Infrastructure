@@ -64,6 +64,8 @@ namespace ZkLobbyServer
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = MiscVar.DefaultEngine;
+            
+            Trace.TraceInformation("ZKLS starting with engine {0}", Engine);
 
             SpringPaths = new SpringPaths(GlobalConst.SpringieDataDir, false, false);
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, SpringPaths);
@@ -97,6 +99,9 @@ namespace ZkLobbyServer
                     PublishUserProfileUpdate(p);
                 });
             });
+            
+            Trace.TraceInformation("Starting migration of old replays"); // NOTE this can be deleted later
+            Task.Factory.StartNew(()=>ReplayStorage.Instance.MigrateReplays(), TaskCreationOptions.LongRunning);
         }
 
         private async Task SpawnAutohosts()
@@ -374,6 +379,7 @@ namespace ZkLobbyServer
                     if (Battles.TryGetValue(battleID ?? 0, out battle))
                     {
                         await SyncAndSay(battle.Users.Keys, say);
+                        say.Target = $"{battle.BattleID} {battle.ModName} {battle.Mode} {battle.MapName} ({battle.MaxPlayers})";
                         await battle.ProcessBattleSay(say);
                         await OfflineMessageHandler.StoreChatHistoryAsync(say);
                     }
@@ -598,14 +604,14 @@ namespace ZkLobbyServer
 
             string str;
             if (reporter.AccountID != reported.AccountID)
-                str = string.Format("{0} https://zero-k.info/Users/Detail/{1} reports abuse by {2} https://zero-k.info/Users/Detail/{3} : {4}", 
+                str = string.Format("`{0}` https://zero-k.info/Users/Detail/{1} reports abuse by `{2}` https://zero-k.info/Users/Detail/{3} : {4}", 
                     reporter.Name,
                     reporter.AccountID,
                     reported.Name, 
                     reported.AccountID,
                     report);
             else
-                str = string.Format("{0} https://zero-k.info/Users/Detail/{1} contacts admins : {2}", 
+                str = string.Format("`{0}` https://zero-k.info/Users/Detail/{1} contacts admins : {2}", 
                     reporter.Name,
                     reporter.AccountID, 
                     report);

@@ -323,7 +323,7 @@ namespace Ratings
                     updateAction = (() =>
                     {
                         Trace.TraceInformation("Initializing WHR " + category + " ratings for " + battlesRegistered + " battles, this will take some time..");
-                        runIterations(75);
+                        runIterations(150);
                         UpdateRankings(players.Values);
                         completelyInitialized = true;
                         cachedDbRatings.Clear();
@@ -502,8 +502,9 @@ namespace Ratings
                         lastBattlePlayers.Where(p => !playerRatings.ContainsKey((p.AccountID))).ForEach(p => playerRatings[(p.AccountID)] = new PlayerRating(DefaultRating));
                         Dictionary<int, float> winChances = db.SpringBattles.Where(p => p.SpringBattleID == battleId).First().GetAllyteamWinChances();
                         lastBattlePlayers.ForEach(p => {
-                            float eloChange = (p.IsInVictoryTeam ? (1f - winChances[p.AllyNumber]) : (-winChances[p.AllyNumber])) * GlobalConst.LadderEloClassicEloK / lastBattlePlayers.Count(x => x.AllyNumber == p.AllyNumber);
-                            playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById(p.AccountID).avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, eloChange, db);
+                            var allyCount = (float)lastBattlePlayers.Count(x => x.AllyNumber == p.AllyNumber);
+                            float eloChange = (p.IsInVictoryTeam ? (1f - winChances[p.AllyNumber]) : (-winChances[p.AllyNumber])) * GlobalConst.LadderEloClassicEloK / allyCount;
+                            playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById(p.AccountID).avgElo + RatingOffset, allyCount, p.IsInVictoryTeam, !p.IsInVictoryTeam, eloChange, db);
                         });
                         lastBattlePlayers.Where(p => !p.EloChange.HasValue).ForEach(p =>
                         {
@@ -531,15 +532,30 @@ namespace Ratings
                         float lastNaturalRatingVar = p.days.Last().naturalRatingVariance;
                         var lastDay = p.days.Last();
                         float ladderElo;
-                        if (playerRatings.ContainsKey(p.id)) ladderElo = playerRatings[p.id].LadderElo;
-                        else ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
-                        playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, !float.IsNaN(p.avgElo));
+                        if (playerRatings.ContainsKey(p.id))
+                        {
+                            ladderElo = playerRatings[p.id].LadderElo;
+                        }
+                        else
+                        {
+                            ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
+                        }
+                        playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, p.onLadder);
                         float rating = -playerRatings[p.id].LadderElo;
-                        if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
-                        while (sortedPlayers.ContainsKey(rating)) rating += 0.01f;
+                        if (playerKeys.ContainsKey(p.id))
+                        {
+                            sortedPlayers.Remove(playerKeys[p.id]);
+                        }
+                        while (sortedPlayers.ContainsKey(rating))
+                        {
+                            rating += 0.01f;
+                        }
                         playerKeys[p.id] = rating;
                         sortedPlayers[rating] = p.id;
-                        if (playerRatings[p.id].Ranked) playerCount++;
+                        if (playerRatings[p.id].Ranked)
+                        {
+                            playerCount++;
+                        }
                     }
                 }
                 this.activePlayers = playerCount;
@@ -663,10 +679,10 @@ namespace Ratings
         {
             if (!players.ContainsKey(id))
             {
-                if (temporary) return new Player(id);
+                if (temporary) return new Player(id, category);
                 lock (updateLockInternal)
                 {
-                    players.Add(id, new Player(id));
+                    players.Add(id, new Player(id, category));
                 }
             }
             return players[id];
