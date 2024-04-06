@@ -15,7 +15,16 @@
 <br />
 <span>Mass create rooms:</span>
 <form action="@Url.Action("AddMultipleBattles")" method="post">
-    @Html.TextBox("battleList", "TitleA,Player1,Player2//TitleB,Player1A,Player1B,Player2A,Player2B//...", new { style = "width:750px" })<br />
+    <table>
+        <tr>
+            <td>Room definition</td>
+            <td>@Html.TextBox("battleList", "TitleA,Player1,Player2//TitleB,Player1A,Player1B,Player2A,Player2B//...", new { style = "width:650px" }) </td>
+        </tr>
+        <tr>
+            <td>Modoptions</td>
+            <td>@Html.TextBox("modoptStringMult", "", new { style = "width:650px" }) </td>
+        </tr>
+    </table>
     <input type="submit" value="Create Battles" class="js_confirm" />
 </form>
 <br />
@@ -102,6 +111,10 @@
             <td>
                 @Html.MultiSelectFor(x => x.Team2Ids, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)))
             </td>
+        </tr>
+        <tr>
+            <td>Modoptions</td>
+            <td>@Html.TextBoxFor(x => x.ModoptString)</td>
         </tr>
         <tr><td colspan="2"><input type="submit" /></td></tr>
     </table>

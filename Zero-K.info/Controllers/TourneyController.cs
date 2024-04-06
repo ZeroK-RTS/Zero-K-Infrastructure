@@ -17,6 +17,7 @@ namespace ZeroKWeb.Controllers
             public List<int> Team1Ids { get; set; } = new List<int>();
             public List<int> Team2Ids { get; set; } = new List<int>();
             public string Title { get; set; }
+            public string ModoptString { get; set; }
         }
 
         // GET: Tourney
@@ -25,7 +26,7 @@ namespace ZeroKWeb.Controllers
             if (!Global.IsTourneyController) return DenyAccess();
             var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
 
-            return View("TourneyIndex", new TourneyModel() {Battles = tourneyBattles});
+            return View("TourneyIndex", new TourneyModel() { Battles = tourneyBattles });
         }
 
         public ActionResult JoinBattle(string battleHost)
@@ -119,16 +120,43 @@ namespace ZeroKWeb.Controllers
                         model.Team2Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList()
                     }
                 });
+
+                string[] optionSplitters = { "," };
+                string[] modoptsStrings = model.ModoptString.Split(optionSplitters, System.StringSplitOptions.RemoveEmptyEntries);
+                foreach (var modStr in modoptsStrings)
+                {
+                    bool validSetting = true;
+                    string[] modComponent = modStr.Split('=');
+                    if (modComponent.Length == 2)
+                    {
+                        tb.ModOptions.Add(modComponent[0], modComponent[1]);
+                    }
+                }
                 Global.Server.AddBattle(tb);
             }
             return RedirectToAction("Index");
         }
 
-        public ActionResult AddMultipleBattles(string battleList)
+        public ActionResult AddMultipleBattles(string battleList, string modoptStringMult)
         {
             if (!Global.IsTourneyController) return DenyAccess();
             var db = new ZkDataContext();
 
+            // parse modoptions
+            Dictionary<string, string> modopts = new Dictionary<string, string>();
+            string[] optionSplitters = { "," };
+            string[] modoptsStrings = modoptStringMult.Split(optionSplitters, System.StringSplitOptions.RemoveEmptyEntries);
+            foreach (var modStr in modoptsStrings)
+            {
+                bool validSetting = true;
+                string[] modComponent = modStr.Split('=');
+                if (modComponent.Length == 2)
+                {
+                    modopts.Add(modComponent[0], modComponent[1]);
+                }
+            }
+
+            // parse and creatge battles
             string[] splitters = { "//" };
             string[] battleSpecs = battleList.Split(splitters, System.StringSplitOptions.RemoveEmptyEntries);
 
@@ -182,6 +210,12 @@ namespace ZeroKWeb.Controllers
                         team2Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList()
                     }
                     });
+
+                    foreach (KeyValuePair<string, string> kvp in modopts)
+                    {
+                        tb.ModOptions.Add(kvp.Key, kvp.Value);
+                    }
+
                     Global.Server.AddBattle(tb);
                 }
             }
@@ -200,7 +234,7 @@ namespace ZeroKWeb.Controllers
                 string line = string.Format("");
                 foreach (var team in tBat.Prototype.TeamPlayers)
                 {
-                    foreach(var p in team)
+                    foreach (var p in team)
                     {
                         line += "@U" + Account.AccountByName(db, p).AccountID + ", ";
                     }
@@ -214,11 +248,12 @@ namespace ZeroKWeb.Controllers
                 foreach (var deb in tBat.Debriefings)
                 {
                     var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == deb.ServerBattleID);
-                    if (bat != null) {
+                    if (bat != null)
+                    {
                         batCount++;
                         line += "@B" + deb.ServerBattleID + ", ";
                     }
-                    
+
                 }
                 line = line.Remove(line.Length - 2);
                 if (batCount > 0)
