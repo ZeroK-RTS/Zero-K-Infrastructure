@@ -53,7 +53,7 @@ namespace ZkLobbyServer
             }
             else
             {
-                StartGame(battle);
+                await StartGame(battle);
             }
 
         }
@@ -71,7 +71,7 @@ namespace ZkLobbyServer
             }
         }
 
-        private async void StartGame(ServerBattle battle)
+        private async Task StartGame(ServerBattle battle)
         {
             await battle.RunCommandDirectly<CmdSpecAfk>(null);
             await battle.StartGame();
