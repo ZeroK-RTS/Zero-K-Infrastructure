@@ -51,8 +51,8 @@ jobs:
         shell: cmd
         
       - name: Test Report C#
+        if: (github.event.pull_request.head.repo.full_name == github.repository) && (success() || failure()) # run this step even if previous step failed but not on PR from forked repo
         uses: dorny/test-reporter@v1
-        if: success() || failure()    # run this step even if previous step failed
         with:
           name: Test results C#           # Name of the check run which will be created
           path: TestResults/test-results.trx
