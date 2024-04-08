@@ -292,6 +292,13 @@ namespace ZeroKWeb.SpringieInterface
                  * See https://github.com/ZeroK-RTS/Zero-K-Infrastructure/blob/master/Shared/LobbyClient/DedicatedServer.cs#L317 */
                 ret.ModOptions["sendSpringieData"] = "1";
 
+                /* Current date. Synced Lua code cannot access `os.date`
+                 * which is needed for gameside events (Easter etc) */
+                var date = DateTime.UtcNow;
+                ret.ModOptions["date_day"] = date.Day.ToString();
+                ret.ModOptions["date_month"] = date.Month.ToString();
+                ret.ModOptions["date_year"] = date.Year.ToString();
+
                 // set PW structures
                 if (mode == AutohostMode.Planetwars)
                 {
