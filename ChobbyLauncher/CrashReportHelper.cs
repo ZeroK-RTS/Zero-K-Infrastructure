@@ -209,32 +209,20 @@ namespace ChobbyLauncher
 
         private static int[] ReadGameReloads(string logStr)
         {
-            //Game reload detected by [f=-000001] that follows either the start of the file, or [f={non-negative value}]
-
-            var list = new List<int>();
-
-            var negativeFrameRegex = new Regex(@"f=-(?<=(?<s>^)\[t=\d+:\d+:\d+\.\d+\]\[f=-)\d+\]", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Multiline, TimeSpan.FromSeconds(30));
-            var nonNegativeFrameRegex = new Regex(@"f=\d(?<=^\[t=\d+:\d+:\d+\.\d+\]\[f=\d)\d*\]", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Multiline, TimeSpan.FromSeconds(30));
-
-            var idx = 0;
+            //[t=00:00:30.569367][f=-000001] [ReloadOrRestart] Spring "E:\Games\SteamLibrary\steamapps\common\Zero-K\engine\win64\105.1.1-2457-g8095d30\spring.exe" should be reloading
+            //This happens whenever a new game is started, or when a game is exited and returns to lobby.
 
             try
             {
-                while (true)
-                {
-                    {
-                        var m = negativeFrameRegex.Match(logStr, idx);
-                        if (!m.Success) break;
-                        idx = m.Index;
-                        list.Add(m.Groups["s"].Index);
-                    }
-                    {
-                        var m = nonNegativeFrameRegex.Match(logStr, idx);
-                        if (!m.Success) break;
-                        idx = m.Index;
-                    }
-                }
-                return list.ToArray();
+                return
+                    Regex
+                        .Matches(
+                            logStr,
+                            @"\[ReloadOrRestart\](?<=(?<s>^)\[t=\d+:\d+:\d+\.\d+\]\[f=-?\d+\] \[ReloadOrRestart\])",
+                            RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Multiline,
+                            TimeSpan.FromSeconds(30))
+                        .Cast<Match>().Select(m => m.Groups["s"].Index)
+                        .ToArray();
             }
             catch (RegexMatchTimeoutException)
             {
