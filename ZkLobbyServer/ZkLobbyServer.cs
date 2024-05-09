@@ -212,6 +212,9 @@ namespace ZkLobbyServer
             // admins always visible
             if (uWatched.User?.IsAdmin == true) return true;
 
+            // admins see everybody
+            if (uWatcher.User?.IsAdmin == true) return true;
+
             // friends see each other
             if (uWatcher.FriendNames.Contains(uWatched.Name)) return true;
 
