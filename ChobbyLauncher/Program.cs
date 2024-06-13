@@ -168,7 +168,7 @@ namespace ChobbyLauncher
             logWriter.Flush();
             var logStr = logSb.ToString();
 
-            CrashReportHelper.CheckAndReportErrors(logStr, springRunOk, chobbyla.BugReportTitle, chobbyla.BugReportDescription, chobbyla.engine);
+            CrashReportHelper.CheckAndReportErrors(logStr, springRunOk, chobbyla.paths, chobbyla.BugReportTitle, chobbyla.BugReportDescription, chobbyla.engine);
         }
 
         static async Task<bool> PrepareWithoutGui(Chobbyla chobbyla)
