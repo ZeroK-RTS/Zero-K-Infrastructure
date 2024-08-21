@@ -173,7 +173,7 @@ namespace ZkLobbyServer
                                 userID,
                                 installID);
 
-                    if (!acc.HasVpnException && GlobalConst.VpnCheckEnabled) if (HasVpn(ip, acc, db)) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID, installID);
+                    if (!acc.HasVpnException && GlobalConst.VpnCheckEnabled && !acc.SteamID.HasValue) if (HasVpn(ip, acc, db)) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID, installID);
 
                     return ret;
                 }
