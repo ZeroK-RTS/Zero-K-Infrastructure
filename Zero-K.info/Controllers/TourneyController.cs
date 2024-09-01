@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -17,7 +18,9 @@ namespace ZeroKWeb.Controllers
             public List<int> Team1Ids { get; set; } = new List<int>();
             public List<int> Team2Ids { get; set; } = new List<int>();
             public string Title { get; set; }
-            public string ModoptString { get; set; }
+
+            [DisplayFormat(ConvertEmptyStringToNull = false)]
+            public string ModoptString { get; set; } = "";
         }
 
         // GET: Tourney
