@@ -22,7 +22,7 @@ namespace LobbyClient
         public static EventHandler<SpringBattleContext> AnyDedicatedExited;
 
         private readonly SpringPaths paths;
-        private readonly Timer timer = new Timer(20000);
+        private readonly Timer timer = new Timer(1000);
 
         private Dictionary<string, HashSet<byte> > gamePrivateMessages = new Dictionary<string, HashSet<byte> >();
 
@@ -514,8 +514,7 @@ namespace LobbyClient
             try
             {
                 var timeSinceStart = DateTime.UtcNow.Subtract(Context.StartTime).TotalSeconds;
-                const int timeToWait = 160; // force start after 180s
-                const int timeToWarn = 100; // warn people after 120s 
+                const int timeToWait = 160; // force start after this many seconds
 
                 if (Context.IsHosting && IsRunning && (Context.IngameStartTime == null))
                 {
@@ -524,7 +523,10 @@ namespace LobbyClient
                         Context.IsTimeoutForceStarted = true;
                         ForceStart();
                     }
-                    else if (timeSinceStart > timeToWarn) SayGame($"Game will be force started in {Math.Max(20, timeToWait - Math.Round(timeSinceStart))} seconds");
+                    else
+                    {
+                        talker.SendText($"/luarules pregame_timer_seconds {Convert.ToInt32(timeToWait - timeSinceStart)}");
+                    }
                 }
             }
             catch (Exception ex)
