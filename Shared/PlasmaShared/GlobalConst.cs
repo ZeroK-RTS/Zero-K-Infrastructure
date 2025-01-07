@@ -266,7 +266,7 @@ namespace ZkData
         }
         
 
-        public static string UnitSyncEngine = "unitsync";
+        public static string UnitSyncEngine = "105.1.1-1485-g78f9a2c";
 
         public static int SteamContributionJarID = 2;
         public static Dictionary<ulong, int> DlcToKudos = new Dictionary<ulong, int>() { { 842950, 100 }, { 842951, 250 }, { 842952, 500 } };
