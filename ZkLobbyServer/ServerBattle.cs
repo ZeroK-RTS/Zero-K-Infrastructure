@@ -181,7 +181,7 @@ namespace ZkLobbyServer
         {
             var ret = Users.Select(x => x.Key).ToList();
             if (spring.IsRunning) ret.AddRange(spring.Context.ActualPlayers.Select(x => x.Name));
-            return ret.Distinct().ToList();
+            return ret.Distinct().Where(x=>x!=null).ToList();
         }
 
         public BattleCommand GetCommandByName(string name)

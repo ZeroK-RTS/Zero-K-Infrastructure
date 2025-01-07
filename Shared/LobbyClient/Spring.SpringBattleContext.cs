@@ -47,6 +47,8 @@ namespace LobbyClient
 
         public BattlePlayerResult GetOrAddPlayer(string name)
         {
+            if (string.IsNullOrEmpty(name)) return null; // we don't want to add null players
+            
             var ret = ActualPlayers.FirstOrDefault(y => y.Name == name);
             if (ret == null)
             {
