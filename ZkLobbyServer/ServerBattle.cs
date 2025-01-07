@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -69,6 +70,12 @@ namespace ZkLobbyServer
         public MapSupportLevel MinimalMapSupportLevel => IsAutohost ? MinimalMapSupportLevelAutohost : (IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported);
 
         public CommandPoll ActivePoll { get; private set; }
+
+        // Dictionary tracking cooldown for each user that fails a poll 
+        private readonly ConcurrentDictionary<string, DateTime> pollFailCooldowns = new ConcurrentDictionary<string, DateTime>();
+        
+        // Returns the count of non-spectators in the current battle
+        public int NonSpectatorPlayerCount => Users.Values.Count(x => x!= null && !x.IsSpectator);
 
         public bool IsAutohost { get; private set; }
         public bool IsDefaultGame { get; private set; } = true;
@@ -652,6 +659,15 @@ namespace ZkLobbyServer
                 await Respond(creator, $"Please wait, another poll already in progress: {ActivePoll.Topic}");
                 return false;
             }
+            
+            // Check if the user is on cooldown due to a failed poll
+            if (creator != null && IsOnPollCooldown(creator?.User, out var remain))
+            {
+                await Respond(creator, $"You cannot start a vote for {remain} seconds.");
+                return false;
+            }
+            
+            
             await poll.Setup(eligibilitySelector, options, creator, topic);
             ActivePoll = poll;
             pollTimer.Interval = timeout * 1000;
@@ -659,6 +675,32 @@ namespace ZkLobbyServer
             return true;
         }
 
+        
+        private bool IsUserModerator(string username)
+        {
+            if (Users.TryGetValue(username, out var ubs) && (ubs?.LobbyUser?.IsAdmin == true))
+                return true;
+            if (server.ConnectedUsers.TryGetValue(username, out var con) && (con?.User?.IsAdmin == true)) // command can be sent by someone not in the battle
+                return true;
+            return false;
+        }
+
+        
+        private bool IsOnPollCooldown(string username, out int remainSeconds)
+        {
+            remainSeconds = 0;
+            if (pollFailCooldowns.TryGetValue(username, out var blockedUntil))
+            {
+                var diff = blockedUntil - DateTime.UtcNow;
+                if (diff.TotalSeconds > 0)
+                {
+                    remainSeconds = (int)Math.Ceiling(diff.TotalSeconds);
+                    return true;
+                }
+            }
+            return false;
+        }        
+        
 
         public async void StopVote()
         {
@@ -669,7 +711,26 @@ namespace ZkLobbyServer
                 if (ActivePoll != null) await ActivePoll.End(false);
                 if (pollTimer != null) pollTimer.Enabled = false;
                 ActivePoll = null;
+                
+                // Let the poll announce results or do final DB logging
                 await oldPoll?.PublishResult();
+
+                
+                // 1) Did the poll pass?
+                bool pollPassed = oldPoll?.Outcome?.ChosenOption != null;
+
+                // 2) Who started this poll?
+                string creatorName = oldPoll?.Creator?.User;
+
+                // 3) If poll failed and conditions are met => apply 30s cooldown
+                if (!string.IsNullOrEmpty(creatorName) && // user is known
+                    !pollPassed                     // poll is a failure
+                    && IsAutohost                   // only relevant in autohost
+                    && NonSpectatorPlayerCount >= 10
+                    && !IsUserModerator(creatorName))
+                {
+                    pollFailCooldowns[creatorName] = DateTime.UtcNow.AddSeconds(30);
+                }
             }
             catch (Exception ex)
             {
