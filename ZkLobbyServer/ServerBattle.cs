@@ -680,7 +680,7 @@ namespace ZkLobbyServer
         {
             if (Users.TryGetValue(username, out var ubs) && (ubs?.LobbyUser?.IsAdmin == true))
                 return true;
-            if (server.ConnectedUsers.TryGetValue(username, out var con) && (con?.User?.IsAdmin == true))
+            if (server.ConnectedUsers.TryGetValue(username, out var con) && (con?.User?.IsAdmin == true)) // command can be sent by someone not in the battle
                 return true;
             return false;
         }
