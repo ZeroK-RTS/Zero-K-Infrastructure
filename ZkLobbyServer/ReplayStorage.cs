@@ -14,12 +14,26 @@ namespace ZkLobbyServer
     public class ReplayStorage
     {
         public static ReplayStorage Instance { get; } = new ReplayStorage();
-        
+
         BlobContainerClient azureContainer;
 
+        string basePath = GlobalConst.SpringieDataDir;
+        
         internal ReplayStorage()
         {
-            azureContainer = new BlobContainerClient(MiscVar.ReplaysConnectionString, MiscVar.ReplaysContainerName);
+            try
+            {
+                if (string.IsNullOrEmpty(MiscVar.ReplaysConnectionString) || string.IsNullOrEmpty(MiscVar.ReplaysContainerName))
+                {
+                    Trace.TraceWarning("Replay storage not configured, replays won't be stored in blobs");
+                    return;
+                }
+                
+                azureContainer = new BlobContainerClient(MiscVar.ReplaysConnectionString, MiscVar.ReplaysContainerName);
+            } catch (Exception ex)
+            {
+                Trace.TraceError("Error initializing replay storage: {0}", ex.Message);
+            } 
         }
 
         public async Task<bool> UploadAndDeleteFileAsync(string path)
@@ -65,17 +79,25 @@ namespace ZkLobbyServer
             return stream.ToArray();
         }
         
+        
+        public byte[] GetLocalFileContent(string replayName)
+        {
+            var path = Path.Combine(basePath, "demos-server", replayName);
+            if (!File.Exists(path)) return null;
+            return File.ReadAllBytes(path);
+        }
+        
         public async Task MigrateReplays()
         {
             // replays themselves
-            var files = Directory.GetFiles(@"c:\Projekty\springie_spring\demos-server");
+            var files = Directory.GetFiles(Path.Combine(basePath,"demos-server"));
             foreach (var fi in files)
             {
                 await UploadAndDeleteFileAsync(fi);
             }
             
             // infologs
-            files = Directory.GetFiles(@"c:\Projekty\springie_spring","infolog_*.txt");
+            files = Directory.GetFiles(basePath,"infolog_*.txt");
             foreach (var fi in files)
             {
                 await UploadAndDeleteFileAsync(fi);
