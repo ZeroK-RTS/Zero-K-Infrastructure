@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using MonoTorrent.Common;
 using PlasmaShared;
 using ZkData;
@@ -87,6 +88,7 @@ namespace AutoRegistrator
         }
 
 
+        [HandleProcessCorruptedStateExceptions]
         private static ResourceInfo Register(UnitSync unitsync, ResourceInfo resource)
         {
             Trace.TraceInformation("UnitSyncer: registering {0}", resource.Name);
