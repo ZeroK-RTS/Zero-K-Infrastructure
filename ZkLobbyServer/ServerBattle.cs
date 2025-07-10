@@ -1135,6 +1135,15 @@ namespace ZkLobbyServer
                     discussionTimer.Interval = (DiscussionSeconds - 1) * 1000;
                     discussionTimer.Start();
                     previousGamePlayers = springBattleContext.ActualPlayers.Select(x => x.Name).ToList();
+                    foreach (var n in previousGamePlayers)
+                    {
+                        UserBattleStatus ubs;
+                        if (Users.TryGetValue(n, out ubs))
+                        {
+                            ubs.QueueOrder = -1;
+                            ValidateBattleStatus(ubs);
+                        }
+                    }
                 }
             }
             await CheckCloseBattle();
