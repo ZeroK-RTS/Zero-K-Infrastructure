@@ -55,6 +55,7 @@ namespace ZkLobbyServer
         protected bool IsPollsBlocked => IsAutohost && DateTime.UtcNow < BlockPollsUntil;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
+        private List<string> previousGamePlayers = new List<string>();
         public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();
 
         private Timer pollTimer;
@@ -205,6 +206,13 @@ namespace ZkLobbyServer
                 Title = Title,
                 IsSpectator = isSpectator,
             };
+        }
+
+        public bool IsInPreviousGame(string name)
+        {
+            var inPrevious = false;
+            if (previousGamePlayers.Any(y => y == name)) inPrevious = true;
+            return inPrevious;
         }
 
         public bool IsKicked(string name)
@@ -1053,7 +1061,11 @@ namespace ZkLobbyServer
                         SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too low. The minimum Rank to play in this battle is " + Ranks.RankNames[MinRank] + ".", ubs.Name);
                     }
                 }
-                if (ubs.QueueOrder <= 0) ubs.QueueOrder = ++QueueCounter;
+                if (ubs.QueueOrder <= 0) 
+                {
+                    ubs.QueueOrder = ++QueueCounter;
+                    if IsInPreviousGame(ubs.Name) ubs.QueueOrder += 1000;
+                }
             }
             else
             {
@@ -1122,6 +1134,16 @@ namespace ZkLobbyServer
                     //Initiate discussion time, then map vote, then start vote
                     discussionTimer.Interval = (DiscussionSeconds - 1) * 1000;
                     discussionTimer.Start();
+                    previousGamePlayers = springBattleContext.ActualPlayers.Select(x => x.Name);
+                    foreach (var name in previousGamePlayers)
+                    {
+                        UserBattleStatus ubs;
+                        if (Users.TryGetValue(name, out ubs))
+                        {
+                            ubs.QueueOrder = -1;
+                            ValidateBattleStatus(ubs);
+                        }
+                    }
                 }
             }
             await CheckCloseBattle();
