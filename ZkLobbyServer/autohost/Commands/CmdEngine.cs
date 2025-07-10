@@ -23,7 +23,7 @@ namespace ZkLobbyServer
 
             if ((battle.Mode != AutohostMode.None || !battle.IsPassworded) && engine != battle.server.Engine && !battle.IsAutohost)
             {
-                battle.Respond(e, $"You cannot change engine to version other than {battle.server.Engine} here, use custom passworded room");
+                battle.Respond(e, $"You cannot change engine to version other than {battle.server.Engine} here, must be the Custom room type (say '!type custom') and passworded (say '!password bla', can remove it afterwards via '!password')");
                 return null;
             }
 
