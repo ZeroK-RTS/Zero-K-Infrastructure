@@ -1061,7 +1061,11 @@ namespace ZkLobbyServer
                         SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too low. The minimum Rank to play in this battle is " + Ranks.RankNames[MinRank] + ".", ubs.Name);
                     }
                 }
-                if (ubs.QueueOrder <= 0) ubs.QueueOrder = ++QueueCounter;
+                if (ubs.QueueOrder <= 0)
+                {
+                    ubs.QueueOrder = ++QueueCounter;
+                    if IsInPreviousGame(ubs.Name) ubs.QueueOrder += 1000;
+                }
             }
             else
             {
