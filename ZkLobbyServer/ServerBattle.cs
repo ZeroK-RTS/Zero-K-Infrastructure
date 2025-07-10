@@ -211,7 +211,7 @@ namespace ZkLobbyServer
         public bool IsInPreviousGame(string name)
         {
             var inPrevious = false;
-            if (previousGamePlayers.Any(y => y == name)) inPrevious = true;
+            if (previousGamePlayers.Any(y => y.Name == name)) inPrevious = true;
             return inPrevious;
         }
 
@@ -1134,16 +1134,6 @@ namespace ZkLobbyServer
                     //Initiate discussion time, then map vote, then start vote
                     discussionTimer.Interval = (DiscussionSeconds - 1) * 1000;
                     discussionTimer.Start();
-                    previousGamePlayers = springBattleContext.ActualPlayers.Select(x => x.Name);
-                    foreach (var name in previousGamePlayers)
-                    {
-                        UserBattleStatus ubs;
-                        if (Users.TryGetValue(name, out ubs))
-                        {
-                            ubs.QueueOrder = -1;
-                            ValidateBattleStatus(ubs);
-                        }
-                    }
                 }
             }
             await CheckCloseBattle();
