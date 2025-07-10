@@ -208,13 +208,6 @@ namespace ZkLobbyServer
             };
         }
 
-        public bool IsInPreviousGame(string name)
-        {
-            var inPrevious = false;
-            if (previousGamePlayers.Any(y => y == name)) inPrevious = true;
-            return inPrevious;
-        }
-
         public bool IsKicked(string name)
         {
             var kicked = false;
