@@ -1064,7 +1064,7 @@ namespace ZkLobbyServer
                 if (ubs.QueueOrder <= 0)
                 {
                     ubs.QueueOrder = ++QueueCounter;
-                    if IsInPreviousGame(ubs.Name) ubs.QueueOrder += 1000;
+                    if (IsInPreviousGame(ubs.Name)) ubs.QueueOrder += 1000;
                 }
             }
             else
