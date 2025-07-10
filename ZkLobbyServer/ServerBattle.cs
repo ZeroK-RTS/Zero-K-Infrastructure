@@ -211,7 +211,7 @@ namespace ZkLobbyServer
         public bool IsInPreviousGame(string name)
         {
             var inPrevious = false;
-            if (previousGamePlayers.Any(y => y.Name == name)) inPrevious = true;
+            if (previousGamePlayers.Any(y => y == name)) inPrevious = true;
             return inPrevious;
         }
 
