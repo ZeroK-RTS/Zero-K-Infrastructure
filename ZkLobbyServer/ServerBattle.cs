@@ -1134,7 +1134,7 @@ namespace ZkLobbyServer
                     //Initiate discussion time, then map vote, then start vote
                     discussionTimer.Interval = (DiscussionSeconds - 1) * 1000;
                     discussionTimer.Start();
-                    previousGamePlayers = springBattleContext.ActualPlayers.Select(x => x.Name).ToList();
+                    previousGamePlayers = springBattleContext.ActualPlayers.Where(x => !x.IsSpectator).Select(x => x.Name).ToList();
                     foreach (var n in previousGamePlayers)
                     {
                         UserBattleStatus ubs;
