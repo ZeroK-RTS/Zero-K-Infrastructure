@@ -1141,10 +1141,9 @@ namespace ZkLobbyServer
                         if (Users.TryGetValue(n, out ubs))
                         {
                             ubs.QueueOrder = -1;
-                            ValidateBattleStatus(ubs);
-                            await server.Broadcast(Users.Keys, ubs.ToUpdateBattleStatus());
                         }
                     }
+                    await ValidateAllBattleStatuses();
                 }
             }
             await CheckCloseBattle();
