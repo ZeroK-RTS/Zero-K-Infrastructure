@@ -29,6 +29,7 @@ namespace ZkLobbyServer
         public const int MapVoteTime = 25;
         public const int NumberOfMapChoices = 4;
         public const int MinimumAutostartPlayers = 6;
+        public const int PrevBattleQueueOffset = 100000;
         public static int BattleCounter;
         public int QueueCounter = 0;
 
@@ -1064,7 +1065,7 @@ namespace ZkLobbyServer
                 if (ubs.QueueOrder <= 0)
                 {
                     ubs.QueueOrder = ++QueueCounter;
-                    if (IsInPreviousGame(ubs.Name)) ubs.QueueOrder += 100000;
+                    if (IsInPreviousGame(ubs.Name)) ubs.QueueOrder += PrevBattleQueueOffset;
                 }
             }
             else
@@ -1134,13 +1135,21 @@ namespace ZkLobbyServer
                     //Initiate discussion time, then map vote, then start vote
                     discussionTimer.Interval = (DiscussionSeconds - 1) * 1000;
                     discussionTimer.Start();
+                    foreach (var n in previousGamePlayers)
+                    {
+                        UserBattleStatus ubs;
+                        if (Users.TryGetValue(n, out ubs))
+                        {
+                            if (ubs.QueueOrder > QueueCounter + PrevBattleQueueOffset/2) ubs.QueueOrder -= PrevBattleQueueOffset;
+                        }
+                    }
                     previousGamePlayers = springBattleContext.ActualPlayers.Where(x => !x.IsSpectator).Select(x => x.Name).ToList();
                     foreach (var n in previousGamePlayers)
                     {
                         UserBattleStatus ubs;
                         if (Users.TryGetValue(n, out ubs))
                         {
-                            ubs.QueueOrder = -1;
+                            if (ubs.QueueOrder > 0 && ubs.QueueOrder < QueueCounter + PrevBattleQueueOffset/2) ubs.QueueOrder += PrevBattleQueueOffset;
                         }
                     }
                     await ValidateAllBattleStatuses();
