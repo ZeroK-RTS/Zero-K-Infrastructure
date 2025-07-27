@@ -99,6 +99,8 @@ namespace ZkLobbyServer
             return isSpectator;
         }
 
+
+
         /// <summary>
         /// Determines the required margin for a majority vote to pass
         /// </summary>
@@ -145,6 +147,7 @@ namespace ZkLobbyServer
             var s = battle.spring;
             bool isSpectator = IsSpectator(battle, userName, ubs);
             bool isAway = user?.IsAway == true;
+            bool isInWaitlist = battle.IsInWaitlist(userName);
             int count = 0;
             if (s.IsRunning)
             {
@@ -182,6 +185,7 @@ namespace ZkLobbyServer
                 reason = "This command can't be executed by spectators. Join the game to use this command.";
                 if (isAway) reason = "You can't vote while being AFK.";
                 if (user?.BanVotes == true) reason = "You have been banned from using votes. Check your user page for details.";
+                if (isInWaitlist) reason = "You can't vote if you are in the waitlist.";
                 return RunPermission.None;
             }
             if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
