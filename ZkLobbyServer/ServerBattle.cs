@@ -29,6 +29,7 @@ namespace ZkLobbyServer
         public const int MapVoteTime = 25;
         public const int NumberOfMapChoices = 4;
         public const int MinimumAutostartPlayers = 6;
+        public const int MinimumGameSizeToPrioritiseNewPlayers = 13; // TODO: !commandable per host
         public const int PrevBattleQueueOffset = 100000;
         public static int BattleCounter;
         public int QueueCounter = 0;
@@ -1143,7 +1144,14 @@ namespace ZkLobbyServer
                             if (ubs.QueueOrder > QueueCounter + PrevBattleQueueOffset/2) ubs.QueueOrder -= PrevBattleQueueOffset;
                         }
                     }
-                    previousGamePlayers = springBattleContext.ActualPlayers.Where(x => !x.IsSpectator).Select(x => x.Name).ToList();
+                    var players = springBattleContext.ActualPlayers.Where(x => !x.IsSpectator).Select(x => x.Name).ToList();
+                    if (players.Count >= MinimumGameSizeToPrioritiseNewPlayers) {
+                        previousGamePlayers = players;
+                    }
+                    else
+                    {
+                        previousGamePlayers = new List<string>();
+                    }
                     foreach (var n in previousGamePlayers)
                     {
                         UserBattleStatus ubs;
