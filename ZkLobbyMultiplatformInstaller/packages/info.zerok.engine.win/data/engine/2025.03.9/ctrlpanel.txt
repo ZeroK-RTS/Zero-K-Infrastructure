@@ -1,0 +1,125 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Spring Control Panel Configuration
+//
+
+// outlinefont       0
+// dropShadows       1
+// useOptionLEDs     1
+// textureAlpha    0.8
+// frameAlpha     -1.0  // use the GUI alpha if < 0.0
+// selectGaps        1
+// selectThrough     0
+
+// newAttackMode     1  // enable attack by area selection
+// attackRect        1  // use a rectangular selection
+// invColorSelect    1  // use color inversion instead of tinting
+// frontByEnds       0  // use endpoints to create movement fronts
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Default 2x8
+//
+
+// xIcons         2
+// yIcons         8
+
+// xPos           0.000
+// yPos           0.175
+
+// xSelectionPos  0.018
+// ySelectionPos  0.127
+
+// xIconSize      0.06
+// yIconSize      0.06
+
+// textBorder     0.003
+// iconBorder     0.003
+// frameBorder    0.003
+
+// prevPageSlot   auto
+// nextPageSlot   auto
+// deadIconSlot   none
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Extended 3x10
+//
+
+// xIcons         3
+// yIcons         10
+// prevPageSlot   j0
+// deadIconSlot   j1
+// nextPageSlot   j2
+// xIconSize      0.05
+// yIconSize      0.05
+
+// xPos           0.000
+// yPos           0.147
+// xSelectionPos  0.018
+// ySelectionPos  0.115
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Extended 3x11
+//
+
+// xIcons         3
+// yIcons         11
+// prevPageSlot   k0
+// deadIconSlot   k1
+// nextPageSlot   k2
+// xIconSize      0.05
+// yIconSize      0.05
+
+// xPos           0.000
+// yPos           0.147
+// xSelectionPos  0.018
+// ySelectionPos  0.115
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  KeyGrid Layout
+//
+
+// xIcons         5
+// yIcons         3
+// xPos           0.00
+// yPos           0.11
+// xIconSize      0.05
+// yIconSize      0.05
+// xSelectionPos  0.297
+// ySelectionPos  0.113
+// noSelectGaps   1
+
+// prevPageSlot   a4
+// nextPageSlot   b4
+// deadIconSlot   c4
+
+// fillOrder b3 b2 b1 b0 a3 c3 a2 c2 a1 c1 a0 c0 a4 b4 c4
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Dual KeyGrid Layout
+//
+
+// xIcons         5
+// yIcons         6
+// xPos           0.00
+// yPos           0.11
+// xIconSize      0.05
+// yIconSize      0.05
+// xSelectionPos  0.297
+// ySelectionPos  0.113
+// noSelectGaps   1
+
+// prevPageSlot   a4
+// nextPageSlot   b4
+// deadIconSlot   c4
+
+// fillOrder  b3 b2 b1 b0  a3 c3 a2 c2 a1 c1 a0 c0  a4 b4 c4   e3 e2 e1 e0  d3 f3 d2 f2 d1 f1 d0 f0  d4 e4 f4

@@ -1,0 +1,136 @@
+// Mono-space font required
+{
+// Build special units when enemy_metal*ratio > response_metal*eps; eps=teamSize*eps_step+(1-eps_step)
+// AA condition for 3v3: (enemy_air_metal*0.67 > (aa_metal+aa_cost)*1.12) and (aa_metal+aa_cost < army_metal*0.5)
+//
+// Probability of UnitDef for AA role depends on income tier: (tierN[UnitDef]+_weight_)*enemy_air_metal/aa_metal*importance
+// armjeth probability for tier 1: (0.00+10.00)*enemy_air_metal*600.0
+"response": {
+	"_weight_": 70.0,  // base weight of response probability, default=0.5
+
+	"assault": {
+		"vs":         ["riot", "static", "assault", "commander", "heavy", "super", "missileskirm", "turtle"],
+		"ratio":      [ 0.75,   2.0,      0.00,      0.20,        0.00,    0.75,    1.5,            3.0],
+		"importance": [ 15.00,  45.00,    25.00,     75.00,       0.00,    45.00,   125.00,         50.0],
+		"max_percent": 1.00
+	},
+	"skirmish": {
+		"vs":         ["riot", "static", "assault", "commander", "heavy", "anti_heavy"],
+		"ratio":      [ 1.50,   0.75,     1.00,      0.00,        0.00,    0.00],
+		"importance": [ 35.00,  25.00,    25.00,     75.00,       0.00,    0.00],
+		"max_percent": 1.00
+	},
+	"raider": {
+		"vs":         ["anti_air", "scout", "raider", "anti_heavy", "mine", "skirmish", "artillery"],
+		"ratio":      [ 0.00,       1.00,    1.0,      0.10,         0.35,   0.40,       0.8],
+		"importance": [ 15.00,      75.00,   75.00,    15.00,        60.00,  45.00,      10.00],
+		"max_percent": 1.00,
+		"eps_step": 0.75
+	},
+	"riot": {
+		"vs":         ["raider", "scout", "commander", "bullshit_raider"],
+		"ratio":      [ 0.8,      0.8,     0.33,        1.5],
+		"importance": [ 100.00,   100.00,  75.00,       125.00],
+		"max_percent": 0.45,
+		"eps_step": 0.25
+	},
+	"missileskirm": {
+		"vs":         ["raider", "scout", "riot"],
+		"ratio":      [ 0.25,     0.5,     0.25],
+		"importance": [ 35.00,    50.00,   35.00],
+		"max_percent": 0.45,
+		"eps_step": 0.25
+	},
+	"transport": {
+		"vs":         ["super", "support", "shieldball"],
+		"ratio":      [ 0.75,    0.75,      0.75],
+		"importance": [ 50.00,   50.00,     50.00],
+		"max_percent": 0.30,
+		"eps_step": 0.015
+	},
+	"scout": {
+		"vs":         ["mine", "artillery", "anti_air", "scout", "static", "heavy", "anti_heavy", "cloaked_raider"],
+		"ratio":      [ 0.35,   0.05,        0.10,       1.00,    0.00,     0.00,    0.05,         0.5],
+		"importance": [ 60.00,  60.0,        60.0,       35.00,   0.00,     0.00,    10.00,        100.00],
+		"max_percent": 0.09,
+		"eps_step": 0.025
+	},
+	"artillery": {
+		"vs":         ["static", "artillery", "super", "shieldball", "turtle"],
+		"ratio":      [ 0.66,     0.00,        0.66,    0.25,         3.0],
+		"importance": [ 20.00,    0.00,        40.00,   40.00,        40.0],
+		"max_percent": 0.66,
+		"eps_step": 0.02
+	},
+	"anti_air": {
+		"vs":         ["air"],
+		"ratio":      [ 0.8],
+		"importance": [ 75.0],
+		"max_percent": 0.4,
+		"eps_step": 0.75
+	},
+	"anti_sub": {
+		"vs":         ["sub"],
+		"ratio":      [ 0.0],
+		"importance": [ 0.0],
+		"max_percent": 0.00,
+		"eps_step": 0.0
+	},
+	"anti_heavy": {
+		"vs":         ["heavy", "artillery", "support", "anti_heavy", "commander", "super", "turtle"],
+		"ratio":      [ 0.45,    0.00,        0.00,      0.00,         0.4,         0.50,    3.00],
+		"importance": [ 85.00,   0.00,        0.00,      0.00,         50.00,       85.0,    50.00],
+		"max_percent": 0.40,
+		"eps_step": 0.00
+	},
+	"disarm_target": {
+		"vs":         ["disarm_target"],
+		"ratio":      [ 0.50],
+		"importance": [ 100.00],
+		"max_percent": 0.40,
+		"eps_step": 0.00
+	},
+	"snipe_target": {
+		"vs":         ["snipe_target", "commander"],
+		"ratio":      [ 1.00,           0.20],
+		"importance": [ 100.00,         50.00],
+		"max_percent": 0.40,
+		"eps_step": 0.00
+	},
+	"cloaked_raider": {
+		"vs":         ["snipe_target", "commander", "transport"],
+		"ratio":      [ 0.50,           0.20,        2.00],
+		"importance": [ 35.00,          35.00,       125.00],
+		"max_percent": 0.50,
+		"eps_step": 0.00
+	},
+	"heavy": {
+		"vs":         ["heavy", "static", "support", "skirmish", "super", "shieldball", "turtle"],
+		"ratio":      [ 0.75,    0.5,      0.00,      0.75,       0.75,    0.75,         3.00],
+		"importance": [ 75.00,   15.00,    0.00,      15.00,      75.00,   75.00,        75.00],
+		"max_percent": 0.50,
+		"eps_step": 0.00
+	},
+	"bomber": {
+		"vs":         ["shieldball", "anti_heavy", "artillery", "super"],
+		"ratio":      [ 0.50,         0.50,         0.50,        0.50],
+		"importance": [ 0.50,         50.00,        50.00,       50.00],
+		"max_percent": 1.0,
+		"eps_step": 0.00
+	},
+	"super": {
+		"vs":         ["heavy", "static", "support", "skirmish", "artillery", "super", "turtle"],
+		"ratio":      [ 0.3,     0.55,     0.00,      0.00,       0.00,        0.00,    0.5],
+		"importance": [ 45.00,   25.00,    0.00,      0.00,       0.00,        0.00,    45.00],
+		"max_percent": 0.2,
+		"eps_step": 0.00
+	},
+	"support": {
+		"vs":         ["assault", "bullshit_raider"],
+		"ratio":      [ 1.00,      0.4],
+		"importance": [ 35.00,     75.00],
+		"max_percent": 0.25,
+		"eps_step": 0.00
+	}
+}
+}

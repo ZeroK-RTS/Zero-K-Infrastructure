@@ -56,7 +56,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
             }
-            if (isGameStart) VerifySpecCheaters(context, res);
+            //if (isGameStart) VerifySpecCheaters(context, res);
 
             return res;
         }

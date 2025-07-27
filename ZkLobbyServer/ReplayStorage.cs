@@ -45,14 +45,14 @@ namespace ZkLobbyServer
                 if (!fi.Exists || fi.Length == 0) return false;
                 var blobName = fi.Name;
 
-                var blobClient = azureContainer.GetBlobClient(blobName);
+                //var blobClient = azureContainer.GetBlobClient(blobName);
 
                 // check whether the file already exists
-                if (await blobClient.ExistsAsync()) return false;
+                //if (await blobClient.ExistsAsync()) return false;
 
 
                 // upload to azure storage
-                await blobClient.UploadAsync(path);
+                //await blobClient.UploadAsync(path);
                 
                 File.Delete(path);
                 return true;

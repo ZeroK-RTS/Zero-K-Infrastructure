@@ -4,11 +4,11 @@
   Layout = "";
 }
 @foreach (var m in Model.Data) {
-  var players = m.Players.Count(p => !p.IsSpectator);
-  var specs = m.Players.Count(p => p.IsSpectator);
+    var players = m.Players.Count(p => !p.IsSpectator);
+    var specs = m.Players.Count(p => p.IsSpectator);
 	<a href='@Url.Action("Detail", new { id = m.Battle.SpringBattleID })'>
 	<div class='mission fleft' style='width:400px; color: #fff; padding-bottom: 1em;'>
-      <b>@m.Battle.Title</b>
+      <b>GAMING @m.Battle.Title</b>
       <br />
       Teams:
       @string.Join("v", m.Players.Where(p => !p.IsSpectator).GroupBy(p => p.AllyNumber).Select(g => g.Count()))

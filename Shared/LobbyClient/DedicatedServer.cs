@@ -174,7 +174,7 @@ namespace LobbyClient
                 talker = new Talker();
                 talker.SpringEvent += talker_SpringEvent;
                 Context.IsHosting = true;
-
+                Console.WriteLine("test");
                 scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + startContext.FounderName + ".txt").Replace('\\', '/');
 
                 var script = ScriptGenerator.GenerateHostScript(Context, talker.LoopbackPort);
@@ -220,7 +220,7 @@ namespace LobbyClient
             try
             {
                 if ((text == "/cheat") || (text?.StartsWith("/cheat ") == true)) Context.IsCheating = true;
-                talker.SendText(text);
+                //talker.SendText(text);
             }
             catch (NullReferenceException)
             {
