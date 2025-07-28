@@ -29,6 +29,8 @@ namespace ZkLobbyServer
         public const int MapVoteTime = 25;
         public const int NumberOfMapChoices = 4;
         public const int MinimumAutostartPlayers = 6;
+        public const int MinimumGameSizeToPrioritiseNewPlayers = 13; // TODO: !commandable per host
+        public const int PrevBattleQueueOffset = 100000;
         public static int BattleCounter;
         public int QueueCounter = 0;
 
@@ -55,6 +57,7 @@ namespace ZkLobbyServer
         protected bool IsPollsBlocked => IsAutohost && DateTime.UtcNow < BlockPollsUntil;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
+        private List<string> previousGamePlayers = new List<string>();
         public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();
 
         private Timer pollTimer;
@@ -205,6 +208,13 @@ namespace ZkLobbyServer
                 Title = Title,
                 IsSpectator = isSpectator,
             };
+        }
+
+        public bool IsInPreviousGame(string name)
+        {
+            var inPrevious = false;
+            if (previousGamePlayers.Any(y => y == name)) inPrevious = true;
+            return inPrevious;
         }
 
         public bool IsKicked(string name)
@@ -1070,7 +1080,11 @@ namespace ZkLobbyServer
                         SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too low. The minimum Rank to play in this battle is " + Ranks.RankNames[MinRank] + ".", ubs.Name);
                     }
                 }
-                if (ubs.QueueOrder <= 0) ubs.QueueOrder = ++QueueCounter;
+                if (ubs.QueueOrder <= 0)
+                {
+                    ubs.QueueOrder = ++QueueCounter;
+                    if (IsInPreviousGame(ubs.Name)) ubs.QueueOrder += PrevBattleQueueOffset;
+                }
             }
             else
             {
@@ -1139,6 +1153,31 @@ namespace ZkLobbyServer
                     //Initiate discussion time, then map vote, then start vote
                     discussionTimer.Interval = (DiscussionSeconds - 1) * 1000;
                     discussionTimer.Start();
+                    foreach (var n in previousGamePlayers)
+                    {
+                        UserBattleStatus ubs;
+                        if (Users.TryGetValue(n, out ubs))
+                        {
+                            if (ubs.QueueOrder > QueueCounter + PrevBattleQueueOffset/2) ubs.QueueOrder -= PrevBattleQueueOffset;
+                        }
+                    }
+                    var players = springBattleContext.ActualPlayers.Where(x => !x.IsSpectator).Select(x => x.Name).ToList();
+                    if (players.Count >= MinimumGameSizeToPrioritiseNewPlayers) {
+                        previousGamePlayers = players;
+                    }
+                    else
+                    {
+                        previousGamePlayers = new List<string>();
+                    }
+                    foreach (var n in previousGamePlayers)
+                    {
+                        UserBattleStatus ubs;
+                        if (Users.TryGetValue(n, out ubs))
+                        {
+                            if (ubs.QueueOrder > 0 && ubs.QueueOrder < QueueCounter + PrevBattleQueueOffset/2) ubs.QueueOrder += PrevBattleQueueOffset;
+                        }
+                    }
+                    await ValidateAllBattleStatuses();
                 }
             }
             await CheckCloseBattle();
