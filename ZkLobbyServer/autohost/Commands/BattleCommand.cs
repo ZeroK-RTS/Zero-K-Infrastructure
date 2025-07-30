@@ -178,7 +178,7 @@ namespace ZkLobbyServer
                 return RunPermission.None;
             }
 
-            var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway || user?.BanVotes == true ? RunPermission.None : RunPermission.Vote);
+            var defPerm = hasElevatedRights ? RunPermission.Run : (isInWaitlist || isSpectator || isAway || user?.BanVotes == true ? RunPermission.None : RunPermission.Vote);
 
             if (defPerm == RunPermission.None)
             {
