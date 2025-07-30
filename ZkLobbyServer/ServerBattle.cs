@@ -84,7 +84,7 @@ namespace ZkLobbyServer
         public bool IsDefaultGame { get; private set; } = true;
         public bool IsCbalEnabled { get; private set; } = true;
 
-        public bool TimeQueueEnabled = true;//> DynamicConfig.Instance.TimeQueueEnabled && true;//(Mode == AutohostMode.Teams || Mode == AutohostMode.Game1v1 || Mode == AutohostMode.GameFFA);
+        public override bool TimeQueueEnabled => DynamicConfig.Instance.TimeQueueEnabled && (Mode == AutohostMode.Teams || Mode == AutohostMode.Game1v1 || Mode == AutohostMode.GameFFA);
 
         public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
 
@@ -557,9 +557,7 @@ namespace ZkLobbyServer
                 allowedPlayers = context.Players.Where(x => !x.IsSpectator).Count() & ~0x1;
             }
             var waitlist = context.Players.Where(x => !x.IsSpectator).OrderBy(x => x.QueueOrder).Skip(allowedPlayers).ToList();
-            Debug.WriteLine(username);
             var isInWaitlist = waitlist.Exists(x => x.Name == username);
-            Debug.WriteLine(isInWaitlist);
             return isInWaitlist;
             
         }
@@ -576,7 +574,6 @@ namespace ZkLobbyServer
                 {
                     allowedPlayers = context.Players.Where(x => !x.IsSpectator).Count() & ~0x1;
                 }
-                //THIS LINE IS THE
                 foreach (var plr in context.Players.Where(x=>!x.IsSpectator).OrderBy(x => x.QueueOrder).Skip(allowedPlayers))
                 {
                     plr.IsSpectator = true;
