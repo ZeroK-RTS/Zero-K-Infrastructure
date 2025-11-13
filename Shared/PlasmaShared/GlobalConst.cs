@@ -153,7 +153,6 @@ namespace ZkData
 
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
-        public const string ErrorChannel = "zkerror";
         public const string UserLogChannel = "zklog";
         public const string CoreChannel = "zkcore";
         
