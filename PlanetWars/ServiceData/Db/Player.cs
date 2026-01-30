@@ -92,11 +92,15 @@ namespace ServiceData
 				o.BuildpowerUsed = 0;// reset bp to 0
 			}
 
-			Metal += MetalIncome;
-			Food += FoodIncome;
-			Quantium += QuantiumIncome;
-			DarkMatter += DarkMatterIncome;
-			ResearchPoints += ResearchIncome;
+			// Empire size diminishing returns to reduce snowballing
+			double empireSize = Math.Max(0, CelestialObjects.Count - 5);
+			double scaling = 1.0 / (1.0 + Math.Log(1 + empireSize) * 0.05); //Logarithmic scaling
+
+			Metal += MetalIncome * scaling;
+			Food += FoodIncome * scaling;
+			Quantium += QuantiumIncome * scaling;
+			DarkMatter += DarkMatterIncome * scaling;
+			ResearchPoints += ResearchIncome * scaling;
 
 			if (Food < 0)
 			{

@@ -11,6 +11,8 @@ namespace ServiceData
 		public static StarMap GetMapData(string playerName, string password)
 		{
 			var db = new DbDataContext();
+			db.EnableGameLogicLoadOptions();
+
 
 			var ret = new StarMap();
 
@@ -36,10 +38,10 @@ namespace ServiceData
 		public static Invariants GetInvariants()
 		{
 			var db = new DbDataContext();
-      var ret = new Invariants();
+      		var ret = new Invariants();
 			ret.StructureTypes = db.StructureTypes.ToList();
-      ret.ShipTypes = db.ShipTypes.ToList();
-      ret.Technologies = db.Teches.ToList();
+      		ret.ShipTypes = db.ShipTypes.ToList();
+      		ret.Technologies = db.Teches.ToList();
 			return ret;
 		}
 
@@ -66,6 +68,8 @@ namespace ServiceData
 			for (var i = 0; i < count; i++) {
 				using (var t = new TransactionScope()) {
 					var db = new DbDataContext();
+					var dlo = new DataLoadOptions();
+    				db.EnableGameLogicLoadOptions();
 
 					var config = db.GetConfig();
 					config.CombatTurn++;

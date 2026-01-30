@@ -234,3 +234,8 @@ Thumbs.db
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
 **/.idea/**/indexLayout.xml
+
+# VS-Code
+.vscode/
+PlanetWars/.vscode/
+

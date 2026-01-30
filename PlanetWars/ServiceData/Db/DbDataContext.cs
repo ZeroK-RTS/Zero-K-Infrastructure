@@ -46,5 +46,15 @@ namespace ServiceData
 			conf.DirtySecond = conf.GameSecond;
 		}
 
+		public void EnableGameLogicLoadOptions()
+		{
+			var dlo = new DataLoadOptions();
+			dlo.LoadWith<Player>(p => p.CelestialObjects);
+			dlo.LoadWith<CelestialObject>(c => c.CelestialObjectStructures);
+			dlo.LoadWith<CelestialObject>(c => c.CelestialObjectShips);
+			dlo.LoadWith<Player>(p => p.PopulationTransports);
+			this.LoadOptions = dlo;
+		}
+
 	}
 }
