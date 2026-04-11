@@ -1341,7 +1341,7 @@ namespace ZkLobbyServer
             try
             {
                 StopVote();
-                if (IsMatchMakerBattle && e.PlayersUnreadyOnStart.Count > 0 && e.IsTimeoutForceStarted)
+                if (IsMatchMakerBattle && Mode != AutohostMode.Planetwars && e.PlayersUnreadyOnStart.Count > 0 && e.IsTimeoutForceStarted)
                 {
                     string message = string.Format("Players {0} did not choose a start position. Game will be aborted.", e.PlayersUnreadyOnStart.StringJoin());
                     spring.SayGame(message);
