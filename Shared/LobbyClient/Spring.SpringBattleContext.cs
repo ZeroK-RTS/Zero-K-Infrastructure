@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,11 +10,6 @@ namespace LobbyClient
     {
         public List<BattlePlayerResult> ActualPlayers = new List<BattlePlayerResult>();
         public List<string> PlayersUnreadyOnStart = new List<string>();
-
-        /// <summary>
-        /// Pool of preallocated team numbers available for mid-game player joins, keyed by ally team ID.
-        /// </summary>
-        public ConcurrentDictionary<int, ConcurrentQueue<int>> MidGameTeamSlots = new ConcurrentDictionary<int, ConcurrentQueue<int>>();
 
         public int Duration;
         public string EngineBattleID;
@@ -99,34 +93,6 @@ namespace LobbyClient
                             IsIngameReady = false,
                             IsIngame = false,
                         }).ToList();
-
-            // Build pool of preallocated team slots for mid-game joins
-            var slotsPerAlly = startContext.MidGameSlotsPerAllyTeam;
-            if (slotsPerAlly > 0)
-            {
-                // Count how many real teams were generated (non-spectator players + bots)
-                var realTeamCount = startContext.Players.Count(x => !x.IsSpectator) + startContext.Bots.Count;
-
-                var allyTeamsInUse = startContext.Players
-                    .Where(x => !x.IsSpectator)
-                    .Select(x => x.AllyID)
-                    .Union(startContext.Bots.Select(x => x.AllyID))
-                    .Distinct()
-                    .OrderBy(x => x)
-                    .ToList();
-
-                var teamNum = realTeamCount;
-                foreach (var allyId in allyTeamsInUse)
-                {
-                    var queue = new ConcurrentQueue<int>();
-                    for (var s = 0; s < slotsPerAlly; s++)
-                    {
-                        queue.Enqueue(teamNum);
-                        teamNum++;
-                    }
-                    MidGameTeamSlots[allyId] = queue;
-                }
-            }
         }
 
 
