@@ -102,16 +102,27 @@ namespace LobbyClient
         }
 
         /// <summary>
-        ///     Adds user dynamically to running game - for security reasons add his script
+        ///     Adds user dynamically to running game as a spectator.
         /// </summary>
         public void AddUser(string name, string scriptPassword, User user)
         {
+            AddUser(name, scriptPassword, user, isSpectator: true, teamNumber: null);
+        }
+
+        /// <summary>
+        ///     Adds user dynamically to running game, optionally as a non-spectator on a specific team.
+        /// </summary>
+        public void AddUser(string name, string scriptPassword, User user, bool isSpectator, int? teamNumber)
+        {
             if (IsRunning)
             {
-                talker.SendText($"/adduser {name} {scriptPassword}");
+                if (!isSpectator && teamNumber.HasValue)
+                    talker.SendText($"/adduser {name} {scriptPassword} 0 {teamNumber.Value}");
+                else
+                    talker.SendText($"/adduser {name} {scriptPassword}");
+
                 if (user != null) talker.SendText($"SPRINGIE:User {new MidGameJoinUser(user)}");
             }
-            
         }
 
         public event EventHandler<SpringBattleContext> BattleStarted = (sender, args) => { };
