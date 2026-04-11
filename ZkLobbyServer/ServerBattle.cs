@@ -167,6 +167,21 @@ namespace ZkLobbyServer
             return Hash.HashString(battleInstanceGuid + name).ToString();
         }
 
+        /// <summary>
+        /// Tries to claim a preallocated team slot for a mid-game joiner on the given ally team.
+        /// Returns the team number if a slot is available, null otherwise.
+        /// </summary>
+        private int? TryClaimMidGameTeamSlot(int allyTeamId)
+        {
+            if (spring?.Context?.MidGameTeamSlots != null &&
+                spring.Context.MidGameTeamSlots.TryGetValue(allyTeamId, out var queue) &&
+                queue.TryDequeue(out var teamNum))
+            {
+                return teamNum;
+            }
+            return null;
+        }
+
         public void Dispose()
         {
             spring.UnsubscribeEvents(this);
@@ -349,11 +364,28 @@ namespace ZkLobbyServer
 
             if (spring.IsRunning)
             {
-                spring.AddUser(ubs.Name, ubs.ScriptPassword, ubs.LobbyUser);
-                var started = DateTime.UtcNow.Subtract(spring.IngameStartTime ?? RunningSince ?? DateTime.UtcNow);
-                started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
-                await SayBattle($"THIS GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT UNTIL IT ENDS! Running for {started}", ubs.Name);
-                await SayBattle("If you say !notify, I will message you when the current game ends.", ubs.Name);
+                // Try to assign a preallocated mid-game team slot if available
+                int? midGameTeam = null;
+                if (!ubs.IsSpectator)
+                {
+                    midGameTeam = TryClaimMidGameTeamSlot(ubs.AllyNumber);
+                    if (midGameTeam == null)
+                        ubs.IsSpectator = true; // no slot available, force spectator
+                }
+
+                spring.AddUser(ubs.Name, ubs.ScriptPassword, ubs.LobbyUser, ubs.IsSpectator, midGameTeam);
+
+                if (midGameTeam.HasValue)
+                {
+                    await SayBattle($"Game is in progress — {ubs.Name} is joining as a player on team {midGameTeam.Value}.");
+                }
+                else
+                {
+                    var started = DateTime.UtcNow.Subtract(spring.IngameStartTime ?? RunningSince ?? DateTime.UtcNow);
+                    started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
+                    await SayBattle($"THIS GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT UNTIL IT ENDS! Running for {started}", ubs.Name);
+                    await SayBattle("If you say !notify, I will message you when the current game ends.", ubs.Name);
+                }
             }
 
             try
@@ -406,22 +438,34 @@ namespace ZkLobbyServer
             UserBattleStatus ubs;
 
             startGameStatus = spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == conus.Name);
-            
+
             if (!Users.TryGetValue(conus.Name, out ubs) && !(IsInGame && startGameStatus != null))
                 if (IsPassworded && (Password != joinPassword))
                 {
                     await conus.Respond("Invalid password");
                     return;
                 }
+
+            var isSpectator = startGameStatus?.IsSpectator != false;
+
+            // For mid-game joins of users not in the original player list, try to assign a team slot
+            int? midGameTeam = null;
+            if (isSpectator && startGameStatus == null && Users.TryGetValue(conus.Name, out ubs) && !ubs.IsSpectator)
+            {
+                midGameTeam = TryClaimMidGameTeamSlot(ubs.AllyNumber);
+                if (midGameTeam.HasValue)
+                    isSpectator = false;
+            }
+
             var pwd = GenerateClientScriptPassword(conus.Name);
-            spring.AddUser(conus.Name, pwd, conus.User);
+            spring.AddUser(conus.Name, pwd, conus.User, isSpectator, midGameTeam);
 
             if (spring.Context.LobbyStartContext.Players.Any(x => x.Name == conus.Name) && conus.MyBattle != this)
             {
                 await ProcessPlayerJoin(conus, joinPassword);
             }
 
-            await conus.SendCommand(GetConnectSpringStructure(pwd, startGameStatus?.IsSpectator != false));
+            await conus.SendCommand(GetConnectSpringStructure(pwd, isSpectator));
         }
 
 

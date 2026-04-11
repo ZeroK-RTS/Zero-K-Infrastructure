@@ -21,6 +21,12 @@ namespace PlasmaShared
         public Dictionary<string,Dictionary<string,string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();
         public int BattleID { get; set; }
 
+        /// <summary>
+        /// Number of extra team slots to preallocate per ally team for mid-game player joins.
+        /// These teams exist in the start script but have no player assigned initially.
+        /// </summary>
+        public int MidGameSlotsPerAllyTeam { get; set; }
+
         public void ApplyBalance(BalanceTeamsResult balance)
         {
             if (balance.DeleteBots) Bots.Clear();

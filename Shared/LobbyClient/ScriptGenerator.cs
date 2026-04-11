@@ -120,6 +120,31 @@ namespace LobbyClient
                 teamNum++;
             }
 
+            // Preallocate empty team slots for mid-game player joins.
+            // These teams exist in the script from frame 0 but start inactive (no player assigned).
+            // The engine activates them when a mid-game joiner is assigned via /adduser.
+            var slotsPerAlly = setup.LobbyStartContext.MidGameSlotsPerAllyTeam;
+            if (slotsPerAlly > 0)
+            {
+                var allyTeamsInUse = setup.LobbyStartContext.Players
+                    .Where(x => !x.IsSpectator)
+                    .Select(x => x.AllyID)
+                    .Union(setup.LobbyStartContext.Bots.Select(x => x.AllyID))
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToList();
+
+                // Use first real player as TeamLeader for the placeholder teams (engine requires a valid leader)
+                var leaderUserNum = 0;
+                foreach (var allyId in allyTeamsInUse)
+                {
+                    for (var s = 0; s < slotsPerAlly; s++)
+                    {
+                        ScriptAddTeam(script, teamNum, leaderUserNum, allyId);
+                        teamNum++;
+                    }
+                }
+            }
 
             // ALLIANCES AND START BOXES
             var startboxes = new StringBuilder();
