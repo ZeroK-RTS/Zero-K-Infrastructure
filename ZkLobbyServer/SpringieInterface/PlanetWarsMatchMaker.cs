@@ -686,18 +686,20 @@ namespace ZeroKWeb
         private static readonly int TurnIntervalMinutes = GlobalConst.PlanetWarsMinutesToAttack + GlobalConst.PlanetWarsMinutesToAccept;
 
         /// <summary>
-        /// Returns the next wall-clock boundary for attack phase start (e.g. :00, :15, :30, :45 for 15-min turns).
-        /// If we're already past the current boundary, snaps to the next one.
+        /// Returns the current or next wall-clock turn boundary (e.g. :00, :15, :30, :45 for 15-min turns).
+        /// If exactly on a boundary, returns that time. Otherwise returns the next one.
         /// </summary>
         private static DateTime GetNextTurnBoundary()
         {
             var now = DateTime.UtcNow;
-            var minutesSinceHour = now.Minute;
-            var currentSlot = (minutesSinceHour / TurnIntervalMinutes) * TurnIntervalMinutes;
-            var nextSlot = currentSlot + TurnIntervalMinutes;
-            var boundary = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0, DateTimeKind.Utc)
-                .AddMinutes(nextSlot);
-            return boundary;
+            // truncate to whole minutes to avoid floating point issues
+            var nowTrunc = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, DateTimeKind.Utc);
+            var midnight = nowTrunc.Date;
+            var totalMinutes = (int)(nowTrunc - midnight).TotalMinutes;
+            var remainder = totalMinutes % TurnIntervalMinutes;
+            if (remainder == 0)
+                return nowTrunc; // already on a boundary
+            return nowTrunc.AddMinutes(TurnIntervalMinutes - remainder);
         }
 
         private void ResetAttackOptions()
