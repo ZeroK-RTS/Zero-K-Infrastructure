@@ -146,26 +146,9 @@ namespace ZeroKWeb
                         break;
 
                     case PwPhase.DefendCollect:
-                        // check if enough defenders volunteered — start 30s countdown
-                        var totalSlots = FormedSquads.Sum(s => s.TeamSize);
-                        var totalDefenders = DefenderVotes.Values.Sum(v => v.Count);
-                        if (totalDefenders >= totalSlots)
-                        {
-                            if (defendersFullTime == null) defendersFullTime = DateTime.UtcNow;
-                        }
-                        else
-                        {
-                            defendersFullTime = null;
-                        }
+                        UpdateDefendersFullTime();
 
-                        var deadline = GetDefendDeadline();
-                        if (defendersFullTime != null)
-                        {
-                            var earlyDeadline = defendersFullTime.Value.AddSeconds(30);
-                            if (earlyDeadline < deadline) deadline = earlyDeadline;
-                        }
-
-                        if (DateTime.UtcNow > deadline)
+                        if (DateTime.UtcNow > GetEffectiveDefendDeadline())
                         {
                             defendersFullTime = null;
                             RunDefenderAssignment();
@@ -352,8 +335,24 @@ namespace ZeroKWeb
                 }
             }
 
-            // floating pool fills unfilled slots on other planets (WHR order)
+            // floating pool fills unfilled slots on other planets (WHR order, respecting faction eligibility)
             floatingPool = floatingPool.OrderByDescending(x => defenderWhr.Get(x)).ToList();
+
+            // cache defending factions per planet and defender faction IDs
+            var planetDefendingFactions = new Dictionary<int, List<Faction>>();
+            foreach (var pid in attackedPlanetIds)
+                planetDefendingFactions[pid] = GetDefendingFactions(FormedSquads.First(s => s.PlanetID == pid));
+
+            var defenderFactionId = new Dictionary<string, int?>();
+            using (var db = new ZkDataContext())
+            {
+                foreach (var name in floatingPool)
+                {
+                    var user = server.ConnectedUsers.Get(name)?.User;
+                    if (user != null) defenderFactionId[name] = db.Accounts.Find(user.AccountID)?.FactionID;
+                }
+            }
+
             foreach (var planetId in attackedPlanetIds)
             {
                 var totalSlotsNeeded = FormedSquads.Where(s => s.PlanetID == planetId).Sum(s => s.TeamSize);
@@ -361,7 +360,9 @@ namespace ZeroKWeb
                 var deficit = totalSlotsNeeded - assigned.Count;
                 if (deficit > 0 && floatingPool.Count > 0)
                 {
-                    var toAdd = floatingPool.Take(deficit).ToList();
+                    var allowedFactionIds = planetDefendingFactions[planetId].Select(f => f.FactionID).ToHashSet();
+                    var eligible = floatingPool.Where(x => defenderFactionId.ContainsKey(x) && defenderFactionId[x].HasValue && allowedFactionIds.Contains(defenderFactionId[x].Value)).ToList();
+                    var toAdd = eligible.Take(deficit).ToList();
                     assigned.AddRange(toAdd);
                     foreach (var p in toAdd) floatingPool.Remove(p);
                 }
@@ -544,11 +545,15 @@ namespace ZeroKWeb
                 var account = db.Accounts.Find(user.AccountID);
                 if (account == null || !account.CanPlayerPlanetWars()) return;
 
-                // check this user's faction can defend at least one squad on this planet
+                // check this user's faction can defend this specific planet
                 var squadsOnPlanet = FormedSquads.Where(s => s.PlanetID == targetPlanetId).ToList();
                 if (!squadsOnPlanet.Any()) return;
                 var defendingFactions = GetDefendingFactions(squadsOnPlanet.First());
-                if (!defendingFactions.Any(f => f.FactionID == account.FactionID)) return;
+                if (!defendingFactions.Any(f => f.FactionID == account.FactionID))
+                {
+                    await server.GhostChanSay(user.Faction, $"{userName} cannot defend {squadsOnPlanet.First().Name} (not owner or allied)");
+                    return;
+                }
 
                 // remove from other planets
                 foreach (var kv in DefenderVotes)
@@ -558,6 +563,7 @@ namespace ZeroKWeb
                 if (!DefenderVotes[targetPlanetId].Contains(userName))
                 {
                     DefenderVotes[targetPlanetId].Add(userName);
+                    UpdateDefendersFullTime();
                     await server.GhostChanSay(user.Faction, $"{userName} joins defense of {squadsOnPlanet.First().Name}");
                     await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetId });
                     await UpdateLobby();
@@ -600,6 +606,8 @@ namespace ZeroKWeb
                     // also remove from formed squads (attacker who disconnected after squad formation)
                     foreach (var squad in FormedSquads)
                         changed |= squad.Attackers.RemoveAll(x => x == name) > 0;
+
+                    if (changed) UpdateDefendersFullTime();
                 }
 
                 if (changed) await UpdateLobby();
@@ -613,7 +621,7 @@ namespace ZeroKWeb
 
         // ===================== LOBBY COMMANDS =====================
 
-        public PwMatchCommand GenerateLobbyCommand()
+        public PwMatchCommand GenerateLobbyCommand(string playerFaction = null)
         {
             PwMatchCommand command = null;
             try
@@ -633,10 +641,30 @@ namespace ZeroKWeb
                 }
                 else if (Phase == PwPhase.DefendCollect)
                 {
-                    // aggregate per planet: one VoteOption per planet showing total slots needed
+                    // build defending factions cache per planet
+                    var defFactionCache = new Dictionary<int, List<Faction>>();
+                    foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct())
+                    {
+                        if (!defFactionCache.ContainsKey(planetId))
+                            defFactionCache[planetId] = GetDefendingFactions(FormedSquads.First(s => s.PlanetID == planetId));
+                    }
+
+                    // resolve player's faction ID for filtering
+                    int? playerFactionId = null;
+                    if (playerFaction != null)
+                    {
+                        var fac = factions.FirstOrDefault(f => f.Shortcut == playerFaction);
+                        playerFactionId = fac?.FactionID;
+                    }
+
+                    // aggregate per planet, filtered to planets this player can defend
                     var options = new List<PwMatchCommand.VoteOption>();
                     foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct())
                     {
+                        // skip planets this player's faction cannot defend
+                        if (playerFactionId != null && !defFactionCache[planetId].Any(f => f.FactionID == playerFactionId))
+                            continue;
+
                         var squads = FormedSquads.Where(s => s.PlanetID == planetId).ToList();
                         var first = squads.First();
                         var totalNeeded = squads.Sum(s => s.TeamSize);
@@ -655,23 +683,17 @@ namespace ZeroKWeb
                         });
                     }
 
-                    // collect all defending factions across attacked planets (one DB call per distinct planet, not per squad)
-                    var defFactionCache = new Dictionary<int, List<Faction>>();
-                    foreach (var pid in options.Select(o => o.PlanetID))
-                    {
-                        if (!defFactionCache.ContainsKey(pid))
-                            defFactionCache[pid] = GetDefendingFactions(FormedSquads.First(s => s.PlanetID == pid));
-                    }
                     var allDefFactions = defFactionCache.Values
                         .SelectMany(f => f.Select(x => x.Shortcut))
                         .Distinct()
                         .ToList();
 
+                    var effectiveDeadline = GetEffectiveDefendDeadline();
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Defend)
                     {
                         Options = options,
-                        Deadline = GetDefendDeadline(),
-                        DeadlineSeconds = (int)GetDefendDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
+                        Deadline = effectiveDeadline,
+                        DeadlineSeconds = (int)effectiveDeadline.Subtract(DateTime.UtcNow).TotalSeconds,
                         AttackerFaction = AttackingFaction.Shortcut,
                         DefenderFactions = allDefFactions
                     };
@@ -834,6 +856,48 @@ namespace ZeroKWeb
             return PhaseStartTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAccept);
         }
 
+        /// <summary>
+        /// Effective defend deadline accounting for the 30s early cutoff when enough defenders join.
+        /// </summary>
+        private DateTime GetEffectiveDefendDeadline()
+        {
+            var deadline = GetDefendDeadline();
+            if (defendersFullTime != null)
+            {
+                var earlyDeadline = defendersFullTime.Value.AddSeconds(30);
+                if (earlyDeadline < deadline) deadline = earlyDeadline;
+            }
+            return deadline;
+        }
+
+        /// <summary>
+        /// Check if every attacked planet has enough direct defender volunteers and set/clear the 30s countdown.
+        /// Each planet must independently have volunteers >= its slots — overflow across factions is not counted.
+        /// </summary>
+        private void UpdateDefendersFullTime()
+        {
+            var allFull = FormedSquads.Any(); // at least one squad exists
+            foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct())
+            {
+                var slotsNeeded = FormedSquads.Where(s => s.PlanetID == planetId).Sum(s => s.TeamSize);
+                var volunteered = DefenderVotes.ContainsKey(planetId) ? DefenderVotes[planetId].Count : 0;
+                if (volunteered < slotsNeeded)
+                {
+                    allFull = false;
+                    break;
+                }
+            }
+
+            if (allFull)
+            {
+                if (defendersFullTime == null) defendersFullTime = DateTime.UtcNow;
+            }
+            else
+            {
+                defendersFullTime = null;
+            }
+        }
+
         public void RemoveFromRunningBattles(int battleID)
         {
             RunningBattles.Remove(battleID);
@@ -841,13 +905,24 @@ namespace ZeroKWeb
 
         private async Task UpdateLobby()
         {
-            await server.Broadcast(server.ConnectedUsers.Values.Where(x => x.User.CanUserPlanetWars()), GenerateLobbyCommand());
+            if (Phase == PwPhase.DefendCollect)
+            {
+                // send per-player filtered options (only planets they can defend)
+                foreach (var conus in server.ConnectedUsers.Values.Where(x => x.User.CanUserPlanetWars()))
+                    await conus.SendCommand(GenerateLobbyCommand(conus.User.Faction));
+            }
+            else
+            {
+                await server.Broadcast(server.ConnectedUsers.Values.Where(x => x.User.CanUserPlanetWars()), GenerateLobbyCommand());
+            }
             SaveStateToDb();
         }
 
         private Task UpdateLobby(string player)
         {
-            return server.ConnectedUsers.Get(player)?.SendCommand(GenerateLobbyCommand());
+            var conus = server.ConnectedUsers.Get(player);
+            if (conus == null) return Task.CompletedTask;
+            return conus.SendCommand(GenerateLobbyCommand(conus.User.Faction));
         }
 
         private void SaveStateToDb()
