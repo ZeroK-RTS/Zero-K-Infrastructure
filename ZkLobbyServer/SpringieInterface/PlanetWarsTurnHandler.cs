@@ -62,7 +62,7 @@ public static class PlanetWarsTurnHandler
         double planetIpDefs = planet.GetEffectiveIpDefense();
 
         double baseInfluence = GlobalConst.BaseInfluencePerBattle;
-        double influence = baseInfluence;
+        double attackerBonus = attackers.Count * GlobalConst.InfluencePerAttacker;
 
         double shipBonus = planet.GetEffectiveShipIpBonus(attacker);
 
@@ -96,7 +96,7 @@ public static class PlanetWarsTurnHandler
             }
         }
 
-        influence = (influence + shipBonus + techBonus + defenseBonus) * ipMultiplier;
+        double influence = (baseInfluence + attackerBonus + shipBonus + techBonus + defenseBonus) * ipMultiplier;
         if (influence < 0) influence = 0;
         influence = Math.Floor(influence * 100) / 100;
 
@@ -128,12 +128,13 @@ public static class PlanetWarsTurnHandler
         }
         try
         {
-            influenceReport = String.Format("{0} gained {1} influence ({2}% {3} of {4}{5}{6}{7})",
+            influenceReport = String.Format("{0} gained {1} influence ({2}% {3} of {4}{5}{6}{7}{8})",
                 attacker.Shortcut,
                 influence,
                 (int)(ipMultiplier * 100.0),
                 ipReason,
                 baseInfluence + " base",
+                attackerBonus > 0 ? " +" + attackerBonus + " from " + attackers.Count + " attackers" : "",
                 techBonus > 0 ? " +" + techBonus + " from techs" : "",
                 shipBonus > 0 ? " +" + shipBonus + " from dropships" : "",
                 defenseBonus != 0 ? " -" + -defenseBonus + " from defenses" : "");
