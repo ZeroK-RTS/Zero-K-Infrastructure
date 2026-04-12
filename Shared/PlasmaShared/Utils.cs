@@ -537,9 +537,15 @@ namespace PlasmaShared
 
 
         public static U Get<T, U>(this IDictionary<T, U> dict, T key)
-    where U : class
         {
             U val = default(U);
+            if (key != null) dict.TryGetValue(key, out val);
+            return val;
+        }
+        
+        public static U GetOrDefault<T, U>(this IDictionary<T, U> dict, T key, U defaultValue)
+        {
+            U val = defaultValue;
             if (key != null) dict.TryGetValue(key, out val);
             return val;
         }
