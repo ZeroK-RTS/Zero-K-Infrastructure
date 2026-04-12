@@ -82,23 +82,26 @@ namespace ZeroKLobby.Notifications
                     }
                     else if (pw.Mode == PwMatchCommand.ModeType.Defend)
                     {
-                        PwMatchCommand.VoteOption opt = pw.Options.First();
-                        headerLabel.Text = string.Format("{0} attacks planet {2}, {1} defends",
+                        headerLabel.Text = string.Format("{0} attacks, {1} defends",
                             pw.AttackerFaction,
-                            string.Join(",", pw.DefenderFactions),
-                            opt.PlanetName);
+                            string.Join(",", pw.DefenderFactions));
 
                         foreach (Button c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
 
-                        var but = new Button { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
-                        Program.ToolTip.SetMap(but, opt.Map);
-
-                        if (pw.DefenderFactions.Contains(tas.MyUser.Faction)) // NOTE this is for cases where nightwatch self faction info is delayed
+                        foreach (PwMatchCommand.VoteOption opt in pw.Options)
                         {
-                            AddButtonClick(opt, but);
+                            Program.Downloader.GetResource(DownloadType.MAP, opt.Map);
+
+                            var but = new Button { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
+                            Program.ToolTip.SetMap(but, opt.Map);
+
+                            if (pw.DefenderFactions.Contains(tas.MyUser.Faction))
+                            {
+                                AddButtonClick(opt, but);
+                            }
+                            else but.Enabled = false;
+                            pnl.Controls.Add(but);
                         }
-                        else but.Enabled = false;
-                        pnl.Controls.Add(but);
                     }
 
                     Program.NotifySection.AddBar(this);
