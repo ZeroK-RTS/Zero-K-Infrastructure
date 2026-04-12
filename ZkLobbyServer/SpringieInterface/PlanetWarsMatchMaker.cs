@@ -66,6 +66,10 @@ namespace ZeroKWeb
                 DefenderVotes = dbState.DefenderVotes ?? new Dictionary<int, List<string>>();
                 AttackerSideChangeTime = dbState.AttackerSideChangeTime;
                 RunningBattles = dbState.RunningBattles ?? new Dictionary<int, AttackOption>();
+
+                // sanity: if PhaseStartTime is in the future or too old, reset to now
+                if (PhaseStartTime > DateTime.UtcNow || PhaseStartTime < DateTime.UtcNow.AddHours(-1))
+                    PhaseStartTime = DateTime.UtcNow;
             }
             else
             {
