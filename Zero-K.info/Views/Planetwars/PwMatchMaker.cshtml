@@ -13,8 +13,8 @@
     }
     else
     {
-        PwMatchCommand.VoteOption opt = pw.Options.First();
-        text = string.Format("{0} attacks planet {2}, {1} defends", pw.AttackerFaction, string.Join(",", pw.DefenderFactions), opt.PlanetName);
+        var planetNames = string.Join(", ", pw.Options.Select(o => o.PlanetName));
+        text = string.Format("{0} attacks {2}, {1} defends", pw.AttackerFaction, string.Join(",", pw.DefenderFactions), planetNames);
     }
 
     bool canClick = (pw.Mode == PwMatchCommand.ModeType.Attack && pw.AttackerFaction == Global.Account.Faction.Shortcut) || (pw.Mode == PwMatchCommand.ModeType.Defend && pw.DefenderFactions.Contains(Global.Account.Faction.Shortcut));
