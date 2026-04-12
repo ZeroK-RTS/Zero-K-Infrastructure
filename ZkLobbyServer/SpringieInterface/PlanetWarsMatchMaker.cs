@@ -21,8 +21,6 @@ namespace ZeroKWeb
     {
         private readonly List<Faction> factions;
 
-        private int missedDefenseCount = 0;
-        private int missedDefenseFactionID = 0;
         private ZkLobbyServer.ZkLobbyServer server;
         private DateTime? defendersFullTime; // set when total defenders >= total attacker slots
 
@@ -793,15 +791,6 @@ namespace ZeroKWeb
 
         private void RecordPlanetwarsLoss(AttackOption option)
         {
-            if (option.OwnerFactionID != null)
-                if (option.OwnerFactionID == missedDefenseFactionID)
-                    missedDefenseCount++;
-                else
-                {
-                    missedDefenseCount = 0;
-                    missedDefenseFactionID = option.OwnerFactionID.Value;
-                }
-
             var message = $"{AttackingFaction.Name} won {option.Name} because nobody tried to defend";
             foreach (var fac in factions) server.GhostChanSay(fac.Shortcut, message);
 
@@ -833,11 +822,7 @@ namespace ZeroKWeb
             if (AttackOptions.Count == 0)
                 return PhaseStartTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttackIfNoOption);
 
-            var extra = 0;
-            if (missedDefenseFactionID == AttackingFaction.FactionID)
-                extra = Math.Min(missedDefenseCount * GlobalConst.PlanetWarsMinutesToAttack, 60);
-
-            return PhaseStartTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttack + extra);
+            return PhaseStartTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttack);
         }
 
         private DateTime GetDefendDeadline()
