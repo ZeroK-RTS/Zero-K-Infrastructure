@@ -406,27 +406,36 @@ namespace ZeroKWeb
 
         private async Task LaunchAllBattles()
         {
-            foreach (var squad in FormedSquads)
+            // merge squads on the same planet into one battle per planet
+            foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct().ToList())
             {
-                // filter to still-connected
-                squad.Attackers = squad.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
-                squad.Defenders = squad.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
+                var squads = FormedSquads.Where(s => s.PlanetID == planetId).ToList();
+                var first = squads.First();
 
-                if (squad.Defenders.Count > 0 && squad.Attackers.Count > 0)
+                // merge all squads into one AttackOption
+                var merged = CreateSquadFromOption(first);
+                foreach (var squad in squads)
+                {
+                    merged.Attackers.AddRange(squad.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)));
+                    merged.Defenders.AddRange(squad.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)));
+                }
+
+                if (merged.Defenders.Count > 0 && merged.Attackers.Count > 0)
                 {
                     // battle (may be uneven)
                     try
                     {
-                        var battle = new PlanetWarsServerBattle(server, squad);
+                        merged.TeamSize = Math.Max(merged.Attackers.Count, merged.Defenders.Count);
+                        var battle = new PlanetWarsServerBattle(server, merged);
                         await server.AddBattle(battle);
-                        RunningBattles[battle.BattleID] = squad;
+                        RunningBattles[battle.BattleID] = merged;
 
-                        foreach (var usr in squad.Attackers.Union(squad.Defenders))
+                        foreach (var usr in merged.Attackers.Union(merged.Defenders))
                             await server.ForceJoinBattle(usr, battle);
 
                         if (await battle.StartGame())
                         {
-                            var text = $"Battle for planet {squad.Name} starts on zk://@join_player:{squad.Attackers.FirstOrDefault()}  Roster: {string.Join(",", squad.Attackers)} vs {string.Join(",", squad.Defenders)}";
+                            var text = $"Battle for planet {merged.Name} starts on zk://@join_player:{merged.Attackers.FirstOrDefault()}  Roster: {string.Join(",", merged.Attackers)} vs {string.Join(",", merged.Defenders)}";
                             foreach (var fac in factions) await server.GhostChanSay(fac.Shortcut, text);
                         }
                         else
@@ -440,10 +449,10 @@ namespace ZeroKWeb
                         Trace.TraceError("PlanetWars LaunchBattle error: {0}", ex);
                     }
                 }
-                else if (squad.Attackers.Count > 0)
+                else if (merged.Attackers.Count > 0)
                 {
                     // concede - zero defenders
-                    RecordPlanetwarsLoss(squad);
+                    RecordPlanetwarsLoss(merged);
                 }
                 // else: no attackers left, skip entirely
             }
