@@ -209,14 +209,14 @@ namespace ZkData
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
-        public const int PlanetWarsMinutesToAttackIfNoOption = 1;
-        public const int PlanetWarsMinutesToAttack = 1;
-        public const int PlanetWarsMinutesToAccept = 2;
+        public const int PlanetWarsMinutesToAttackIfNoOption = 2;
+        public const int PlanetWarsMinutesToAttack = 5;
+        public const int PlanetWarsMinutesToAccept = 10;
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
         public const int PlanetWarsMaxTeamsize = 4;
         public const double PlanetWarsDefenderWinKillCcMultiplier = 0.2;
         public const double PlanetWarsAttackerWinLoseCcMultiplier = 0.5;
-        public const int MinPlanetWarsLevel = 0;
+        public const int MinPlanetWarsLevel = 5;
         public const int MinPlanetWarsElo = -1000;
 
         public const int WikiEditLevel = 20;
