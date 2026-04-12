@@ -12,16 +12,18 @@ public static class PlanetWarsTurnHandler
 {
 
     /// <summary>
-    /// Process planet wars turn
+    /// Process planet wars turn - legacy wrapper calling both per-battle and per-turn processing
     /// </summary>
-    /// <param name="mapName"></param>
-    /// <param name="extraData"></param>
-    /// <param name="db"></param>
-    /// <param name="winNum">0 = attacker wins, 1 = defender wins</param>
-    /// <param name="players"></param>
-    /// <param name="text"></param>
-    /// <param name="sb"></param>
     public static void EndTurn(string mapName, List<string> extraData, ZkDataContext db, int? winNum, List<Account> players, StringBuilder text, SpringBattle sb, List<Account> attackers, IPlanetwarsEventCreator eventCreator, ZkLobbyServer.ZkLobbyServer server)
+    {
+        ProcessBattleResult(mapName, extraData, db, winNum, players, text, sb, attackers, eventCreator, server);
+        ProcessGalaxyTick(db, text, eventCreator, server, mapName, sb);
+    }
+
+    /// <summary>
+    /// Per-battle processing: influence, metal, structures, attack points
+    /// </summary>
+    public static void ProcessBattleResult(string mapName, List<string> extraData, ZkDataContext db, int? winNum, List<Account> players, StringBuilder text, SpringBattle sb, List<Account> attackers, IPlanetwarsEventCreator eventCreator, ZkLobbyServer.ZkLobbyServer server)
     {
         if (extraData == null) extraData = new List<string>();
         Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
@@ -57,8 +59,6 @@ public static class PlanetWarsTurnHandler
         string influenceReport = "";
 
         // distribute influence
-        // save influence gains
-        // give influence to main attackers
         double planetIpDefs = planet.GetEffectiveIpDefense();
 
         double baseInfluence = GlobalConst.BaseInfluencePerBattle;
@@ -100,7 +100,7 @@ public static class PlanetWarsTurnHandler
         if (influence < 0) influence = 0;
         influence = Math.Floor(influence * 100) / 100;
 
-        // main winner influence 
+        // main winner influence
         PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == attacker);
         if (entry == null)
         {
@@ -112,7 +112,6 @@ public static class PlanetWarsTurnHandler
 
 
         // clamping of influence
-        // gained over 100, sole owner
         if (entry.Influence >= GlobalConst.PlanetWarsMaximumIP)
         {
             entry.Influence = GlobalConst.PlanetWarsMaximumIP;
@@ -143,8 +142,6 @@ public static class PlanetWarsTurnHandler
         {
             Trace.TraceError(ex.ToString());
         }
-
-
 
 
         // distribute metal
@@ -222,7 +219,7 @@ public static class PlanetWarsTurnHandler
             acc.PwAttackPoints += ap;
         }
 
-        // paranoia!
+        // event logging
         try
         {
             var mainEvent = eventCreator.CreateEvent("{0} attacked {1} {2} in {3} and {4}. {5}",
@@ -301,12 +298,36 @@ public static class PlanetWarsTurnHandler
                 else planet.PlanetStructures.Remove(s);
             }
 
-            var ev = eventCreator.CreateEvent("All non-evacuated structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
-            db.Events.InsertOnSubmit(ev);
-            text.AppendLine(ev.PlainText);
+            var ev2 = eventCreator.CreateEvent("All non-evacuated structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
+            db.Events.InsertOnSubmit(ev2);
+            text.AppendLine(ev2.PlainText);
         }
 
         db.SaveChanges();
+
+        // planet ownership can change from battle influence — must check immediately
+        int? oldOwner = planet.OwnerAccountID;
+        SetPlanetOwners(eventCreator, db, sb);
+
+        // re-fetch planet after ownership update
+        planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
+        if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
+        {
+            text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  {3}/PlanetWars/Planet/{2}\n",
+                planet.Name,
+                planet.Account.Name,
+                planet.PlanetID,
+                GlobalConst.BaseSiteUrl);
+        }
+    }
+
+    /// <summary>
+    /// Per-turn galaxy-wide processing: influence spread, decay, production, VP, treaties
+    /// Called once per turn from the matchmaker after launching battles.
+    /// </summary>
+    public static void ProcessGalaxyTick(ZkDataContext db, StringBuilder text, IPlanetwarsEventCreator eventCreator, ZkLobbyServer.ZkLobbyServer server, string mapName = null, SpringBattle sb = null)
+    {
+        Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
 
         gal.DecayInfluence();
         gal.SpreadInfluence();
@@ -361,11 +382,10 @@ public static class PlanetWarsTurnHandler
         foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) fac.ConvertExcessEnergyToMetal();
 
 
-        int? oldOwner = planet.OwnerAccountID;
         gal.Turn++;
         db.SaveChanges();
 
-        db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
+        db = new ZkDataContext(); // attempt to fix setplanetowners being buggy
         SetPlanetOwners(eventCreator, db, sb != null ? db.SpringBattles.Find(sb.SpringBattleID) : null);
         gal = db.Galaxies.Single(x => x.IsDefault);
 
@@ -379,22 +399,10 @@ public static class PlanetWarsTurnHandler
             db.SaveChanges();
         }
 
-
-        planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);
-        if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
-        {
-            text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  {3}/PlanetWars/Planet/{2}\n",
-                planet.Name,
-                planet.Account.Name,
-                planet.PlanetID,
-                GlobalConst.BaseSiteUrl);
-        }
-
         server.PublishUserProfilePlanetwarsPlayers();
-        
+
         try
         {
-
             // store history
             foreach (Planet p in gal.Planets)
             {
@@ -418,27 +426,30 @@ public static class PlanetWarsTurnHandler
         }
 
         //rotate map
-        if (GlobalConst.RotatePWMaps)
+        if (GlobalConst.RotatePWMaps && mapName != null)
         {
             db = new ZkDataContext();
             gal = db.Galaxies.Single(x => x.IsDefault);
-            planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);
-            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.MapSupportLevel>=MapSupportLevel.Featured
-                                                  && x.ResourceID != planet.MapResourceID && x.MapWaterLevel == planet.Resource.MapWaterLevel).ToList();
-            if (mapList.Count > 0)
+            var planet2 = gal.Planets.SingleOrDefault(x => x.Resource.InternalName == mapName);
+            if (planet2 != null)
             {
-                int r = new Random().Next(mapList.Count);
-                int resourceID = mapList[r].ResourceID;
-                Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
-                text.AppendLine(String.Format("Map cycler - {0} maps found, selected map {1} to replace map {2}", mapList.Count, newMap.InternalName, planet.Resource.InternalName));
-                planet.Resource = newMap;
-                gal.IsDirty = true;
+                var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.MapSupportLevel>=MapSupportLevel.Featured
+                                                      && x.ResourceID != planet2.MapResourceID && x.MapWaterLevel == planet2.Resource.MapWaterLevel).ToList();
+                if (mapList.Count > 0)
+                {
+                    int r = new Random().Next(mapList.Count);
+                    int resourceID = mapList[r].ResourceID;
+                    Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
+                    text.AppendLine(String.Format("Map cycler - {0} maps found, selected map {1} to replace map {2}", mapList.Count, newMap.InternalName, planet2.Resource.InternalName));
+                    planet2.Resource = newMap;
+                    gal.IsDirty = true;
+                }
+                else
+                {
+                    text.AppendLine("Map cycler - no maps found");
+                }
+                db.SaveChanges();
             }
-            else
-            {
-                text.AppendLine("Map cycler - no maps found");
-            }
-            db.SaveChanges();
         }
     }
 
@@ -458,7 +469,7 @@ public static class PlanetWarsTurnHandler
                 var ev = eventCreator.CreateEvent("{0} metal gain reduced by {1} because it is disconnected from {2}. {3}",
                     forFaction,
                     hq.EffectDisconnectedMetalMalus,
-                    hq.Name, 
+                    hq.Name,
                     sb);
                 db.Events.Add(ev);
                 texts.AppendLine(ev.PlainText);
@@ -507,8 +518,6 @@ public static class PlanetWarsTurnHandler
     /// <summary>
     /// Updates shadow influence and new owners
     /// </summary>
-    /// <param name="db"></param>
-    /// <param name="sb">optional spring batle that caused this change (for event logging)</param>
     public static void SetPlanetOwners(IPlanetwarsEventCreator eventCreator, ZkDataContext db = null, SpringBattle sb = null)
     {
         if (db == null) db = new ZkDataContext();
@@ -529,7 +538,7 @@ public static class PlanetWarsTurnHandler
 
             if (best == null || best.Influence < GlobalConst.InfluenceToCapturePlanet)
             {
-                // planet not capture 
+                // planet not capture
 
                 if (planet.Faction != null)
                 {
@@ -572,7 +581,7 @@ public static class PlanetWarsTurnHandler
                                 FirstOrDefault();
                     }
 
-                    // best with planets 
+                    // best with planets
                     if (candidate == null)
                     {
                         candidate =
@@ -587,7 +596,7 @@ public static class PlanetWarsTurnHandler
             // change has occured
             if (newFaction != planet.Faction)
             {
-                // disable structures 
+                // disable structures
                 foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis))
                 {
                     structure.ReactivateAfterBuild();
