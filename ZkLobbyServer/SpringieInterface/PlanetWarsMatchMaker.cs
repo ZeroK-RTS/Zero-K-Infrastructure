@@ -741,7 +741,9 @@ namespace ZeroKWeb
             PhaseStartTime = DateTime.UtcNow;
             AttackerSideChangeTime = DateTime.UtcNow;
 
-            var contestedPlanetIds = RunningBattles.Values.Select(x => x.PlanetID).ToHashSet();
+            // TODO re-enable to prevent attacking planets with running battles
+            // var contestedPlanetIds = RunningBattles.Values.Select(x => x.PlanetID).ToHashSet();
+            var contestedPlanetIds = new HashSet<int>();
 
             using (var db = new ZkDataContext())
             {
