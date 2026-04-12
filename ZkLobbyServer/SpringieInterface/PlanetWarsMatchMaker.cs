@@ -116,6 +116,10 @@ namespace ZeroKWeb
 
                 if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running) return;
 
+                // clean up stale running battles (e.g. if Spring process crashed)
+                var staleBattleIds = RunningBattles.Keys.Where(id => !server.Battles.ContainsKey(id)).ToList();
+                foreach (var id in staleBattleIds) RunningBattles.Remove(id);
+
                 switch (Phase)
                 {
                     case PwPhase.AttackCollect:
@@ -188,8 +192,7 @@ namespace ZeroKWeb
                     var user = server.ConnectedUsers.Get(name)?.User;
                     if (user == null) { playerPlanet.Remove(name); continue; }
 
-                    var rating = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(user.AccountID);
-                    playerWhr[name] = rating.LadderElo;
+                    playerWhr[name] = GetPlayerWhr(name);
 
                     // PW-Rank: faction role DisplayOrder, lower = higher rank. No role = int.MaxValue
                     var account = db.Accounts.Find(user.AccountID);
@@ -298,18 +301,16 @@ namespace ZeroKWeb
                 {
                     if (defenderWhr.ContainsKey(name)) continue;
                     if (!server.ConnectedUsers.ContainsKey(name)) continue;
-                    var user = server.ConnectedUsers.Get(name)?.User;
-                    if (user == null) continue;
-                    var rating = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(user.AccountID);
-                    defenderWhr[name] = rating.LadderElo;
+                    defenderWhr[name] = GetPlayerWhr(name);
                 }
             }
 
             // per-planet: assign defenders, overflow to pool
             var floatingPool = new List<string>();
             var assignedDefenders = new Dictionary<int, List<string>>(); // planetID -> assigned defender names
+            var attackedPlanetIds = FormedSquads.Select(s => s.PlanetID).Distinct().ToList();
 
-            foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct())
+            foreach (var planetId in attackedPlanetIds)
             {
                 var totalSlotsNeeded = FormedSquads.Where(s => s.PlanetID == planetId).Sum(s => s.TeamSize);
                 var volunteers = (DefenderVotes.ContainsKey(planetId) ? DefenderVotes[planetId] : new List<string>())
@@ -330,7 +331,7 @@ namespace ZeroKWeb
 
             // floating pool fills unfilled slots on other planets (WHR order)
             floatingPool = floatingPool.OrderByDescending(x => defenderWhr.Get(x)).ToList();
-            foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct())
+            foreach (var planetId in attackedPlanetIds)
             {
                 var totalSlotsNeeded = FormedSquads.Where(s => s.PlanetID == planetId).Sum(s => s.TeamSize);
                 var assigned = assignedDefenders[planetId];
@@ -344,7 +345,7 @@ namespace ZeroKWeb
             }
 
             // slice defenders into squads: sort squads by avg attacker WHR desc, assign best defenders to best attackers
-            foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct())
+            foreach (var planetId in attackedPlanetIds)
             {
                 var squadsForPlanet = FormedSquads
                     .Where(s => s.PlanetID == planetId)
@@ -631,9 +632,15 @@ namespace ZeroKWeb
                         });
                     }
 
-                    // collect all defending factions across all attacked planets
-                    var allDefFactions = FormedSquads
-                        .SelectMany(s => GetDefendingFactions(s).Select(f => f.Shortcut))
+                    // collect all defending factions across attacked planets (one DB call per distinct planet, not per squad)
+                    var defFactionCache = new Dictionary<int, List<Faction>>();
+                    foreach (var pid in options.Select(o => o.PlanetID))
+                    {
+                        if (!defFactionCache.ContainsKey(pid))
+                            defFactionCache[pid] = GetDefendingFactions(FormedSquads.First(s => s.PlanetID == pid));
+                    }
+                    var allDefFactions = defFactionCache.Values
+                        .SelectMany(f => f.Select(x => x.Shortcut))
                         .Distinct()
                         .ToList();
 
@@ -801,18 +808,20 @@ namespace ZeroKWeb
 
             try
             {
-                var db = new ZkDataContext();
-                var playerIds = option.Attackers.Union(option.Defenders).ToList();
+                using (var db = new ZkDataContext())
+                {
+                    var playerIds = option.Attackers.Union(option.Defenders).ToList();
 
-                PlanetWarsTurnHandler.ProcessBattleResult(option.Map,
-                    null,
-                    db,
-                    0,
-                    db.Accounts.Where(x => playerIds.Contains(x.Name) && (x.Faction != null)).ToList(),
-                    new StringBuilder(),
-                    null,
-                    db.Accounts.Where(x => option.Attackers.Contains(x.Name) && (x.Faction != null)).ToList(),
-                    server.PlanetWarsEventCreator, server);
+                    PlanetWarsTurnHandler.ProcessBattleResult(option.Map,
+                        null,
+                        db,
+                        0,
+                        db.Accounts.Where(x => playerIds.Contains(x.Name) && (x.Faction != null)).ToList(),
+                        new StringBuilder(),
+                        null,
+                        db.Accounts.Where(x => option.Attackers.Contains(x.Name) && (x.Faction != null)).ToList(),
+                        server.PlanetWarsEventCreator, server);
+                }
             }
             catch (Exception ex)
             {
@@ -855,14 +864,14 @@ namespace ZeroKWeb
 
         private void SaveStateToDb()
         {
-            var db = new ZkDataContext();
-            var gal = db.Galaxies.First(x => x.IsDefault);
-
-            gal.MatchMakerState = JsonConvert.SerializeObject((PlanetWarsMatchMakerState)this);
-
-            gal.AttackerSideCounter = AttackerSideCounter;
-            gal.AttackerSideChangeTime = AttackerSideChangeTime;
-            db.SaveChanges();
+            using (var db = new ZkDataContext())
+            {
+                var gal = db.Galaxies.First(x => x.IsDefault);
+                gal.MatchMakerState = JsonConvert.SerializeObject((PlanetWarsMatchMakerState)this);
+                gal.AttackerSideCounter = AttackerSideCounter;
+                gal.AttackerSideChangeTime = AttackerSideChangeTime;
+                db.SaveChanges();
+            }
         }
 
         private static PwStatus GeneratePwStatus()
