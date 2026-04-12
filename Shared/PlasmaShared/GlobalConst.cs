@@ -216,7 +216,7 @@ namespace ZkData
         public const int PlanetWarsMaxTeamsize = 4;
         public const double PlanetWarsDefenderWinKillCcMultiplier = 0.2;
         public const double PlanetWarsAttackerWinLoseCcMultiplier = 0.5;
-        public const int MinPlanetWarsLevel = 5;
+        public const int MinPlanetWarsLevel = 0;
         public const int MinPlanetWarsElo = -1000;
 
         public const int WikiEditLevel = 20;
