@@ -30,6 +30,7 @@ namespace ZkLobbyServer
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
 
             SetCompetitiveModoptions();
+            ModOptions["equalcom"] = "enable";
 
             ValidateAndFillDetails();
         }
