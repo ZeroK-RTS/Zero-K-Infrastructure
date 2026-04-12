@@ -381,12 +381,12 @@ namespace ZeroKWeb
                 foreach (var squad in squadsForPlanet)
                 {
                     var count = Math.Min(squad.TeamSize, defenders.Count - idx);
-                    if (count == squad.TeamSize)
+                    if (count > 0)
                     {
                         squad.Defenders = defenders.Skip(idx).Take(count).ToList();
                         idx += count;
                     }
-                    // else: squad gets no defenders (concede) - Defenders stays empty
+                    // else: no defenders at all for this squad (concede)
                 }
             }
         }
@@ -409,9 +409,9 @@ namespace ZeroKWeb
                 squad.Attackers = squad.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
                 squad.Defenders = squad.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
 
-                if (squad.Defenders.Count == squad.TeamSize && squad.Attackers.Count == squad.TeamSize)
+                if (squad.Defenders.Count > 0 && squad.Attackers.Count > 0)
                 {
-                    // full battle
+                    // battle (may be uneven)
                     try
                     {
                         var battle = new PlanetWarsServerBattle(server, squad);
@@ -437,12 +437,12 @@ namespace ZeroKWeb
                         Trace.TraceError("PlanetWars LaunchBattle error: {0}", ex);
                     }
                 }
-                else if (squad.Attackers.Count == squad.TeamSize)
+                else if (squad.Attackers.Count > 0)
                 {
-                    // concede - not enough defenders
+                    // concede - zero defenders
                     RecordPlanetwarsLoss(squad);
                 }
-                // else: attackers also disconnected, skip entirely
+                // else: no attackers left, skip entirely
             }
 
             FormedSquads.Clear();
