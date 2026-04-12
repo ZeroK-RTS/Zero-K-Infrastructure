@@ -37,15 +37,13 @@ namespace Ratings
                         {
                             int battles = 0;
                             data.Database.CommandTimeout = 240;
-                            for (int month = 10*12; month > 0; month--)
+                            for (int month = 5*12; month > 0; month--)
                             {
                                 DateTime minStartTime = DateTime.Now.AddMonths(-month);
                                 DateTime maxStartTime = DateTime.Now.AddMonths(-month + 1);
                                 foreach (SpringBattle b in data.SpringBattles
                                         .Where(x => x.StartTime > minStartTime && x.StartTime < maxStartTime)
-                                        .Include(x => x.ResourceByMapResourceID)
                                         .Include(x => x.SpringBattlePlayers)
-                                        .Include(x => x.SpringBattleBots)
                                         .AsNoTracking()
                                         .OrderBy(x => x.StartTime))
                                 {
