@@ -24,6 +24,7 @@ namespace ZeroKWeb
         private int missedDefenseCount = 0;
         private int missedDefenseFactionID = 0;
         private ZkLobbyServer.ZkLobbyServer server;
+        private DateTime? defendersFullTime; // set when total defenders >= total attacker slots
 
         private Timer timer;
 
@@ -73,7 +74,7 @@ namespace ZeroKWeb
                 AttackerSideCounter = gal.AttackerSideCounter;
                 AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
                 Phase = PwPhase.AttackCollect;
-                PhaseStartTime = GetNextTurnBoundary();
+                PhaseStartTime = DateTime.UtcNow;
             }
 
             timer = new Timer(1045);
@@ -143,8 +144,28 @@ namespace ZeroKWeb
                         break;
 
                     case PwPhase.DefendCollect:
-                        if (DateTime.UtcNow > GetDefendDeadline())
+                        // check if enough defenders volunteered — start 30s countdown
+                        var totalSlots = FormedSquads.Sum(s => s.TeamSize);
+                        var totalDefenders = DefenderVotes.Values.Sum(v => v.Count);
+                        if (totalDefenders >= totalSlots)
                         {
+                            if (defendersFullTime == null) defendersFullTime = DateTime.UtcNow;
+                        }
+                        else
+                        {
+                            defendersFullTime = null;
+                        }
+
+                        var deadline = GetDefendDeadline();
+                        if (defendersFullTime != null)
+                        {
+                            var earlyDeadline = defendersFullTime.Value.AddSeconds(30);
+                            if (earlyDeadline < deadline) deadline = earlyDeadline;
+                        }
+
+                        if (DateTime.UtcNow > deadline)
+                        {
+                            defendersFullTime = null;
                             RunDefenderAssignment();
                             await LaunchAllBattles();
                             RunGalaxyTick();
@@ -687,36 +708,14 @@ namespace ZeroKWeb
             }
         }
 
-        /// <summary>
-        /// Total turn duration in minutes (attack + defend). Turns snap to this boundary on the wall clock.
-        /// </summary>
-        private static readonly int TurnIntervalMinutes = GlobalConst.PlanetWarsMinutesToAttack + GlobalConst.PlanetWarsMinutesToAccept;
-
-        /// <summary>
-        /// Returns the current or next wall-clock turn boundary (e.g. :00, :15, :30, :45 for 15-min turns).
-        /// If exactly on a boundary, returns that time. Otherwise returns the next one.
-        /// </summary>
-        private static DateTime GetNextTurnBoundary()
-        {
-            var now = DateTime.UtcNow;
-            // truncate to whole minutes to avoid floating point issues
-            var nowTrunc = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, DateTimeKind.Utc);
-            var midnight = nowTrunc.Date;
-            var totalMinutes = (int)(nowTrunc - midnight).TotalMinutes;
-            var remainder = totalMinutes % TurnIntervalMinutes;
-            if (remainder == 0)
-                return nowTrunc; // already on a boundary
-            return nowTrunc.AddMinutes(TurnIntervalMinutes - remainder);
-        }
-
         private void ResetAttackOptions()
         {
             AttackOptions.Clear();
             FormedSquads.Clear();
             DefenderVotes.Clear();
             Phase = PwPhase.AttackCollect;
-            PhaseStartTime = GetNextTurnBoundary();
-            AttackerSideChangeTime = PhaseStartTime;
+            PhaseStartTime = DateTime.UtcNow;
+            AttackerSideChangeTime = DateTime.UtcNow;
 
             var contestedPlanetIds = RunningBattles.Values.Select(x => x.PlanetID).ToHashSet();
 
