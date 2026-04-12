@@ -332,7 +332,7 @@ namespace ZeroKWeb
 
                                 await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetId });
 
-                                if (attackOption.Attackers.Count == attackOption.TeamSize) await StartChallenge(attackOption);
+                                if (attackOption.Attackers.Count >= attackOption.TeamSize) await StartChallenge(attackOption);
                                 else await UpdateLobby();
                             }
                         }
@@ -361,7 +361,7 @@ namespace ZeroKWeb
 
                             await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetID });
 
-                            if (Challenge.Defenders.Count == Challenge.TeamSize) await AcceptChallenge();
+                            if (Challenge.Defenders.Count >= Challenge.TeamSize) await AcceptChallenge();
                             else await UpdateLobby();
                         }
                 }
