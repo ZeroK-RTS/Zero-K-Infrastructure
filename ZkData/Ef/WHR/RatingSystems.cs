@@ -37,7 +37,7 @@ namespace Ratings
                         {
                             int battles = 0;
                             data.Database.CommandTimeout = 240;
-                            for (int month = 5*12; month > 0; month--)
+                            for (int month = 10*12; month > 0; month--)
                             {
                                 DateTime minStartTime = DateTime.Now.AddMonths(-month);
                                 DateTime maxStartTime = DateTime.Now.AddMonths(-month + 1);

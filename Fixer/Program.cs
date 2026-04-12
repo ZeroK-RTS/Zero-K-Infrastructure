@@ -431,17 +431,22 @@ namespace Fixer
         {
             var server = new global::ZkLobbyServer.ZkLobbyServer("", new PlanetwarsEventCreator());
             var mm = server.PlanetWarsMatchMaker;
-            mm.ChallengeTime = DateTime.Now;
             mm.AttackerSideCounter = 1;
-            //mm.ResetAttackOptions();
-            mm.GenerateLobbyCommand();
-            mm.Challenge = mm.AttackOptions[3];
-            mm.Challenge.OwnerFactionID = 2;
-            mm.Challenge.PlanetID = 4375;
-            mm.GetDefendingFactions(mm.Challenge);
             mm.GenerateLobbyCommand();
 
-            //mm.Challenge = 
+            // simulate defend phase with a formed squad
+            if (mm.AttackOptions.Count > 3)
+            {
+                var opt = mm.AttackOptions[3];
+                opt.OwnerFactionID = 2;
+                opt.PlanetID = 4375;
+                mm.FormedSquads.Add(opt);
+                mm.Phase = PwPhase.DefendCollect;
+                mm.PhaseStartTime = DateTime.UtcNow;
+                mm.GetDefendingFactions(opt);
+                mm.GenerateLobbyCommand();
+            }
+
             Global.Server.PlanetWarsMatchMaker.GenerateLobbyCommand();
         }
 

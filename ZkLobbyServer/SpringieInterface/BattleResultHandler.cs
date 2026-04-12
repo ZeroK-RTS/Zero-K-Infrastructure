@@ -184,7 +184,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (winNum > 1) winNum = null;
             }
 
-            PlanetWarsTurnHandler.EndTurn(result.LobbyStartContext.Map,
+            PlanetWarsTurnHandler.ProcessBattleResult(result.LobbyStartContext.Map,
                 result.OutputExtras,
                 db,
                 winNum,
