@@ -766,7 +766,7 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var gal = db.Galaxies.First(x => x.IsDefault);
-                var cnt = 6;
+                var cnt = DynamicConfig.Instance.PwAttackOptionCount;
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
                 var planets =
                     gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)

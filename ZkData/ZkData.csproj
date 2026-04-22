@@ -495,6 +495,8 @@
     <Compile Include="Migrations\202404060935038_AddPopularMapsFraction.Designer.cs">
       <DependentUpon>202404060935038_AddPopularMapsFraction.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202604222356320_AddPwDynamicConfigs.cs" />
+    <Compile Include="Migrations\202604222356320_AddPwDynamicConfigs.Designer.cs" />
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -946,6 +948,7 @@
     <EmbeddedResource Include="Migrations\202404060935038_AddPopularMapsFraction.resx">
       <DependentUpon>202404060935038_AddPopularMapsFraction.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202604222356320_AddPwDynamicConfigs.resx" />
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZkDataResources.Designer.cs</LastGenOutput>

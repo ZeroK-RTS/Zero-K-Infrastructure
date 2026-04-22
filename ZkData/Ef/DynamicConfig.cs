@@ -38,7 +38,17 @@ namespace ZkData
 
         [Description("Map vote always tries to include some of the most popular maps (precentile <0.2), this value controls how big fraction of offers is most popular maps.")]
         public double MapVoteFractionOfPopularMaps { get; set; } = 0.5;
+
         
+        [Description("PlanetWars: number of attack options shown to the attacking faction each turn.")]
+        public int PwAttackOptionCount { get; set; } = 6;
+
+        [Description("PlanetWars: maximum attack charges a player can hold. 0 disables the charge system.")]
+        public int PwAttackChargesMax { get; set; } = 2;
+
+        [Description("PlanetWars: minutes a player must sit below max charges before gaining one passively.")]
+        public int PwAttackChargesRechargeMinutes { get; set; } = 60;        
+
 
         public static DynamicConfig Instance;
 
