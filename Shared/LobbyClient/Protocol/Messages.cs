@@ -702,6 +702,8 @@ namespace LobbyClient
             public List<string> StructureImages { get; set; }
             public int IconSize { get; set; }
             public string PlanetName { get; set; }
+            public bool CanSelectForBattle { get; set; }
+            public bool PlayerIsAttacker { get; set; }
         }
     }
 

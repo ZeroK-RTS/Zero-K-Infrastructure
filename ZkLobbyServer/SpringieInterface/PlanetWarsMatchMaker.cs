@@ -630,7 +630,7 @@ namespace ZeroKWeb
 
         // ===================== LOBBY COMMANDS =====================
 
-        public PwMatchCommand GenerateLobbyCommand(string playerFaction = null)
+        public PwMatchCommand GenerateLobbyCommand(string playerName = null, string playerFaction = null)
         {
             PwMatchCommand command = null;
             try
@@ -638,11 +638,27 @@ namespace ZeroKWeb
                 if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running)
                     return new PwMatchCommand(PwMatchCommand.ModeType.Clear);
 
+                int? playerFactionId = null;
+                if (playerFaction != null)
+                {
+                    var fac = factions.FirstOrDefault(f => f.Shortcut == playerFaction);
+                    playerFactionId = fac?.FactionID;
+                }
+
                 if (Phase == PwPhase.AttackCollect)
                 {
+                    var canAttack = playerFactionId != null && playerFactionId == AttackingFaction.FactionID;
+                    var options = AttackOptions.Select(x =>
+                    {
+                        var v = x.ToVoteOption(PwMatchCommand.ModeType.Attack);
+                        v.CanSelectForBattle = canAttack;
+                        v.PlayerIsAttacker = playerName != null && x.Attackers.Contains(playerName);
+                        return v;
+                    }).ToList();
+
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                     {
-                        Options = AttackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
+                        Options = options,
                         Deadline = GetAttackDeadline(),
                         DeadlineSeconds = (int)GetAttackDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
                         AttackerFaction = AttackingFaction.Shortcut
@@ -658,26 +674,17 @@ namespace ZeroKWeb
                             defFactionCache[planetId] = GetDefendingFactions(FormedSquads.First(s => s.PlanetID == planetId));
                     }
 
-                    // resolve player's faction ID for filtering
-                    int? playerFactionId = null;
-                    if (playerFaction != null)
-                    {
-                        var fac = factions.FirstOrDefault(f => f.Shortcut == playerFaction);
-                        playerFactionId = fac?.FactionID;
-                    }
-
-                    // aggregate per planet, filtered to planets this player can defend
+                    // aggregate per planet — send all planets, flag which ones the viewer can act on
                     var options = new List<PwMatchCommand.VoteOption>();
                     foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct())
                     {
-                        // skip planets this player's faction cannot defend
-                        if (playerFactionId != null && !defFactionCache[planetId].Any(f => f.FactionID == playerFactionId))
-                            continue;
-
                         var squads = FormedSquads.Where(s => s.PlanetID == planetId).ToList();
                         var first = squads.First();
                         var totalNeeded = squads.Sum(s => s.TeamSize);
                         var volunteered = DefenderVotes.ContainsKey(planetId) ? DefenderVotes[planetId].Count : 0;
+
+                        var playerIsAttacker = playerName != null && squads.Any(s => s.Attackers.Contains(playerName));
+                        var canDefend = playerFactionId != null && defFactionCache[planetId].Any(f => f.FactionID == playerFactionId);
 
                         options.Add(new PwMatchCommand.VoteOption
                         {
@@ -688,7 +695,9 @@ namespace ZeroKWeb
                             StructureImages = first.StructureImages,
                             PlanetImage = first.PlanetImage,
                             Count = volunteered,
-                            Needed = totalNeeded
+                            Needed = totalNeeded,
+                            CanSelectForBattle = canDefend && !playerIsAttacker,
+                            PlayerIsAttacker = playerIsAttacker
                         });
                     }
 
@@ -916,16 +925,9 @@ namespace ZeroKWeb
 
         private async Task UpdateLobby()
         {
-            if (Phase == PwPhase.DefendCollect)
-            {
-                // send per-player filtered options (only planets they can defend)
-                foreach (var conus in server.ConnectedUsers.Values.Where(x => x.User.CanUserPlanetWars()))
-                    await conus.SendCommand(GenerateLobbyCommand(conus.User.Faction));
-            }
-            else
-            {
-                await server.Broadcast(server.ConnectedUsers.Values.Where(x => x.User.CanUserPlanetWars()), GenerateLobbyCommand());
-            }
+            // per-player: flags (CanSelectForBattle / PlayerIsAttacker) depend on the viewer
+            foreach (var conus in server.ConnectedUsers.Values.Where(x => x.User.CanUserPlanetWars()))
+                await conus.SendCommand(GenerateLobbyCommand(conus.Name, conus.User.Faction));
             SaveStateToDb();
         }
 
@@ -933,7 +935,7 @@ namespace ZeroKWeb
         {
             var conus = server.ConnectedUsers.Get(player);
             if (conus == null) return Task.CompletedTask;
-            return conus.SendCommand(GenerateLobbyCommand(conus.User.Faction));
+            return conus.SendCommand(GenerateLobbyCommand(conus.Name, conus.User.Faction));
         }
 
         private void SaveStateToDb()
