@@ -704,6 +704,7 @@ namespace LobbyClient
             public string PlanetName { get; set; }
             public bool CanSelectForBattle { get; set; }
             public bool PlayerIsAttacker { get; set; }
+            public bool PlayerIsDefender { get; set; }
         }
     }
 

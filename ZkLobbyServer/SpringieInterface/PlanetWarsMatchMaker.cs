@@ -684,6 +684,7 @@ namespace ZeroKWeb
                         var volunteered = DefenderVotes.ContainsKey(planetId) ? DefenderVotes[planetId].Count : 0;
 
                         var playerIsAttacker = playerName != null && squads.Any(s => s.Attackers.Contains(playerName));
+                        var playerIsDefender = playerName != null && DefenderVotes.ContainsKey(planetId) && DefenderVotes[planetId].Contains(playerName);
                         var canDefend = playerFactionId != null && defFactionCache[planetId].Any(f => f.FactionID == playerFactionId);
 
                         options.Add(new PwMatchCommand.VoteOption
@@ -697,7 +698,8 @@ namespace ZeroKWeb
                             Count = volunteered,
                             Needed = totalNeeded,
                             CanSelectForBattle = canDefend && !playerIsAttacker,
-                            PlayerIsAttacker = playerIsAttacker
+                            PlayerIsAttacker = playerIsAttacker,
+                            PlayerIsDefender = playerIsDefender
                         });
                     }
 
