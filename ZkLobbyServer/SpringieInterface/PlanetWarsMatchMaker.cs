@@ -265,6 +265,20 @@ namespace ZeroKWeb
                 foreach (var p in fillers) pool.Remove(p);
             }
 
+            // Pass 3: absorb leftovers into an existing squad on their original planet,
+            // so all attackers join when a planet had more people than TeamSize.
+            foreach (var name in pool.ToList())
+            {
+                var originalPlanetId = playerPlanet[name].PlanetID;
+                var squad = FormedSquads.FirstOrDefault(s => s.PlanetID == originalPlanetId);
+                if (squad != null)
+                {
+                    squad.Attackers.Add(name);
+                    squad.TeamSize = squad.Attackers.Count;
+                    pool.Remove(name);
+                }
+            }
+
             AttackOptions.Clear();
 
             // initialize defender votes for attacked planets
