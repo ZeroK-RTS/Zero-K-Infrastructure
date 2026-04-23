@@ -507,6 +507,10 @@
     <Compile Include="Migrations\202604231826040_AddPwBomberNerfConfigs.Designer.cs">
       <DependentUpon>202604231826040_AddPwBomberNerfConfigs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202604232250090_AddPwAttackCharges.cs" />
+    <Compile Include="Migrations\202604232250090_AddPwAttackCharges.Designer.cs">
+      <DependentUpon>202604232250090_AddPwAttackCharges.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -966,6 +970,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202604231826040_AddPwBomberNerfConfigs.resx">
       <DependentUpon>202604231826040_AddPwBomberNerfConfigs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202604232250090_AddPwAttackCharges.resx">
+      <DependentUpon>202604232250090_AddPwAttackCharges.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

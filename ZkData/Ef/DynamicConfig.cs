@@ -46,8 +46,8 @@ namespace ZkData
         [Description("PlanetWars: maximum attack charges a player can hold. 0 disables the charge system.")]
         public int PwAttackChargesMax { get; set; } = 2;
 
-        [Description("PlanetWars: minutes a player must sit below max charges before gaining one passively.")]
-        public int PwAttackChargesRechargeMinutes { get; set; } = 60;
+        [Description("PlanetWars: turns of cooldown after an attack before the player starts regaining charges (1 per subsequent turn, up to max).")]
+        public int PwAttackChargesCooldownTurns { get; set; } = 3;
 
         [Description("PlanetWars: fraction of enemy bomber IP damage also applied to the bomber's own faction. 0 disables self-damage.")]
         public double PwBomberSelfIpRate { get; set; } = 0.5;

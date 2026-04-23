@@ -154,6 +154,7 @@ namespace ZeroKWeb
                             RunDefenderAssignment();
                             await LaunchAllBattles();
                             RunGalaxyTick();
+                            await ApplyTurnEndChargeBump();
                             AttackerSideCounter++;
                             ResetAttackOptions();
                         }
@@ -420,6 +421,8 @@ namespace ZeroKWeb
 
         private async Task LaunchAllBattles()
         {
+            var attackerNamesToChargeSpend = new List<string>();
+
             // merge squads on the same planet into one battle per planet
             foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct().ToList())
             {
@@ -433,6 +436,8 @@ namespace ZeroKWeb
                     merged.Attackers.AddRange(squad.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)));
                     merged.Defenders.AddRange(squad.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)));
                 }
+
+                if (merged.Attackers.Count > 0) attackerNamesToChargeSpend.AddRange(merged.Attackers);
 
                 if (merged.Defenders.Count > 0 && merged.Attackers.Count > 0)
                 {
@@ -473,6 +478,30 @@ namespace ZeroKWeb
 
             FormedSquads.Clear();
             DefenderVotes.Clear();
+
+            if (attackerNamesToChargeSpend.Count > 0) await SpendAttackCharges(attackerNamesToChargeSpend);
+        }
+
+        private async Task SpendAttackCharges(List<string> playerNames)
+        {
+            var max = DynamicConfig.Instance.PwAttackChargesMax;
+            if (max <= 0) return;
+            try
+            {
+                List<Account> accounts;
+                using (var db = new ZkDataContext())
+                {
+                    var turn = db.Galaxies.First(g => g.IsDefault).Turn;
+                    accounts = db.Accounts.Where(a => playerNames.Contains(a.Name)).ToList();
+                    foreach (var acc in accounts) acc.SpendPwAttackCharge(turn);
+                    db.SaveChanges();
+                }
+                await Task.WhenAll(accounts.Select(acc => SendPwAttackCharges(server, acc.Name, acc)));
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("PlanetWars SpendAttackCharges error: {0}", ex);
+            }
         }
 
 
@@ -540,6 +569,13 @@ namespace ZeroKWeb
                 var account = db.Accounts.Find(user.AccountID);
                 if (account == null || account.FactionID != AttackingFaction.FactionID || !account.CanPlayerPlanetWars()) return;
 
+                var maxCharges = DynamicConfig.Instance.PwAttackChargesMax;
+                if (maxCharges > 0 && account.PwAttackCharges <= 0)
+                {
+                    await server.GhostChanSay(user.Faction, $"{userName} cannot attack: out of attack charges");
+                    return;
+                }
+
                 // remove from other options
                 foreach (var aop in AttackOptions.Where(x => x.PlanetID != targetPlanetId))
                     aop.Attackers.RemoveAll(x => x == userName);
@@ -604,7 +640,11 @@ namespace ZeroKWeb
             if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
             {
                 var u = connectedUser.User;
-                if (u.CanUserPlanetWars()) await UpdateLobby(u.Name);
+                if (u.CanUserPlanetWars())
+                {
+                    await UpdateLobby(u.Name);
+                    await SendPwAttackChargesForUser(u.Name);
+                }
             }
         }
 
@@ -937,6 +977,75 @@ namespace ZeroKWeb
         public void RemoveFromRunningBattles(int battleID)
         {
             RunningBattles.Remove(battleID);
+        }
+
+
+        // ===================== ATTACK CHARGES =====================
+
+        public static PwAttackCharges BuildPwAttackCharges(Account account)
+        {
+            var max = DynamicConfig.Instance.PwAttackChargesMax;
+            int? nextRechargeTurn = null;
+            if (max > 0 && account.PwAttackCharges < max && account.PwLastAttackTurn != null)
+                nextRechargeTurn = account.PwLastAttackTurn.Value + DynamicConfig.Instance.PwAttackChargesCooldownTurns;
+            return new PwAttackCharges
+            {
+                Current = account.PwAttackCharges,
+                NextRechargeTurn = nextRechargeTurn,
+            };
+        }
+
+        public static async Task SendPwAttackCharges(ZkLobbyServer.ZkLobbyServer server, string userName, Account account)
+        {
+            var conus = server.ConnectedUsers.Get(userName);
+            if (conus == null) return;
+            await conus.SendCommand(BuildPwAttackCharges(account));
+        }
+
+        private async Task SendPwAttackChargesForUser(string userName)
+        {
+            var conus = server.ConnectedUsers.Get(userName);
+            if (conus?.User == null) return;
+            using (var db = new ZkDataContext())
+            {
+                var account = db.Accounts.Find(conus.User.AccountID);
+                if (account == null) return;
+                await conus.SendCommand(BuildPwAttackCharges(account));
+            }
+        }
+
+        private async Task ApplyTurnEndChargeBump()
+        {
+            try
+            {
+                var max = DynamicConfig.Instance.PwAttackChargesMax;
+                if (max <= 0) return;
+                var cooldown = DynamicConfig.Instance.PwAttackChargesCooldownTurns;
+
+                List<Account> bumped;
+                using (var db = new ZkDataContext())
+                {
+                    var turn = db.Galaxies.First(g => g.IsDefault).Turn;
+                    var query = db.Accounts.Where(a =>
+                        a.FactionID != null &&
+                        a.PwAttackCharges < max &&
+                        (a.PwLastAttackTurn == null || turn - a.PwLastAttackTurn >= cooldown));
+
+                    bumped = query.Select(a => new { a.Name, a.PwAttackCharges, a.PwLastAttackTurn })
+                        .AsEnumerable()
+                        .Select(x => new Account { Name = x.Name, PwAttackCharges = x.PwAttackCharges + 1, PwLastAttackTurn = x.PwLastAttackTurn })
+                        .ToList();
+
+                    if (bumped.Count > 0)
+                        query.Update(a => new Account { PwAttackCharges = a.PwAttackCharges + 1 });
+                }
+
+                await Task.WhenAll(bumped.Select(a => SendPwAttackCharges(server, a.Name, a)));
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("PlanetWars turn-end charge bump error: {0}", ex);
+            }
         }
 
         private async Task UpdateLobby()

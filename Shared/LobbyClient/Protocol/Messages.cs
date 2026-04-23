@@ -749,6 +749,13 @@ namespace LobbyClient
         public int MinLevel { get; set; }
     }
 
+    [Message(Origin.Server)]
+    public class PwAttackCharges
+    {
+        public int Current { get; set; }
+        public int? NextRechargeTurn { get; set; }
+    }
+
 
 
 

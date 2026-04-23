@@ -174,6 +174,16 @@ public static class PlanetWarsTurnHandler
                 db.Events.InsertOnSubmit(ev);
                 text.AppendLine(ev.PlainText);
             }
+
+            var maxCharges = DynamicConfig.Instance.PwAttackChargesMax;
+            if (maxCharges > 0)
+            {
+                foreach (Account w in defenders)
+                {
+                    w.GrantPwAttackCharge(maxCharges);
+                    _ = ZeroKWeb.PlanetWarsMatchMaker.SendPwAttackCharges(server, w.Name, w);
+                }
+            }
         }
         else
         {
