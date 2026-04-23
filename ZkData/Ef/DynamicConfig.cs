@@ -47,7 +47,13 @@ namespace ZkData
         public int PwAttackChargesMax { get; set; } = 2;
 
         [Description("PlanetWars: minutes a player must sit below max charges before gaining one passively.")]
-        public int PwAttackChargesRechargeMinutes { get; set; } = 60;        
+        public int PwAttackChargesRechargeMinutes { get; set; } = 60;
+
+        [Description("PlanetWars: fraction of enemy bomber IP damage also applied to the bomber's own faction. 0 disables self-damage.")]
+        public double PwBomberSelfIpRate { get; set; } = 0.5;
+
+        [Description("PlanetWars: minimum IP (0-100) below which bombers cannot push any faction. 0 disables the floor.")]
+        public double PwBomberMinimumIpFloor { get; set; } = 5.0;
 
 
         public static DynamicConfig Instance;
