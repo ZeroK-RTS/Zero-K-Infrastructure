@@ -496,7 +496,13 @@
       <DependentUpon>202404060935038_AddPopularMapsFraction.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202604222356320_AddPwDynamicConfigs.cs" />
-    <Compile Include="Migrations\202604222356320_AddPwDynamicConfigs.Designer.cs" />
+    <Compile Include="Migrations\202604222356320_AddPwDynamicConfigs.Designer.cs">
+      <DependentUpon>202604222356320_AddPwDynamicConfigs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202604231755110_AddStructureBlockFlags.cs" />
+    <Compile Include="Migrations\202604231755110_AddStructureBlockFlags.Designer.cs">
+      <DependentUpon>202604231755110_AddStructureBlockFlags.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -948,7 +954,12 @@
     <EmbeddedResource Include="Migrations\202404060935038_AddPopularMapsFraction.resx">
       <DependentUpon>202404060935038_AddPopularMapsFraction.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202604222356320_AddPwDynamicConfigs.resx" />
+    <EmbeddedResource Include="Migrations\202604222356320_AddPwDynamicConfigs.resx">
+      <DependentUpon>202604222356320_AddPwDynamicConfigs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202604231755110_AddStructureBlockFlags.resx">
+      <DependentUpon>202604231755110_AddStructureBlockFlags.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZkDataResources.Designer.cs</LastGenOutput>
