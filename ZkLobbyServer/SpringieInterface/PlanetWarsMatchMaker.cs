@@ -9,7 +9,6 @@ using LobbyClient;
 using Newtonsoft.Json;
 using PlasmaShared;
 using Ratings;
-using Z.EntityFramework.Plus;
 using ZkData;
 using ZkLobbyServer;
 
@@ -778,14 +777,28 @@ namespace ZeroKWeb
             public HashSet<int> DefenderFactionIds; // DefendCollect only
         }
 
-        private List<OptionSnapshot> ComputeOptionSnapshots(PwPhase phase)
+        /// <summary>
+        /// Viewer-invariant data for the whole lobby fan-out: the per-option snapshots plus the aggregate
+        /// attacker/defender faction shortcut lists that go into the command header. Computed once per
+        /// UpdateLobby tick.
+        /// </summary>
+        private sealed class LobbySnapshot
         {
-            var result = new List<OptionSnapshot>();
+            public List<OptionSnapshot> Options;
+            public List<string> AttackerFactionShortcuts;
+            public List<string> DefenderFactionShortcuts;
+        }
+
+        private LobbySnapshot ComputeLobbySnapshot(PwPhase phase)
+        {
+            var options = new List<OptionSnapshot>();
+            var defenderShortcuts = new HashSet<string>();
+
             if (phase == PwPhase.AttackCollect)
             {
                 foreach (var opt in AttackOptions)
                 {
-                    result.Add(new OptionSnapshot
+                    options.Add(new OptionSnapshot
                     {
                         PlanetId = opt.PlanetID,
                         AttackerFactionId = opt.AttackerFactionID,
@@ -812,7 +825,13 @@ namespace ZeroKWeb
                 {
                     var atkAvg = AvgTopNWhr(squad.Attackers, squad.TeamSize);
                     int? defAvg = squad.DefenderVotes.Count > 0 ? (int?)AvgTopNWhr(squad.DefenderVotes, squad.TeamSize) : null;
-                    result.Add(new OptionSnapshot
+                    var defenderFactionIds = GetDefendingFactions(squad).Select(f => f.FactionID).ToHashSet();
+                    foreach (var fid in defenderFactionIds)
+                    {
+                        var sc = GetFactionShortcut(fid);
+                        if (sc != null) defenderShortcuts.Add(sc);
+                    }
+                    options.Add(new OptionSnapshot
                     {
                         PlanetId = squad.PlanetID,
                         AttackerFactionId = squad.AttackerFactionID,
@@ -829,21 +848,31 @@ namespace ZeroKWeb
                         WinChance = ComputeWinChance(atkAvg, defAvg),
                         AttackerNames = new HashSet<string>(squad.Attackers),
                         DefenderNames = new HashSet<string>(squad.DefenderVotes),
-                        DefenderFactionIds = GetDefendingFactions(squad).Select(f => f.FactionID).ToHashSet(),
+                        DefenderFactionIds = defenderFactionIds,
                     });
                 }
             }
-            return result;
+
+            return new LobbySnapshot
+            {
+                Options = options,
+                AttackerFactionShortcuts = options
+                    .Select(s => s.AttackerFactionShortcut)
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .Distinct()
+                    .ToList(),
+                DefenderFactionShortcuts = defenderShortcuts.ToList(),
+            };
         }
 
         public PwMatchCommand GenerateLobbyCommand(string playerName = null, string playerFaction = null)
         {
             if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running)
                 return new PwMatchCommand(PwMatchCommand.ModeType.Clear);
-            return StampLobbyCommand(ComputeOptionSnapshots(Phase), Phase, playerName, playerFaction);
+            return StampLobbyCommand(ComputeLobbySnapshot(Phase), Phase, playerName, playerFaction);
         }
 
-        private PwMatchCommand StampLobbyCommand(List<OptionSnapshot> snapshots, PwPhase phase, string playerName, string playerFaction)
+        private PwMatchCommand StampLobbyCommand(LobbySnapshot snapshot, PwPhase phase, string playerName, string playerFaction)
         {
             try
             {
@@ -851,20 +880,12 @@ namespace ZeroKWeb
                 if (playerFaction != null)
                     playerFactionId = factions.FirstOrDefault(f => f.Shortcut == playerFaction)?.FactionID;
 
-                // Distinct attacker factions across all options — populated from the shared snapshot so it
-                // matches the per-option AttackerFaction data the client sees in both phases.
-                var attackerFactionShortcuts = snapshots
-                    .Select(s => s.AttackerFactionShortcut)
-                    .Where(x => !string.IsNullOrEmpty(x))
-                    .Distinct()
-                    .ToList();
-
                 if (phase == PwPhase.AttackCollect)
                 {
                     // All factions' options are shown to every viewer (parity with pre-parallel-turn UX, where
                     // everyone could see what the current attacker was planning). CanSelectForBattle gates the
                     // click: a player can only join options for their own faction.
-                    var options = snapshots.Select(s => new PwMatchCommand.VoteOption
+                    var options = snapshot.Options.Select(s => new PwMatchCommand.VoteOption
                     {
                         PlanetID = s.PlanetId,
                         PlanetName = s.PlanetName,
@@ -889,18 +910,16 @@ namespace ZeroKWeb
                         Options = options,
                         Deadline = deadline,
                         DeadlineSeconds = (int)deadline.Subtract(DateTime.UtcNow).TotalSeconds,
-                        AttackerFactions = attackerFactionShortcuts,
+                        AttackerFactions = snapshot.AttackerFactionShortcuts,
                     };
                 }
                 else // DefendCollect
                 {
-                    var allDefenderShortcuts = new HashSet<string>();
-                    var options = new List<PwMatchCommand.VoteOption>(snapshots.Count);
-                    foreach (var s in snapshots)
+                    var options = snapshot.Options.Select(s =>
                     {
                         var playerIsAttacker = playerName != null && s.AttackerNames.Contains(playerName);
                         var canDefend = playerFactionId != null && s.DefenderFactionIds != null && s.DefenderFactionIds.Contains(playerFactionId.Value);
-                        options.Add(new PwMatchCommand.VoteOption
+                        return new PwMatchCommand.VoteOption
                         {
                             PlanetID = s.PlanetId,
                             PlanetName = s.PlanetName,
@@ -917,14 +936,8 @@ namespace ZeroKWeb
                             AttackerAvgWhr = s.AttackerAvgWhr,
                             DefenderAvgWhr = s.DefenderAvgWhr,
                             WinChance = s.WinChance,
-                        });
-                        if (s.DefenderFactionIds != null)
-                            foreach (var fid in s.DefenderFactionIds)
-                            {
-                                var sc = GetFactionShortcut(fid);
-                                if (sc != null) allDefenderShortcuts.Add(sc);
-                            }
-                    }
+                        };
+                    }).ToList();
 
                     var deadline = GetEffectiveDefendDeadline();
                     return new PwMatchCommand(PwMatchCommand.ModeType.Defend)
@@ -932,8 +945,8 @@ namespace ZeroKWeb
                         Options = options,
                         Deadline = deadline,
                         DeadlineSeconds = (int)deadline.Subtract(DateTime.UtcNow).TotalSeconds,
-                        AttackerFactions = attackerFactionShortcuts,
-                        DefenderFactions = allDefenderShortcuts.ToList(),
+                        AttackerFactions = snapshot.AttackerFactionShortcuts,
+                        DefenderFactions = snapshot.DefenderFactionShortcuts,
                     };
                 }
             }
@@ -960,11 +973,8 @@ namespace ZeroKWeb
                 if (planet.OwnerFactionID == attackerFactionId) return;
                 if (AttackOptions.Any(x => x.PlanetID == planet.PlanetID && x.AttackerFactionID == attackerFactionId)) return;
 
-                using (var db = new ZkDataContext())
-                {
-                    var attackerFaction = db.Factions.Find(attackerFactionId);
-                    if (attackerFaction == null || !planet.CanMatchMakerPlay(attackerFaction)) return;
-                }
+                var attackerFaction = factions.FirstOrDefault(f => f.FactionID == attackerFactionId);
+                if (attackerFaction == null || !planet.CanMatchMakerPlay(attackerFaction)) return;
 
                 InternalAddOption(planet, attackerFactionId);
                 UpdateLobby();
@@ -1244,9 +1254,9 @@ namespace ZeroKWeb
             }
 
             // compute viewer-invariant data once, stamp per-viewer flags in parallel send fan-out
-            var snapshots = ComputeOptionSnapshots(Phase);
+            var snapshot = ComputeLobbySnapshot(Phase);
             var phase = Phase;
-            await Task.WhenAll(users.Select(u => u.SendCommand(StampLobbyCommand(snapshots, phase, u.Name, u.User.Faction))));
+            await Task.WhenAll(users.Select(u => u.SendCommand(StampLobbyCommand(snapshot, phase, u.Name, u.User.Faction))));
             SaveStateToDb();
         }
 
