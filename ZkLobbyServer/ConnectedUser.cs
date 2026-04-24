@@ -112,6 +112,11 @@ namespace ZkLobbyServer
             await server.PlanetWarsMatchMaker.OnJoinPlanet(this, args);
         }
 
+        public async Task Process(PwCancel args)
+        {
+            await server.PlanetWarsMatchMaker.OnCancel(this);
+        }
+
 
         public async Task Process(KickFromBattle batKick)
         {
