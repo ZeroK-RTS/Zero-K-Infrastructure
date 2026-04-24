@@ -128,6 +128,7 @@ namespace ZeroKWeb
                     case PwPhase.AttackCollect:
                         if (DateTime.UtcNow > GetAttackDeadline())
                         {
+                            await ApplyTurnEndChargeBump();
                             RunSquadFormation();
                             if (FormedSquads.Any())
                             {
@@ -154,7 +155,6 @@ namespace ZeroKWeb
                             RunDefenderAssignment();
                             await LaunchAllBattles();
                             RunGalaxyTick();
-                            await ApplyTurnEndChargeBump();
                             AttackerSideCounter++;
                             ResetAttackOptions();
                         }
