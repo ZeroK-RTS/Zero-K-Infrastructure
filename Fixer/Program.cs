@@ -431,7 +431,6 @@ namespace Fixer
         {
             var server = new global::ZkLobbyServer.ZkLobbyServer("", new PlanetwarsEventCreator());
             var mm = server.PlanetWarsMatchMaker;
-            mm.AttackerSideCounter = 1;
             mm.GenerateLobbyCommand();
 
             // simulate defend phase with a formed squad

@@ -1,23 +1,21 @@
-﻿@using LobbyClient
+@using LobbyClient
 @using PlasmaShared
 @using ZeroKWeb
 @using ZkData
 @model LobbyClient.PwMatchCommand
 @{
     PwMatchCommand pw = Model;
-    string text = "";
+    string text;
     var db = new ZkDataContext();
     if (pw.Mode == PwMatchCommand.ModeType.Attack)
     {
-        text = string.Format("{0} picks a planet to attack", pw.AttackerFaction);
+        text = "Pick a planet to attack";
     }
     else
     {
-        var planetNames = string.Join(", ", pw.Options.Select(o => o.PlanetName));
-        text = string.Format("{0} attacks {2}, {1} defends", pw.AttackerFaction, string.Join(",", pw.DefenderFactions), planetNames);
+        var planetNames = string.Join(", ", pw.Options.Select(o => o.PlanetName + " (" + (o.AttackerFaction ?? "?") + ")"));
+        text = string.Format("Defend options: {0}", planetNames);
     }
-
-    bool canClick = (pw.Mode == PwMatchCommand.ModeType.Attack && pw.AttackerFaction == Global.Account.Faction.Shortcut) || (pw.Mode == PwMatchCommand.ModeType.Defend && pw.DefenderFactions.Contains(Global.Account.Faction.Shortcut));
 }
 
 <div id="matchMaker">
@@ -30,12 +28,21 @@
         foreach (PwMatchCommand.VoteOption opt in pw.Options)
         {
             <span style="border: 1px solid cyan;">
-                @if (canClick)
+                @if (opt.CanSelectForBattle)
                 {
-                    @Ajax.ActionLink("Join", "MatchMakerJoin", new { planetID = opt.PlanetID }, new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace })
+                    @Ajax.ActionLink("Join", "MatchMakerJoin", new { planetID = opt.PlanetID, attackerFaction = opt.AttackerFaction }, new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace })
                 }
                 @Html.PrintPlanet(db.Planets.First(x => x.PlanetID == opt.PlanetID))
+                <span>[@opt.AttackerFaction]</span>
                 <span>[@opt.Count/@opt.Needed]</span>
+                @if (opt.WinChance != null)
+                {
+                    <span>(WHR A:@opt.AttackerAvgWhr D:@opt.DefenderAvgWhr, @opt.WinChance% attacker)</span>
+                }
+                else if (opt.AttackerAvgWhr > 0)
+                {
+                    <span>(WHR @opt.AttackerAvgWhr)</span>
+                }
             </span>
             <text>&nbsp; &nbsp;&nbsp;</text>
         }

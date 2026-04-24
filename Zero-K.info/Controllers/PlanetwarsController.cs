@@ -797,10 +797,11 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
-            if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanMatchMakerPlay(db.CurrentAccount().Faction))
+            var account = db.CurrentAccount();
+            if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && account?.FactionID != null && planet.CanMatchMakerPlay(account.Faction))
             {
-                Global.Server.PlanetWarsMatchMaker.AddAttackOption(planet);
-                Global.Server.RequestJoinPlanet(Global.Account.Name, planet.PlanetID);
+                Global.Server.PlanetWarsMatchMaker.AddAttackOption(planet, account.FactionID.Value);
+                Global.Server.RequestJoinPlanet(Global.Account.Name, planet.PlanetID, account.Faction.Shortcut);
             }
             return RedirectToAction("Planet", new { id = planetID });
         }
@@ -812,16 +813,17 @@ namespace ZeroKWeb.Controllers
             var pwm = Global.Server.PlanetWarsMatchMaker;
             if (pwm != null)
             {
-                var state = Global.Server.PlanetWarsMatchMaker.GenerateLobbyCommand();
+                // admin view gets a per-viewer command so per-option flags render correctly
+                var state = Global.Server.PlanetWarsMatchMaker.GenerateLobbyCommand(Global.Account?.Name, Global.Account?.Faction?.Shortcut);
                 if (state != null) return View("PwMatchMaker", state);
             }
             return Content("Match maker offline");
         }
 
         [Auth]
-        public ActionResult MatchMakerJoin(int planetID)
+        public ActionResult MatchMakerJoin(int planetID, string attackerFaction)
         {
-            Global.Server.RequestJoinPlanet(Global.Account.Name,  planetID);
+            Global.Server.RequestJoinPlanet(Global.Account.Name, planetID, attackerFaction);
             return MatchMaker();
         }
 

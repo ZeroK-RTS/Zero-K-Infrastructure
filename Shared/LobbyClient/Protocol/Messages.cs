@@ -674,7 +674,11 @@ namespace LobbyClient
             Defend = 2
         }
 
-        public string AttackerFaction { get; set; }
+        /// <summary>
+        /// Distinct attacker faction shortcuts across all <see cref="Options"/>. In parallel-turn PW every
+        /// faction can be attacking simultaneously; each option also carries its own <see cref="VoteOption.AttackerFaction"/>.
+        /// </summary>
+        public List<string> AttackerFactions { get; set; }
 
         public DateTime Deadline { get; set; }
 
@@ -690,6 +694,7 @@ namespace LobbyClient
             Mode = mode;
             Options = new List<VoteOption>();
             DefenderFactions = new List<string>();
+            AttackerFactions = new List<string>();
         }
 
         public class VoteOption
@@ -705,6 +710,17 @@ namespace LobbyClient
             public bool CanSelectForBattle { get; set; }
             public bool PlayerIsAttacker { get; set; }
             public bool PlayerIsDefender { get; set; }
+            /// <summary>
+            /// Faction shortcut of the attacker. Together with <see cref="PlanetID"/> forms the (planet, attacker)
+            /// key that identifies this attack slot. Clients must echo it back in <see cref="PwJoinPlanet"/>.
+            /// </summary>
+            public string AttackerFaction { get; set; }
+            /// <summary>Average PW-WHR of the projected attacker squad (top-TeamSize volunteers). 0 when none.</summary>
+            public int AttackerAvgWhr { get; set; }
+            /// <summary>Average PW-WHR of the projected defender squad. Null in AttackCollect phase or when no volunteers.</summary>
+            public int? DefenderAvgWhr { get; set; }
+            /// <summary>Attacker win chance 0-100 derived from WHR delta. Null when either side is empty.</summary>
+            public int? WinChance { get; set; }
         }
     }
 
@@ -712,12 +728,27 @@ namespace LobbyClient
     public class PwJoinPlanet
     {
         public int PlanetID { get; set; }
+        /// <summary>
+        /// Which attack slot the player is interacting with. Required — a planet can be attacked by multiple
+        /// factions simultaneously, each a separate slot. For an attacker this should equal the user's own
+        /// faction; for a defender it identifies which incoming attack to defend against.
+        /// </summary>
+        public string AttackerFaction { get; set; }
+    }
+
+    /// <summary>
+    /// Client → server: cancel the player's current attack or defense commitment for the cycle.
+    /// </summary>
+    [Message(Origin.Client)]
+    public class PwCancel
+    {
     }
 
     [Message(Origin.Server)]
     public class PwRequestJoinPlanet
     {
         public int PlanetID { get; set; }
+        public string AttackerFaction { get; set; }
     }
 
 
@@ -725,12 +756,14 @@ namespace LobbyClient
     public class PwJoinPlanetSuccess
     {
         public int PlanetID { get; set; }
+        public string AttackerFaction { get; set; }
     }
 
     [Message(Origin.Server)]
     public class PwAttackingPlanet
     {
         public int PlanetID { get; set; }
+        public string AttackerFaction { get; set; }
     }
 
     [Message(Origin.Client)]
