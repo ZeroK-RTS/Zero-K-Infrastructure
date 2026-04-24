@@ -70,19 +70,23 @@ namespace ZeroKWeb.Controllers
                 double ipKillAmmount = ipKillCount * GlobalConst.BomberKillIpAmount;
                 if (ipKillAmmount > 0)
                 {
-                    var influenceDecayMin = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.EffectPreventInfluenceDecayBelow != null).Select(x => x.StructureType.EffectPreventInfluenceDecayBelow).OrderByDescending(x => x).FirstOrDefault() ?? 0;
+                    var structureFloor = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.EffectPreventInfluenceDecayBelow != null).Select(x => x.StructureType.EffectPreventInfluenceDecayBelow).OrderByDescending(x => x).FirstOrDefault() ?? 0;
+                    var globalFloor = DynamicConfig.Instance.PwBomberMinimumIpFloor;
+                    var selfRate = DynamicConfig.Instance.PwBomberSelfIpRate;
 
-
-                    foreach (PlanetFaction pf in planet.PlanetFactions.Where(x => x.FactionID != acc.FactionID))
+                    foreach (PlanetFaction pf in planet.PlanetFactions)
                     {
-                        pf.Influence -= ipKillAmmount;
-                        if (pf.Influence < 0) pf.Influence = 0;
+                        bool isOwn = pf.FactionID == acc.FactionID;
+                        double damage = isOwn ? ipKillAmmount * selfRate : ipKillAmmount;
+                        if (damage <= 0) continue;
 
-                        // prevent bombing below influence decaymin for owner - set by active structures
-                        if (pf.FactionID == planet.OwnerFactionID && pf.Influence < influenceDecayMin) pf.Influence = influenceDecayMin;
+                        // owner gets max of global floor and any structure-provided floor; everyone else gets global only
+                        double floor = (pf.FactionID == planet.OwnerFactionID) ? Math.Max(globalFloor, structureFloor) : globalFloor;
+
+                        // floor only prevents pushing below it — a faction already below the floor is not raised by bombing
+                        double effectiveFloor = Math.Min(pf.Influence, floor);
+                        pf.Influence = Math.Max(pf.Influence - damage, Math.Max(effectiveFloor, 0));
                     }
-
-
                 }
 
                 var args = new List<object>
