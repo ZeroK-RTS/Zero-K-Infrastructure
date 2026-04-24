@@ -365,6 +365,13 @@ namespace ZeroKWeb.Controllers
                 gal.Ended = null;
                 gal.EndMessage = null;
                 db.SaveChanges();
+
+                var maxCharges = DynamicConfig.Instance.PwAttackChargesMax;
+                db.Accounts.Where(x => x.FactionID != null).Update(x => new Account()
+                {
+                    PwAttackCharges = maxCharges,
+                    PwLastChargeChangeTurn = null,
+                });
             }
 
             return RedirectToAction("Index");
