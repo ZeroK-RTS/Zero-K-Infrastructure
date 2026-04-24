@@ -13,7 +13,7 @@ namespace ZkData.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202604232250090_AddPwAttackCharges"; }
+            get { return "202604241242120_AddPwAttackCharges"; }
         }
         
         string IMigrationMetadata.Source

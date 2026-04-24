@@ -370,7 +370,7 @@ namespace ZeroKWeb.Controllers
                 db.Accounts.Where(x => x.FactionID != null).Update(x => new Account()
                 {
                     PwAttackCharges = maxCharges,
-                    PwLastAttackTurn = null,
+                    PwLastChargeChangeTurn = null,
                 });
             }
 
