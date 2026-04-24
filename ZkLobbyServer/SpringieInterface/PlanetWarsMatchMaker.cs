@@ -381,24 +381,30 @@ namespace ZeroKWeb
                 }
             }
 
-            // fill deficits: prioritize squads by attacker strength (strongest attacker squads get top floaters first)
+            // Round-robin deficit fill: cover as many attacked planets as possible before any squad gets a
+            // second floater. Each round walks squads in attacker-strength order so the top-WHR floater lands
+            // on the highest-stakes battle first; remaining rounds spread the rest across still-deficit squads.
             var squadsByAttackerStrength = FormedSquads
                 .OrderByDescending(s => s.Attackers.Any() ? s.Attackers.Average(a => GetPlayerWhr(a)) : 0.0)
                 .ToList();
 
-            foreach (var squad in squadsByAttackerStrength)
+            while (floatingPool.Count > 0)
             {
-                var deficit = squad.TeamSize - squad.Defenders.Count;
-                if (deficit <= 0 || floatingPool.Count == 0) continue;
+                bool progressed = false;
+                foreach (var squad in squadsByAttackerStrength)
+                {
+                    if (squad.Defenders.Count >= squad.TeamSize) continue;
 
-                var allowedFactions = squadDefendingFactions[squad];
-                var eligible = floatingPool
-                    .Where(x => defenderFactionId.ContainsKey(x) && defenderFactionId[x].HasValue && allowedFactions.Contains(defenderFactionId[x].Value))
-                    .Take(deficit)
-                    .ToList();
+                    var allowedFactions = squadDefendingFactions[squad];
+                    var pick = floatingPool.FirstOrDefault(x =>
+                        defenderFactionId.ContainsKey(x) && defenderFactionId[x].HasValue && allowedFactions.Contains(defenderFactionId[x].Value));
+                    if (pick == null) continue;
 
-                squad.Defenders.AddRange(eligible);
-                foreach (var p in eligible) floatingPool.Remove(p);
+                    squad.Defenders.Add(pick);
+                    floatingPool.Remove(pick);
+                    progressed = true;
+                }
+                if (!progressed) break;
             }
         }
 
