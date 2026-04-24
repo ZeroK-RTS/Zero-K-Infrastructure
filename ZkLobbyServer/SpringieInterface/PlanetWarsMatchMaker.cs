@@ -172,13 +172,19 @@ namespace ZeroKWeb
         }
 
 
-        // ===================== SQUAD FORMATION (PIERCING) =====================
+        // ===================== SQUAD FORMATION =====================
+        // Phase 1: planets with >= TeamSize attackers form one squad with ALL their attackers.
+        // Phase 2: repeatedly complete a squad for the highest-ranked straggler whose planet
+        //          the pool can still fill, pulling other stragglers to him as fillers. Skip
+        //          leaders whose planet is too big for the pool; stop when none qualify.
+        // Phase 3: any remaining stragglers join the strongest existing squad (drawn by its
+        //          highest-ranked member). If no squad was formed at all, they are dropped.
+        // Result: at most one squad per planet.
 
         private void RunSquadFormation()
         {
             FormedSquads.Clear();
 
-            // collect all attackers still connected, grouped by planet
             var playerPlanet = new Dictionary<string, AttackOption>(); // player -> their chosen option
             foreach (var opt in AttackOptions)
             {
@@ -213,71 +219,62 @@ namespace ZeroKWeb
                 }
             }
 
-            var pool = new HashSet<string>(playerPlanet.Keys);
-
-            // Pass 1: while any planet has >= TeamSize players, form squads from top WHR
-            bool formed;
-            do
+            // Phase 1: self-sufficient planets form one squad with all their attackers
+            foreach (var opt in AttackOptions)
             {
-                formed = false;
-                foreach (var opt in AttackOptions)
+                var available = opt.Attackers.Where(playerPlanet.ContainsKey).ToList();
+                if (available.Count >= opt.TeamSize)
                 {
-                    var available = opt.Attackers.Where(pool.Contains).OrderByDescending(x => playerWhr.Get(x)).ToList();
-                    while (available.Count >= opt.TeamSize)
-                    {
-                        var squad = CreateSquadFromOption(opt);
-                        squad.Attackers = available.Take(opt.TeamSize).ToList();
-                        FormedSquads.Add(squad);
-                        foreach (var p in squad.Attackers) pool.Remove(p);
-                        available = available.Skip(opt.TeamSize).ToList();
-                        formed = true;
-                    }
+                    var squad = CreateSquadFromOption(opt);
+                    squad.Attackers = available;
+                    squad.TeamSize = available.Count;
+                    FormedSquads.Add(squad);
+                    foreach (var p in available) playerPlanet.Remove(p);
                 }
-            } while (formed); // repeat in case removing players from one planet frees up nothing, but be safe
+            }
 
-            // Pass 2: piercing — top PW-Rank player pulls others to their planet
-            while (pool.Count > 0)
+            // Phase 2: piercing — pick the top-ranked straggler whose planet's TeamSize
+            // the pool can still satisfy; skip leaders whose planet is too big.
+            while (playerPlanet.Count > 0)
             {
-                // find top PW-Rank player (lowest DisplayOrder, tiebreak by WHR desc)
-                var leader = pool
+                var leader = playerPlanet.Keys
+                    .Where(x => playerPlanet[x].TeamSize <= playerPlanet.Count)
                     .OrderBy(x => playerRoleOrder.GetOrDefault(x, int.MaxValue))
                     .ThenByDescending(x => playerWhr.Get(x))
-                    .First();
+                    .FirstOrDefault();
+
+                if (leader == null) break; // no straggler's planet fits the remaining pool
 
                 var leaderOption = playerPlanet[leader];
-                if (pool.Count < leaderOption.TeamSize)
-                    break; // not enough players for any squad
 
-                var fillers = pool
+                var fillers = playerPlanet.Keys
                     .Where(x => x != leader)
                     .OrderByDescending(x => playerWhr.Get(x))
                     .Take(leaderOption.TeamSize - 1)
                     .ToList();
 
-                if (fillers.Count < leaderOption.TeamSize - 1)
-                    break; // not enough
-
                 var squad = CreateSquadFromOption(leaderOption);
-                squad.Attackers = new List<string> { leader };
+                squad.Attackers.Add(leader);
                 squad.Attackers.AddRange(fillers);
+                squad.TeamSize = squad.Attackers.Count;
                 FormedSquads.Add(squad);
 
-                pool.Remove(leader);
-                foreach (var p in fillers) pool.Remove(p);
+                playerPlanet.Remove(leader);
+                foreach (var p in fillers) playerPlanet.Remove(p);
             }
 
-            // Pass 3: absorb leftovers into an existing squad on their original planet,
-            // so all attackers join when a planet had more people than TeamSize.
-            foreach (var name in pool.ToList())
+            // Phase 3: remaining stragglers all merge into the strongest existing squad,
+            // i.e. the one whose best member has the top PW-Rank (tiebreak by WHR).
+            if (playerPlanet.Count > 0 && FormedSquads.Count > 0)
             {
-                var originalPlanetId = playerPlanet[name].PlanetID;
-                var squad = FormedSquads.FirstOrDefault(s => s.PlanetID == originalPlanetId);
-                if (squad != null)
-                {
-                    squad.Attackers.Add(name);
-                    squad.TeamSize = squad.Attackers.Count;
-                    pool.Remove(name);
-                }
+                var strongest = FormedSquads
+                    .OrderBy(s => s.Attackers.Min(a => playerRoleOrder.GetOrDefault(a, int.MaxValue)))
+                    .ThenByDescending(s => s.Attackers.Max(a => playerWhr.Get(a)))
+                    .First();
+
+                strongest.Attackers.AddRange(playerPlanet.Keys);
+                strongest.TeamSize = strongest.Attackers.Count;
+                playerPlanet.Clear();
             }
 
             AttackOptions.Clear();
@@ -326,37 +323,28 @@ namespace ZeroKWeb
                 }
             }
 
-            // per-planet: assign defenders, overflow to pool
+            // per-squad: assign top-WHR volunteers; overflow spills to floating pool
             var floatingPool = new List<string>();
-            var assignedDefenders = new Dictionary<int, List<string>>(); // planetID -> assigned defender names
-            var attackedPlanetIds = FormedSquads.Select(s => s.PlanetID).Distinct().ToList();
-
-            foreach (var planetId in attackedPlanetIds)
+            foreach (var squad in FormedSquads)
             {
-                var totalSlotsNeeded = FormedSquads.Where(s => s.PlanetID == planetId).Sum(s => s.TeamSize);
-                var volunteers = (DefenderVotes.ContainsKey(planetId) ? DefenderVotes[planetId] : new List<string>())
+                var volunteers = (DefenderVotes.ContainsKey(squad.PlanetID) ? DefenderVotes[squad.PlanetID] : new List<string>())
                     .Where(x => server.ConnectedUsers.ContainsKey(x) && defenderWhr.ContainsKey(x))
                     .OrderByDescending(x => defenderWhr[x])
                     .ToList();
 
-                if (volunteers.Count > totalSlotsNeeded)
+                if (volunteers.Count > squad.TeamSize)
                 {
-                    assignedDefenders[planetId] = volunteers.Take(totalSlotsNeeded).ToList();
-                    floatingPool.AddRange(volunteers.Skip(totalSlotsNeeded));
+                    squad.Defenders = volunteers.Take(squad.TeamSize).ToList();
+                    floatingPool.AddRange(volunteers.Skip(squad.TeamSize));
                 }
                 else
                 {
-                    assignedDefenders[planetId] = volunteers;
+                    squad.Defenders = volunteers;
                 }
             }
 
-            // floating pool fills unfilled slots on other planets (WHR order, respecting faction eligibility)
+            // floating pool fills deficits on other squads (WHR order, respecting faction eligibility)
             floatingPool = floatingPool.OrderByDescending(x => defenderWhr.Get(x)).ToList();
-
-            // cache defending factions per planet and defender faction IDs
-            var planetDefendingFactions = new Dictionary<int, List<Faction>>();
-            foreach (var pid in attackedPlanetIds)
-                planetDefendingFactions[pid] = GetDefendingFactions(FormedSquads.First(s => s.PlanetID == pid));
 
             var defenderFactionId = new Dictionary<string, int?>();
             using (var db = new ZkDataContext())
@@ -368,43 +356,16 @@ namespace ZeroKWeb
                 }
             }
 
-            foreach (var planetId in attackedPlanetIds)
+            foreach (var squad in FormedSquads)
             {
-                var totalSlotsNeeded = FormedSquads.Where(s => s.PlanetID == planetId).Sum(s => s.TeamSize);
-                var assigned = assignedDefenders[planetId];
-                var deficit = totalSlotsNeeded - assigned.Count;
+                var deficit = squad.TeamSize - squad.Defenders.Count;
                 if (deficit > 0 && floatingPool.Count > 0)
                 {
-                    var allowedFactionIds = planetDefendingFactions[planetId].Select(f => f.FactionID).ToHashSet();
+                    var allowedFactionIds = GetDefendingFactions(squad).Select(f => f.FactionID).ToHashSet();
                     var eligible = floatingPool.Where(x => defenderFactionId.ContainsKey(x) && defenderFactionId[x].HasValue && allowedFactionIds.Contains(defenderFactionId[x].Value)).ToList();
                     var toAdd = eligible.Take(deficit).ToList();
-                    assigned.AddRange(toAdd);
+                    squad.Defenders.AddRange(toAdd);
                     foreach (var p in toAdd) floatingPool.Remove(p);
-                }
-            }
-
-            // slice defenders into squads: sort squads by avg attacker WHR desc, assign best defenders to best attackers
-            foreach (var planetId in attackedPlanetIds)
-            {
-                var squadsForPlanet = FormedSquads
-                    .Where(s => s.PlanetID == planetId)
-                    .OrderByDescending(s => s.Attackers.Average(a => GetPlayerWhr(a))) // sort by attacker strength
-                    .ToList();
-
-                var defenders = assignedDefenders.ContainsKey(planetId)
-                    ? assignedDefenders[planetId].OrderByDescending(x => defenderWhr.Get(x)).ToList()
-                    : new List<string>();
-
-                int idx = 0;
-                foreach (var squad in squadsForPlanet)
-                {
-                    var count = Math.Min(squad.TeamSize, defenders.Count - idx);
-                    if (count > 0)
-                    {
-                        squad.Defenders = defenders.Skip(idx).Take(count).ToList();
-                        idx += count;
-                    }
-                    // else: no defenders at all for this squad (concede)
                 }
             }
         }
@@ -423,38 +384,30 @@ namespace ZeroKWeb
         {
             var attackerNamesToChargeSpend = new List<string>();
 
-            // merge squads on the same planet into one battle per planet
-            foreach (var planetId in FormedSquads.Select(s => s.PlanetID).Distinct().ToList())
+            foreach (var squad in FormedSquads)
             {
-                var squads = FormedSquads.Where(s => s.PlanetID == planetId).ToList();
-                var first = squads.First();
+                // drop anyone who disconnected between squad formation and launch
+                squad.Attackers = squad.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
+                squad.Defenders = squad.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
 
-                // merge all squads into one AttackOption
-                var merged = CreateSquadFromOption(first);
-                foreach (var squad in squads)
-                {
-                    merged.Attackers.AddRange(squad.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)));
-                    merged.Defenders.AddRange(squad.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)));
-                }
+                if (squad.Attackers.Count > 0) attackerNamesToChargeSpend.AddRange(squad.Attackers);
 
-                if (merged.Attackers.Count > 0) attackerNamesToChargeSpend.AddRange(merged.Attackers);
-
-                if (merged.Defenders.Count > 0 && merged.Attackers.Count > 0)
+                if (squad.Defenders.Count > 0 && squad.Attackers.Count > 0)
                 {
                     // battle (may be uneven)
                     try
                     {
-                        merged.TeamSize = Math.Max(merged.Attackers.Count, merged.Defenders.Count);
-                        var battle = new PlanetWarsServerBattle(server, merged);
+                        squad.TeamSize = Math.Max(squad.Attackers.Count, squad.Defenders.Count);
+                        var battle = new PlanetWarsServerBattle(server, squad);
                         await server.AddBattle(battle);
-                        RunningBattles[battle.BattleID] = merged;
+                        RunningBattles[battle.BattleID] = squad;
 
-                        foreach (var usr in merged.Attackers.Union(merged.Defenders))
+                        foreach (var usr in squad.Attackers.Union(squad.Defenders))
                             await server.ForceJoinBattle(usr, battle);
 
                         if (await battle.StartGame())
                         {
-                            var text = $"Battle for planet {merged.Name} starts on zk://@join_player:{merged.Attackers.FirstOrDefault()}  Roster: {string.Join(",", merged.Attackers)} vs {string.Join(",", merged.Defenders)}";
+                            var text = $"Battle for planet {squad.Name} starts on zk://@join_player:{squad.Attackers.FirstOrDefault()}  Roster: {string.Join(",", squad.Attackers)} vs {string.Join(",", squad.Defenders)}";
                             foreach (var fac in factions) await server.GhostChanSay(fac.Shortcut, text);
                         }
                         else
@@ -468,10 +421,10 @@ namespace ZeroKWeb
                         Trace.TraceError("PlanetWars LaunchBattle error: {0}", ex);
                     }
                 }
-                else if (merged.Attackers.Count > 0)
+                else if (squad.Attackers.Count > 0)
                 {
                     // concede - zero defenders
-                    RecordPlanetwarsLoss(merged);
+                    RecordPlanetwarsLoss(squad);
                 }
                 // else: no attackers left, skip entirely
             }
