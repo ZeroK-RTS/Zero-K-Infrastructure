@@ -674,7 +674,11 @@ namespace LobbyClient
             Defend = 2
         }
 
-        public string AttackerFaction { get; set; }
+        /// <summary>
+        /// Distinct attacker faction shortcuts across all <see cref="Options"/>. In parallel-turn PW every
+        /// faction can be attacking simultaneously; each option also carries its own <see cref="VoteOption.AttackerFaction"/>.
+        /// </summary>
+        public List<string> AttackerFactions { get; set; }
 
         public DateTime Deadline { get; set; }
 
@@ -690,6 +694,7 @@ namespace LobbyClient
             Mode = mode;
             Options = new List<VoteOption>();
             DefenderFactions = new List<string>();
+            AttackerFactions = new List<string>();
         }
 
         public class VoteOption
