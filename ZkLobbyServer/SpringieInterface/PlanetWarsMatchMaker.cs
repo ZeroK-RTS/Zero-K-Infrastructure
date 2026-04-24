@@ -1150,8 +1150,8 @@ namespace ZeroKWeb
         {
             var max = DynamicConfig.Instance.PwAttackChargesMax;
             int? nextRechargeTurn = null;
-            if (max > 0 && account.PwAttackCharges < max && account.PwLastAttackTurn != null)
-                nextRechargeTurn = account.PwLastAttackTurn.Value + DynamicConfig.Instance.PwAttackChargesCooldownTurns;
+            if (max > 0 && account.PwAttackCharges < max && account.PwLastChargeChangeTurn != null)
+                nextRechargeTurn = account.PwLastChargeChangeTurn.Value + DynamicConfig.Instance.PwAttackChargesCooldownTurns;
             return new PwAttackCharges
             {
                 Current = account.PwAttackCharges,
@@ -1190,18 +1190,18 @@ namespace ZeroKWeb
                 using (var db = new ZkDataContext())
                 {
                     var turn = db.Galaxies.First(g => g.IsDefault).Turn;
-                    var query = db.Accounts.Where(a =>
+                    bumped = db.Accounts.Where(a =>
                         a.FactionID != null &&
                         a.PwAttackCharges < max &&
-                        (a.PwLastAttackTurn == null || turn - a.PwLastAttackTurn >= cooldown));
+                        (a.PwLastChargeChangeTurn == null || turn - a.PwLastChargeChangeTurn >= cooldown)).ToList();
 
-                    bumped = query.Select(a => new { a.Name, a.PwAttackCharges, a.PwLastAttackTurn })
-                        .AsEnumerable()
-                        .Select(x => new Account { Name = x.Name, PwAttackCharges = x.PwAttackCharges + 1, PwLastAttackTurn = x.PwLastAttackTurn })
-                        .ToList();
+                    foreach (var acc in bumped)
+                    {
+                        acc.PwAttackCharges++;
+                        acc.PwLastChargeChangeTurn = turn;
+                    }
 
-                    if (bumped.Count > 0)
-                        query.Update(a => new Account { PwAttackCharges = a.PwAttackCharges + 1 });
+                    if (bumped.Count > 0) db.SaveChanges();
                 }
 
                 await Task.WhenAll(bumped.Select(a => SendPwAttackCharges(server, a.Name, a)));
