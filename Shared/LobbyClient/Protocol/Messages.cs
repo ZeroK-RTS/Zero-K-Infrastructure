@@ -780,12 +780,15 @@ namespace LobbyClient
         public PlanetWarsModes? PlanetWarsNextMode { get; set; }
         public DateTime? PlanetWarsNextModeTime { get; set; }
         public int MinLevel { get; set; }
+        public int AttackerPhaseMinutes { get; set; }
+        public int DefenderPhaseMinutes { get; set; }
     }
 
     [Message(Origin.Server)]
     public class PwAttackCharges
     {
         public int Current { get; set; }
+        /// <summary>Absolute galaxy turn on which the next charge will be granted. Null when at max or charges are disabled.</summary>
         public int? NextRechargeTurn { get; set; }
     }
 

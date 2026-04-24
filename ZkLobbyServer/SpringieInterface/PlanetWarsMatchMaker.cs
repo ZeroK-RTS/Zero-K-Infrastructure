@@ -1277,7 +1277,9 @@ namespace ZeroKWeb
                 PlanetWarsMode = MiscVar.PlanetWarsMode,
                 MinLevel = GlobalConst.MinPlanetWarsLevel,
                 PlanetWarsNextMode = MiscVar.PlanetWarsNextMode,
-                PlanetWarsNextModeTime = MiscVar.PlanetWarsNextModeTime
+                PlanetWarsNextModeTime = MiscVar.PlanetWarsNextModeTime,
+                AttackerPhaseMinutes = GlobalConst.PlanetWarsMinutesToAttack,
+                DefenderPhaseMinutes = GlobalConst.PlanetWarsMinutesToAccept,
             };
         }
 
