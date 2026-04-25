@@ -154,7 +154,7 @@ namespace ZkData
         public double PwWarpUsed { get; set; }
         public double PwAttackPoints { get; set; }
         public int PwAttackCharges { get; set; }
-        public int? PwLastChargeChangeTurn { get; set; }
+        public DateTime? PwLastChargeChange { get; set; }
         public bool HasVpnException { get; set; }
         public bool HasKudos { get; set; }
         public int ForumTotalUpvotes { get; set; }
@@ -532,18 +532,18 @@ namespace ZkData
 
 
 
-        public void SpendPwAttackCharge(int currentTurn)
+        public void SpendPwAttackCharge()
         {
             if (PwAttackCharges > 0) PwAttackCharges--;
-            PwLastChargeChangeTurn = currentTurn;
+            PwLastChargeChange = DateTime.UtcNow;
         }
 
-        public void GrantPwAttackCharge(int maxCharges, int currentTurn)
+        public void GrantPwAttackCharge(int maxCharges)
         {
             if (maxCharges <= 0) return;
             if (PwAttackCharges >= maxCharges) return;
             PwAttackCharges++;
-            PwLastChargeChangeTurn = currentTurn;
+            PwLastChargeChange = DateTime.UtcNow;
         }
 
 

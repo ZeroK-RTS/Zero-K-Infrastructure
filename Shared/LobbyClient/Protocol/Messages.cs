@@ -788,8 +788,8 @@ namespace LobbyClient
     public class PwAttackCharges
     {
         public int Current { get; set; }
-        /// <summary>Absolute galaxy turn on which the next charge will be granted. Null when at max or charges are disabled.</summary>
-        public int? NextRechargeTurn { get; set; }
+        /// <summary>UTC time at which the next charge will be granted, rounded up to a full minute. Null when at max or charges are disabled.</summary>
+        public DateTime? NextRechargeTime { get; set; }
     }
 
 

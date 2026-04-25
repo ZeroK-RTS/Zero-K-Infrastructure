@@ -511,6 +511,10 @@
     <Compile Include="Migrations\202604241242120_AddPwAttackCharges.Designer.cs">
       <DependentUpon>202604241242120_AddPwAttackCharges.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202604251056090_AddPwChargesWallclock.cs" />
+    <Compile Include="Migrations\202604251056090_AddPwChargesWallclock.Designer.cs">
+      <DependentUpon>202604251056090_AddPwChargesWallclock.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -973,6 +977,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202604241242120_AddPwAttackCharges.resx">
       <DependentUpon>202604241242120_AddPwAttackCharges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202604251056090_AddPwChargesWallclock.resx">
+      <DependentUpon>202604251056090_AddPwChargesWallclock.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

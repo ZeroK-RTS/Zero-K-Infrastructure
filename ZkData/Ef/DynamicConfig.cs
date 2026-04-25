@@ -46,8 +46,8 @@ namespace ZkData
         [Description("PlanetWars: maximum attack charges a player can hold. 0 disables the charge system.")]
         public int PwAttackChargesMax { get; set; } = 2;
 
-        [Description("PlanetWars: turns a player must be idle (no spend/gain) before their next +1 passive charge, up to max. Every charge gain or loss resets this clock, so the average regen rate is at most 1 charge per this many turns.")]
-        public int PwAttackChargesCooldownTurns { get; set; } = 4;
+        [Description("PlanetWars: minutes a player must be idle (no spend/gain) before their next +1 passive charge, up to max. Every charge gain or loss resets this clock, so the average regen rate is at most 1 charge per this many minutes.")]
+        public int PwAttackChargesCooldownMinutes { get; set; } = 60;
 
         [Description("PlanetWars: fraction of enemy bomber IP damage also applied to the bomber's own faction. 0 disables self-damage.")]
         public double PwBomberSelfIpRate { get; set; } = 0.5;

@@ -28,6 +28,7 @@ namespace ZeroKWeb
         private DateTime? defendersFullTime; // set when every formed squad has enough defender volunteers
 
         private Timer timer;
+        private DateTime lastChargeRechargeCheck = DateTime.MinValue;
 
         public PlanetWarsMatchMaker(ZkLobbyServer.ZkLobbyServer server)
         {
@@ -108,6 +109,12 @@ namespace ZeroKWeb
                     lastPlanetWarsMode = MiscVar.PlanetWarsMode;
                 }
 
+                if (DateTime.UtcNow - lastChargeRechargeCheck >= TimeSpan.FromMinutes(1))
+                {
+                    lastChargeRechargeCheck = DateTime.UtcNow;
+                    await ProcessChargeRecharge();
+                }
+
                 if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running) return;
 
                 // clean up stale running battles (e.g. if Spring process crashed)
@@ -119,7 +126,6 @@ namespace ZeroKWeb
                     case PwPhase.AttackCollect:
                         if (DateTime.UtcNow > GetAttackDeadline())
                         {
-                            await ApplyTurnEndChargeBump();
                             RunSquadFormation();
                             if (FormedSquads.Any())
                             {
@@ -506,9 +512,8 @@ namespace ZeroKWeb
                 List<Account> accounts;
                 using (var db = new ZkDataContext())
                 {
-                    var turn = db.Galaxies.First(g => g.IsDefault).Turn;
                     accounts = db.Accounts.Where(a => playerNames.Contains(a.Name)).ToList();
-                    foreach (var acc in accounts) acc.SpendPwAttackCharge(turn);
+                    foreach (var acc in accounts) acc.SpendPwAttackCharge();
                     db.SaveChanges();
                 }
                 await Task.WhenAll(accounts.Select(acc => SendPwAttackCharges(server, acc.Name, acc)));
@@ -1179,13 +1184,13 @@ namespace ZeroKWeb
         public static PwAttackCharges BuildPwAttackCharges(Account account)
         {
             var max = DynamicConfig.Instance.PwAttackChargesMax;
-            int? nextRechargeTurn = null;
-            if (max > 0 && account.PwAttackCharges < max && account.PwLastChargeChangeTurn != null)
-                nextRechargeTurn = account.PwLastChargeChangeTurn.Value + DynamicConfig.Instance.PwAttackChargesCooldownTurns;
+            DateTime? nextRechargeTime = null;
+            if (max > 0 && account.PwAttackCharges < max && account.PwLastChargeChange != null)
+                nextRechargeTime = account.PwLastChargeChange.Value.AddMinutes(DynamicConfig.Instance.PwAttackChargesCooldownMinutes).CeilingToMinute();
             return new PwAttackCharges
             {
                 Current = account.PwAttackCharges,
-                NextRechargeTurn = nextRechargeTurn,
+                NextRechargeTime = nextRechargeTime,
             };
         }
 
@@ -1208,28 +1213,28 @@ namespace ZeroKWeb
             }
         }
 
-        private async Task ApplyTurnEndChargeBump()
+        private async Task ProcessChargeRecharge()
         {
             try
             {
                 var max = DynamicConfig.Instance.PwAttackChargesMax;
                 if (max <= 0) return;
-                var cooldown = DynamicConfig.Instance.PwAttackChargesCooldownTurns;
+                var cooldownMinutes = DynamicConfig.Instance.PwAttackChargesCooldownMinutes;
+                // +35s offset: displayed nextRechargeTime is rounded up to a full minute. Bumping the
+                // eligibility window forward absorbs ≤1min jitter between the recharge check and the
+                // displayed minute boundary, so the user never sees the time pass without the grant.
+                var threshold = DateTime.UtcNow.AddSeconds(35).AddMinutes(-cooldownMinutes);
 
                 List<Account> bumped;
                 using (var db = new ZkDataContext())
                 {
-                    var turn = db.Galaxies.First(g => g.IsDefault).Turn;
                     bumped = db.Accounts.Where(a =>
                         a.FactionID != null &&
                         a.PwAttackCharges < max &&
-                        (a.PwLastChargeChangeTurn == null || turn - a.PwLastChargeChangeTurn >= cooldown)).ToList();
+                        a.PwLastChargeChange != null &&
+                        a.PwLastChargeChange <= threshold).ToList();
 
-                    foreach (var acc in bumped)
-                    {
-                        acc.PwAttackCharges++;
-                        acc.PwLastChargeChangeTurn = turn;
-                    }
+                    foreach (var acc in bumped) acc.GrantPwAttackCharge(max);
 
                     if (bumped.Count > 0) db.SaveChanges();
                 }
@@ -1238,7 +1243,7 @@ namespace ZeroKWeb
             }
             catch (Exception ex)
             {
-                Trace.TraceError("PlanetWars turn-end charge bump error: {0}", ex);
+                Trace.TraceError("PlanetWars charge recharge tick error: {0}", ex);
             }
         }
 

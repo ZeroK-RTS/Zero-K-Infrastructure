@@ -180,7 +180,7 @@ public static class PlanetWarsTurnHandler
             {
                 foreach (Account w in defenders)
                 {
-                    w.GrantPwAttackCharge(maxCharges, gal.Turn);
+                    w.GrantPwAttackCharge(maxCharges);
                     _ = ZeroKWeb.PlanetWarsMatchMaker.SendPwAttackCharges(server, w.Name, w);
                 }
             }
