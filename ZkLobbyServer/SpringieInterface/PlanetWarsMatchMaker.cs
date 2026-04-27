@@ -129,6 +129,13 @@ namespace ZeroKWeb
                             RunSquadFormation();
                             if (FormedSquads.Any())
                             {
+                                // Charge spend happens here, the moment squads are formed — every attacker in
+                                // a FormedSquad has irrevocably committed (see disconnect locking above), so
+                                // there is no path that gives the charge back. LaunchAllBattles no longer
+                                // touches charges.
+                                var attackerNames = FormedSquads.SelectMany(s => s.Attackers).Distinct().ToList();
+                                if (attackerNames.Count > 0) await SpendAttackCharges(attackerNames);
+
                                 Phase = PwPhase.DefendCollect;
                                 PhaseStartTime = DateTime.UtcNow;
                                 UpdateLobby();
@@ -447,15 +454,15 @@ namespace ZeroKWeb
 
         private async Task LaunchAllBattles()
         {
-            // charges are spent only for attackers whose squad reached a confirmed outcome — either
-            // the Spring battle successfully started, or it was a concede. Battles that fail to start
-            // (StartGame returned false, or setup threw) refund the commitment.
-            var attackerNamesToChargeSpend = new List<string>();
+            // Charges are spent at end of AttackCollect (squad formation), not here. By the time we launch,
+            // the commitment is final regardless of whether StartGame succeeds or the squad concedes.
 
             // one battle per squad — no merging across attacker factions (each (planet, attacker-faction) is its own slot)
             foreach (var squad in FormedSquads.ToList())
             {
-                squad.Attackers = squad.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
+                // Attackers are locked at squad formation; we do NOT drop disconnected ones — they keep their
+                // slot in the Spring script and can reconnect into the running battle. Defenders are looser —
+                // a defender who disconnected after RunDefenderAssignment is dropped here.
                 squad.Defenders = squad.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
 
                 if (squad.Attackers.Count == 0) continue;
@@ -474,7 +481,6 @@ namespace ZeroKWeb
 
                         if (await battle.StartGame())
                         {
-                            attackerNamesToChargeSpend.AddRange(squad.Attackers);
                             var attackerFactionShortcut = GetFactionShortcut(squad.AttackerFactionID) ?? "?";
                             var text = $"Battle for planet {squad.Name} ({attackerFactionShortcut} attacks) starts on zk://@join_player:{squad.Attackers.FirstOrDefault()}  Roster: {string.Join(",", squad.Attackers)} vs {string.Join(",", squad.Defenders)}";
                             foreach (var fac in factions) await server.GhostChanSay(fac.Shortcut, text);
@@ -492,15 +498,12 @@ namespace ZeroKWeb
                 }
                 else
                 {
-                    // concede — zero defenders. Attackers still "attacked", so charge applies.
-                    attackerNamesToChargeSpend.AddRange(squad.Attackers);
+                    // concede — zero defenders. Charge was already spent at end of AttackCollect.
                     RecordPlanetwarsLoss(squad);
                 }
             }
 
             FormedSquads.Clear();
-
-            if (attackerNamesToChargeSpend.Count > 0) await SpendAttackCharges(attackerNamesToChargeSpend);
         }
 
         private async Task SpendAttackCharges(List<string> playerNames)
@@ -738,11 +741,12 @@ namespace ZeroKWeb
                 }
                 else if (Phase == PwPhase.DefendCollect)
                 {
+                    // Attackers are locked at squad formation: a disconnect must NOT release them, otherwise
+                    // they could reconnect and switch into a defense slot (or simply dodge their charge spend).
+                    // They stay in squad.Attackers and are carried into the launched Spring battle so they can
+                    // reconnect into the running game.
                     foreach (var squad in FormedSquads)
-                    {
                         changed |= squad.DefenderVotes.RemoveAll(x => x == name) > 0;
-                        changed |= squad.Attackers.RemoveAll(x => x == name) > 0;
-                    }
                     if (changed) UpdateDefendersFullTime();
                 }
 
@@ -767,6 +771,7 @@ namespace ZeroKWeb
             public int PlanetId;
             public int? AttackerFactionId;
             public string AttackerFactionShortcut;
+            public string OwnerFactionShortcut;
             public string PlanetName;
             public string Map;
             public int IconSize;
@@ -808,6 +813,7 @@ namespace ZeroKWeb
                         PlanetId = opt.PlanetID,
                         AttackerFactionId = opt.AttackerFactionID,
                         AttackerFactionShortcut = GetFactionShortcut(opt.AttackerFactionID),
+                        OwnerFactionShortcut = GetFactionShortcut(opt.OwnerFactionID),
                         PlanetName = opt.Name,
                         Map = opt.Map,
                         IconSize = opt.IconSize,
@@ -841,6 +847,7 @@ namespace ZeroKWeb
                         PlanetId = squad.PlanetID,
                         AttackerFactionId = squad.AttackerFactionID,
                         AttackerFactionShortcut = GetFactionShortcut(squad.AttackerFactionID),
+                        OwnerFactionShortcut = GetFactionShortcut(squad.OwnerFactionID),
                         PlanetName = squad.Name,
                         Map = squad.Map,
                         IconSize = squad.IconSize,
@@ -904,6 +911,7 @@ namespace ZeroKWeb
                         PlayerIsAttacker = playerName != null && s.AttackerNames.Contains(playerName),
                         PlayerIsDefender = false,
                         AttackerFaction = s.AttackerFactionShortcut,
+                        OwnerFaction = s.OwnerFactionShortcut,
                         AttackerAvgWhr = s.AttackerAvgWhr,
                         DefenderAvgWhr = null,
                         WinChance = null,
@@ -938,6 +946,7 @@ namespace ZeroKWeb
                             PlayerIsAttacker = playerIsAttacker,
                             PlayerIsDefender = playerName != null && s.DefenderNames.Contains(playerName),
                             AttackerFaction = s.AttackerFactionShortcut,
+                            OwnerFaction = s.OwnerFactionShortcut,
                             AttackerAvgWhr = s.AttackerAvgWhr,
                             DefenderAvgWhr = s.DefenderAvgWhr,
                             WinChance = s.WinChance,
@@ -1184,8 +1193,12 @@ namespace ZeroKWeb
         public static PwAttackCharges BuildPwAttackCharges(Account account)
         {
             var max = DynamicConfig.Instance.PwAttackChargesMax;
+            // Passive recharge stops at PwAttackChargesPassiveLimit; charges above that come only from active
+            // grants (e.g. defense rewards). Show NextRechargeTime only while the player is still under the
+            // passive cap — once they're at or above it, no passive tick is coming.
+            var passiveLimit = Math.Min(DynamicConfig.Instance.PwAttackChargesPassiveLimit, max);
             DateTime? nextRechargeTime = null;
-            if (max > 0 && account.PwAttackCharges < max && account.PwLastChargeChange != null)
+            if (max > 0 && account.PwAttackCharges < passiveLimit && account.PwLastChargeChange != null)
                 nextRechargeTime = account.PwLastChargeChange.Value.AddMinutes(DynamicConfig.Instance.PwAttackChargesCooldownMinutes).CeilingToMinute();
             return new PwAttackCharges
             {
@@ -1219,6 +1232,12 @@ namespace ZeroKWeb
             {
                 var max = DynamicConfig.Instance.PwAttackChargesMax;
                 if (max <= 0) return;
+                // Passive recharge tops out at PwAttackChargesPassiveLimit (clamped to max). Active grants
+                // (defense rewards) can push players above this and they keep what they have, but no idle
+                // tick will. Default of 1 means a player who logged off at 0 wakes up tomorrow with one
+                // charge — enough to attack OR to incentivise defending to stockpile more.
+                var passiveLimit = Math.Min(DynamicConfig.Instance.PwAttackChargesPassiveLimit, max);
+                if (passiveLimit <= 0) return;
                 var cooldownMinutes = DynamicConfig.Instance.PwAttackChargesCooldownMinutes;
                 // +35s offset: displayed nextRechargeTime is rounded up to a full minute. Bumping the
                 // eligibility window forward absorbs ≤1min jitter between the recharge check and the
@@ -1230,11 +1249,11 @@ namespace ZeroKWeb
                 {
                     bumped = db.Accounts.Where(a =>
                         a.FactionID != null &&
-                        a.PwAttackCharges < max &&
+                        a.PwAttackCharges < passiveLimit &&
                         a.PwLastChargeChange != null &&
                         a.PwLastChargeChange <= threshold).ToList();
 
-                    foreach (var acc in bumped) acc.GrantPwAttackCharge(max);
+                    foreach (var acc in bumped) acc.GrantPwAttackCharge(passiveLimit);
 
                     if (bumped.Count > 0) db.SaveChanges();
                 }
@@ -1285,6 +1304,7 @@ namespace ZeroKWeb
                 PlanetWarsNextModeTime = MiscVar.PlanetWarsNextModeTime,
                 AttackerPhaseMinutes = GlobalConst.PlanetWarsMinutesToAttack,
                 DefenderPhaseMinutes = GlobalConst.PlanetWarsMinutesToAccept,
+                MaxAttackCharges = DynamicConfig.Instance.PwAttackChargesMax,
             };
         }
 

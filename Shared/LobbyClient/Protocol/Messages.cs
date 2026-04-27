@@ -715,6 +715,9 @@ namespace LobbyClient
             /// key that identifies this attack slot. Clients must echo it back in <see cref="PwJoinPlanet"/>.
             /// </summary>
             public string AttackerFaction { get; set; }
+            /// <summary>Faction shortcut of the planet's current owner, or null for neutral planets. Lets the
+            /// lobby surface "you own this", "ally owns this", "neutral" hints during attack/defense pick.</summary>
+            public string OwnerFaction { get; set; }
             /// <summary>Average PW-WHR of the projected attacker squad (top-TeamSize volunteers). 0 when none.</summary>
             public int AttackerAvgWhr { get; set; }
             /// <summary>Average PW-WHR of the projected defender squad. Null in AttackCollect phase or when no volunteers.</summary>
@@ -782,6 +785,9 @@ namespace LobbyClient
         public int MinLevel { get; set; }
         public int AttackerPhaseMinutes { get; set; }
         public int DefenderPhaseMinutes { get; set; }
+        /// <summary>Server's configured max attack charges. Lobby renders X/Max in the charges UI;
+        /// before this field existed Chobby hardcoded 2 as the fallback default.</summary>
+        public int MaxAttackCharges { get; set; }
     }
 
     [Message(Origin.Server)]

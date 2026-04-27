@@ -366,10 +366,12 @@ namespace ZeroKWeb.Controllers
                 gal.EndMessage = null;
                 db.SaveChanges();
 
-                var maxCharges = DynamicConfig.Instance.PwAttackChargesMax;
+                // Seed everyone at the passive recharge limit, not the absolute max — defending as the very
+                // first PW action of the new galaxy then has a tangible reward (stockpiling above passive cap).
+                var initialCharges = Math.Min(DynamicConfig.Instance.PwAttackChargesPassiveLimit, DynamicConfig.Instance.PwAttackChargesMax);
                 db.Accounts.Where(x => x.FactionID != null).Update(x => new Account()
                 {
-                    PwAttackCharges = maxCharges,
+                    PwAttackCharges = initialCharges,
                     PwLastChargeChange = null,
                 });
             }

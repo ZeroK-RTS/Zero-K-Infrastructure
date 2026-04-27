@@ -49,6 +49,9 @@ namespace ZkData
         [Description("PlanetWars: minutes a player must be idle (no spend/gain) before their next +1 passive charge, up to max. Every charge gain or loss resets this clock, so the average regen rate is at most 1 charge per this many minutes.")]
         public int PwAttackChargesCooldownMinutes { get; set; } = 60;
 
+        [Description("PlanetWars: cap on charges obtainable through passive idle recharge. Players may exceed this via active grants (e.g. defense rewards) and keep what they have, but the recharge tick will not push them above this value. Should be <= PwAttackChargesMax.")]
+        public int PwAttackChargesPassiveLimit { get; set; } = 1;
+
         [Description("PlanetWars: fraction of enemy bomber IP damage also applied to the bomber's own faction. 0 disables self-damage.")]
         public double PwBomberSelfIpRate { get; set; } = 0.5;
 
