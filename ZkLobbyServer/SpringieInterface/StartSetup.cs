@@ -100,7 +100,8 @@ namespace ZeroKWeb.SpringieInterface
                     ret.ModOptions["planet"] = planet.Name;
                     ret.ModOptions["pw_galaxyTurn"] = galaxy.Turn.ToString();
 
-                    ret.ModOptions["pw_baseIP"] = GlobalConst.BaseInfluencePerBattle.ToString(CultureInfo.InvariantCulture);
+                    var attackerCount = context.Players.Count(x => !x.IsSpectator && x.AllyID == 0);
+                    ret.ModOptions["pw_baseIP"] = (GlobalConst.BaseInfluencePerBattle + attackerCount * GlobalConst.InfluencePerAttacker).ToString(CultureInfo.InvariantCulture);
                     ret.ModOptions["pw_dropshipIP"] = planet.GetEffectiveShipIpBonus(attacker).ToString(CultureInfo.InvariantCulture);
                     ret.ModOptions["pw_defenseIP"] = planet.GetEffectiveIpDefense().ToString(CultureInfo.InvariantCulture);
                     ret.ModOptions["pw_attackerIP"] = (planet.PlanetFactions.FirstOrDefault(x => x.FactionID == attacker.FactionID)?.Influence ?? 0).ToString(CultureInfo.InvariantCulture);

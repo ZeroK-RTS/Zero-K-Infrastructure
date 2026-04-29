@@ -38,7 +38,26 @@ namespace ZkData
 
         [Description("Map vote always tries to include some of the most popular maps (precentile <0.2), this value controls how big fraction of offers is most popular maps.")]
         public double MapVoteFractionOfPopularMaps { get; set; } = 0.5;
+
         
+        [Description("PlanetWars: number of attack options shown to the attacking faction each turn.")]
+        public int PwAttackOptionCount { get; set; } = 6;
+
+        [Description("PlanetWars: maximum attack charges a player can hold. 0 disables the charge system.")]
+        public int PwAttackChargesMax { get; set; } = 2;
+
+        [Description("PlanetWars: minutes a player must be idle (no spend/gain) before their next +1 passive charge, up to max. Every charge gain or loss resets this clock, so the average regen rate is at most 1 charge per this many minutes.")]
+        public int PwAttackChargesCooldownMinutes { get; set; } = 60;
+
+        [Description("PlanetWars: cap on charges obtainable through passive idle recharge. Players may exceed this via active grants (e.g. defense rewards) and keep what they have, but the recharge tick will not push them above this value. Should be <= PwAttackChargesMax.")]
+        public int PwAttackChargesPassiveLimit { get; set; } = 1;
+
+        [Description("PlanetWars: fraction of enemy bomber IP damage also applied to the bomber's own faction. 0 disables self-damage.")]
+        public double PwBomberSelfIpRate { get; set; } = 0.5;
+
+        [Description("PlanetWars: minimum IP (0-100) below which bombers cannot push any faction. 0 disables the floor.")]
+        public double PwBomberMinimumIpFloor { get; set; } = 5.0;
+
 
         public static DynamicConfig Instance;
 

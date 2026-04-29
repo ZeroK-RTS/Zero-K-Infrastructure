@@ -153,6 +153,8 @@ namespace ZkData
         public double PwWarpProduced { get; set; }
         public double PwWarpUsed { get; set; }
         public double PwAttackPoints { get; set; }
+        public int PwAttackCharges { get; set; }
+        public DateTime? PwLastChargeChange { get; set; }
         public bool HasVpnException { get; set; }
         public bool HasKudos { get; set; }
         public int ForumTotalUpvotes { get; set; }
@@ -528,6 +530,21 @@ namespace ZkData
             PwMetalUsed = 0;
         }
 
+
+
+        public void SpendPwAttackCharge()
+        {
+            if (PwAttackCharges > 0) PwAttackCharges--;
+            PwLastChargeChange = DateTime.UtcNow;
+        }
+
+        public void GrantPwAttackCharge(int maxCharges)
+        {
+            if (maxCharges <= 0) return;
+            if (PwAttackCharges >= maxCharges) return;
+            PwAttackCharges++;
+            PwLastChargeChange = DateTime.UtcNow;
+        }
 
 
         public void SpendBombers(double count)

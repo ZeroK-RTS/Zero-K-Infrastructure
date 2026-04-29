@@ -322,10 +322,10 @@ namespace ZkLobbyServer
                 });
         }
 
-        public async Task RequestJoinPlanet(string name, int planetID)
+        public async Task RequestJoinPlanet(string name, int planetId, string attackerFaction)
         {
             var conus = ConnectedUsers.Get(name);
-            if (conus != null) await conus.SendCommand(new PwRequestJoinPlanet() { PlanetID = planetID });
+            if (conus != null) await conus.SendCommand(new PwRequestJoinPlanet() { PlanetID = planetId, AttackerFaction = attackerFaction });
         }
 
         public Task GhostPm(string name, string text)

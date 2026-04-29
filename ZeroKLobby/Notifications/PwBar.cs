@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
@@ -59,9 +60,11 @@ namespace ZeroKLobby.Notifications
                     deadline = DateTime.Now.AddSeconds(pw.DeadlineSeconds);
                     timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining(pw.DeadlineSeconds);
 
+                    var attackerFactionsText = string.Join(",", pw.AttackerFactions ?? new List<string>());
+
                     if (pw.Mode == PwMatchCommand.ModeType.Attack)
                     {
-                        headerLabel.Text = string.Format("{0} picks a planet to attack", pw.AttackerFaction);
+                        headerLabel.Text = string.Format("{0} picks a planet to attack", attackerFactionsText);
 
                         foreach (Button c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
 
@@ -72,7 +75,7 @@ namespace ZeroKLobby.Notifications
                             var but = new Button { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
                             Program.ToolTip.SetMap(but, opt.Map);
 
-                            if (pw.AttackerFaction == tas.MyUser.Faction) // NOTE this is for cases where nightwatch self faction info is delayed
+                            if (pw.AttackerFactions != null && pw.AttackerFactions.Contains(tas.MyUser.Faction))
                             {
                                 AddButtonClick(opt, but);
                             }
@@ -83,7 +86,7 @@ namespace ZeroKLobby.Notifications
                     else if (pw.Mode == PwMatchCommand.ModeType.Defend)
                     {
                         headerLabel.Text = string.Format("{0} attacks, {1} defends",
-                            pw.AttackerFaction,
+                            attackerFactionsText,
                             string.Join(",", pw.DefenderFactions));
 
                         foreach (Button c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);

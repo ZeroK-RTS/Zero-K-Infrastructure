@@ -34,6 +34,12 @@ namespace PlasmaShared
             if (o != null) o.Dispose();
         }
 
+        public static DateTime CeilingToMinute(this DateTime d)
+        {
+            var floored = new DateTime(d.Year, d.Month, d.Day, d.Hour, d.Minute, 0, d.Kind);
+            return d == floored ? d : floored.AddMinutes(1);
+        }
+
         public static IEnumerable<Indexed<T>> ToIndexedList<T>(this IEnumerable<T> enumeration)
         {
             return enumeration.Select((x, i) => new Indexed<T>(x, i));

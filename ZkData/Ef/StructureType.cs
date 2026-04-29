@@ -61,7 +61,10 @@ namespace ZkData
 
         public double? EffectPreventInfluenceDecayBelow { get; set; }
 
-        
+        public bool? EffectBlocksBombers { get; set; }
+        public bool? EffectBlocksInvasion { get; set; }
+
+
         public double Cost { get; set; }
         public bool IsBuildable { get; set; }
         public bool IsIngameDestructible { get; set; }

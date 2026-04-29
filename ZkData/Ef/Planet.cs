@@ -93,31 +93,46 @@ namespace ZkData
             return PlanetStructures.Sum(y => (int?)y.StructureType.UpkeepEnergy) ?? 0;
         }
 
+        public bool BlocksBombers()
+        {
+            return PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectBlocksBombers == true);
+        }
+
+        public bool BlocksInvasion()
+        {
+            return PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectBlocksInvasion == true);
+        }
+
         public bool CanDropshipsAttack(Faction attacker)
         {
             if (attacker.FactionID == OwnerFactionID) return false; // cannot attack own
+            if (BlocksInvasion()) return false;
             return CheckLinkAttack(attacker, x => x.EffectPreventDropshipAttack == true, x => x.EffectAllowDropshipPass == true);
         }
 
         public bool CanDropshipsWarp(Faction attacker)
         {
             if (attacker.FactionID == OwnerFactionID) return false; // cannot attack own
+            if (BlocksInvasion()) return false;
             return CheckWarpAttack(attacker, x => x.EffectPreventDropshipAttack == true);
         }
 
         public bool CanBombersAttack(Faction attacker)
         {
+            if (BlocksBombers()) return false;
             return CheckLinkAttack(attacker, x => x.EffectPreventBomberAttack == true, x => x.EffectAllowBomberPass == true);
         }
 
         public bool CanBombersWarp(Faction attacker)
         {
+            if (BlocksBombers()) return false;
             return CheckWarpAttack(attacker, x => x.EffectPreventBomberAttack == true);
         }
 
         public bool CanMatchMakerPlay(Faction attacker)
         {
             if (attacker == null) return false;
+            if (BlocksInvasion()) return false;
 
             if (CanDropshipsAttack(attacker) ||
                 PlanetFactions.Where(x => x.FactionID == attacker.FactionID).Sum(y => y.Dropships) >
