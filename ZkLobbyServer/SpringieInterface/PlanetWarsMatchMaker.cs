@@ -928,6 +928,10 @@ namespace ZeroKWeb
                 }
                 else // DefendCollect
                 {
+                    // attack/defend are mutually exclusive across the whole cycle (see JoinPlanetDefense),
+                    // so any squad's attacker list disqualifies this player from defending ANY squad.
+                    var playerIsAttackerAnywhere = playerName != null && snapshot.Options.Any(o => o.AttackerNames.Contains(playerName));
+
                     var options = snapshot.Options.Select(s =>
                     {
                         var playerIsAttacker = playerName != null && s.AttackerNames.Contains(playerName);
@@ -942,7 +946,7 @@ namespace ZeroKWeb
                             PlanetImage = s.PlanetImage,
                             Count = s.Count,
                             Needed = s.Needed,
-                            CanSelectForBattle = canDefend && !playerIsAttacker,
+                            CanSelectForBattle = canDefend && !playerIsAttackerAnywhere,
                             PlayerIsAttacker = playerIsAttacker,
                             PlayerIsDefender = playerName != null && s.DefenderNames.Contains(playerName),
                             AttackerFaction = s.AttackerFactionShortcut,
