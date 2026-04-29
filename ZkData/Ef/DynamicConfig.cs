@@ -58,6 +58,12 @@ namespace ZkData
         [Description("PlanetWars: minimum IP (0-100) below which bombers cannot push any faction. 0 disables the floor.")]
         public double PwBomberMinimumIpFloor { get; set; } = 5.0;
 
+        [Description("PlanetWars: length in minutes of the attack-collect phase (attackers pick a target).")]
+        public int PwAttackPhaseMinutes { get; set; } = 2;
+
+        [Description("PlanetWars: length in minutes of the defend-collect phase (defenders accept).")]
+        public int PwDefendPhaseMinutes { get; set; } = 2;
+
 
         public static DynamicConfig Instance;
 

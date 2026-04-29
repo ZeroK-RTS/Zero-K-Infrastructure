@@ -519,6 +519,10 @@
     <Compile Include="Migrations\202604271235020_AddPwAttackChargesPassiveLimit.Designer.cs">
       <DependentUpon>202604271235020_AddPwAttackChargesPassiveLimit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202604290948595_AddPwPhaseMinutes.cs" />
+    <Compile Include="Migrations\202604290948595_AddPwPhaseMinutes.Designer.cs">
+      <DependentUpon>202604290948595_AddPwPhaseMinutes.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -987,6 +991,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202604271235020_AddPwAttackChargesPassiveLimit.resx">
       <DependentUpon>202604271235020_AddPwAttackChargesPassiveLimit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202604290948595_AddPwPhaseMinutes.resx">
+      <DependentUpon>202604290948595_AddPwPhaseMinutes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -1139,12 +1139,12 @@ namespace ZeroKWeb
             if (AttackOptions.Count == 0)
                 return PhaseStartTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttackIfNoOption);
 
-            return PhaseStartTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttack);
+            return PhaseStartTime.AddMinutes(DynamicConfig.Instance.PwAttackPhaseMinutes);
         }
 
         private DateTime GetDefendDeadline()
         {
-            return PhaseStartTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAccept);
+            return PhaseStartTime.AddMinutes(DynamicConfig.Instance.PwDefendPhaseMinutes);
         }
 
         /// <summary>
@@ -1302,8 +1302,8 @@ namespace ZeroKWeb
                 MinLevel = GlobalConst.MinPlanetWarsLevel,
                 PlanetWarsNextMode = MiscVar.PlanetWarsNextMode,
                 PlanetWarsNextModeTime = MiscVar.PlanetWarsNextModeTime,
-                AttackerPhaseMinutes = GlobalConst.PlanetWarsMinutesToAttack,
-                DefenderPhaseMinutes = GlobalConst.PlanetWarsMinutesToAccept,
+                AttackerPhaseMinutes = DynamicConfig.Instance.PwAttackPhaseMinutes,
+                DefenderPhaseMinutes = DynamicConfig.Instance.PwDefendPhaseMinutes,
                 MaxAttackCharges = DynamicConfig.Instance.PwAttackChargesMax,
             };
         }
