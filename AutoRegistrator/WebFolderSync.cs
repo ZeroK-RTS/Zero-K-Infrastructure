@@ -15,7 +15,10 @@ namespace ZeroKWeb
             var ret = new List<string>();
             using (var wc = new WebClient())
             {
-                var url = $"{GlobalConst.SpringfilesBaseUrl}json.php?category=map&springname=*&logical=or&nosensitive=on&limit=1000000&offset=0";
+                // category=map alone makes the server filter to maps (~3570 entries today). Earlier we used
+                // springname=*&logical=or which UNION'd all categories and exceeded the server's response cap
+                // (~4200 entries) when limit was set high — caused 500s. See git history.
+                var url = $"{GlobalConst.SpringfilesBaseUrl}json.php?category=map&limit=100000&offset=0";
                 var json = wc.DownloadString(url);
                 var entries = JsonConvert.DeserializeObject<List<SpringfilesEntry>>(json);
                 if (entries == null) return ret;
