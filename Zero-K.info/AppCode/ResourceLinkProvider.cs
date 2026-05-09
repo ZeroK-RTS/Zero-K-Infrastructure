@@ -89,12 +89,12 @@ namespace ZeroKWeb
                 return content.LinkCount > 0;
 
             var md5 = content.Md5;
-            return InflightProbes.GetOrAdd(md5, key => new Lazy<Task<bool>>(
-                () => Task.Run(() => RunProbe(key)),
-                LazyThreadSafetyMode.ExecutionAndPublication)).Value.Result;
+            return InflightProbes.GetOrAdd(md5, key => new Lazy<bool>(
+                () => RunProbe(key),
+                LazyThreadSafetyMode.ExecutionAndPublication)).Value;
         }
 
-        // The cache re-check inside the using block covers the gap between Task completion
+        // The cache re-check inside the using block covers the gap between Lazy completion
         // and InflightProbes eviction — a caller arriving in that window creates a new Lazy
         // but the new probe sees the just-persisted LastLinkCheck and skips the HEAD.
         static bool RunProbe(string md5)
@@ -121,7 +121,7 @@ namespace ZeroKWeb
             }
             finally
             {
-                Lazy<Task<bool>> _;
+                Lazy<bool> _;
                 InflightProbes.TryRemove(md5, out _);
             }
         }
