@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using ZkData;
 
 namespace ZeroKWeb
@@ -15,9 +14,10 @@ namespace ZeroKWeb
     {
         const double SpringfilesRecheckHours = 24;
 
-        // dedup concurrent springfiles probes per Md5 — Lazy guarantees a single Task even under contention
-        static readonly ConcurrentDictionary<string, Lazy<Task<bool>>> InflightProbes
-            = new ConcurrentDictionary<string, Lazy<Task<bool>>>();
+        // dedup concurrent springfiles probes per Md5 — Lazy<bool> with ExecutionAndPublication
+        // ensures the factory (the actual probe) runs exactly once; concurrent callers block on .Value
+        static readonly ConcurrentDictionary<string, Lazy<bool>> InflightProbes
+            = new ConcurrentDictionary<string, Lazy<bool>>();
 
         public static bool GetLinksAndTorrent(string internalName,
                                               out List<string> links,
@@ -89,16 +89,15 @@ namespace ZeroKWeb
                 return content.LinkCount > 0;
 
             var md5 = content.Md5;
-            var length = content.Length;
             return InflightProbes.GetOrAdd(md5, key => new Lazy<Task<bool>>(
-                () => Task.Run(() => RunProbe(key, url, length)),
+                () => Task.Run(() => RunProbe(key)),
                 LazyThreadSafetyMode.ExecutionAndPublication)).Value.Result;
         }
 
         // The cache re-check inside the using block covers the gap between Task completion
         // and InflightProbes eviction — a caller arriving in that window creates a new Lazy
         // but the new probe sees the just-persisted LastLinkCheck and skips the HEAD.
-        static bool RunProbe(string md5, string url, int length)
+        static bool RunProbe(string md5)
         {
             try
             {

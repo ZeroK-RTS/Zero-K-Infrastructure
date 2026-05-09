@@ -193,7 +193,7 @@ namespace ZeroKWeb
                 if (!alreadyRegistered)
                 {
                     var results = UnitSyncer.Scan();
-                    var ourResult = results?.FirstOrDefault(r => r.ResourceInfo?.ArchiveName == file);
+                    var ourResult = results?.FirstOrDefault(r => string.Equals(r.ResourceInfo?.ArchiveName, file, StringComparison.OrdinalIgnoreCase));
                     registered = ourResult != null && ourResult.Status != UnitSyncer.ResourceFileStatus.RegistrationError;
 
                     using (var db = new ZkDataContext())
