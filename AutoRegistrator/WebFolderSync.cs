@@ -1,69 +1,62 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using ZkData;
 
 namespace ZeroKWeb
 {
     public class WebFolderSyncer
     {
-        private string urlSource;
-
-        public WebFolderSyncer(string urlSource = "http://api.springfiles.com/files/maps/")
-        {
-            this.urlSource = urlSource;
-        }
-
         public List<string> GetFileList()
         {
+            var ret = new List<string>();
             using (var wc = new WebClient())
             {
-                var str = wc.DownloadString(urlSource);
-                return (from Match m in Regex.Matches(str, "<a href=\"([^\"]+)\">([^<]+)</a>")
-                        where m.Success && m.Groups[1].Value == m.Groups[2].Value
-                        select m.Groups[1].Value).ToList();
+                var url = $"{GlobalConst.SpringfilesBaseUrl}json.php?category=map&springname=*&logical=or&nosensitive=on&limit=1000000&offset=0";
+                var json = wc.DownloadString(url);
+                var entries = JsonConvert.DeserializeObject<List<SpringfilesEntry>>(json);
+                if (entries == null) return ret;
+                foreach (var e in entries)
+                {
+                    if (e?.path == "maps" && !string.IsNullOrEmpty(e.filename) && e.mirrors != null && e.mirrors.Length > 0)
+                        ret.Add(e.filename);
+                }
             }
+            return ret;
         }
 
-        public void DownloadFile(string targetFolder, string file)
+        public bool DownloadFile(string targetFolder, string file)
         {
             if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
             var targetFile = Path.Combine(targetFolder, file);
-            if (!File.Exists(targetFile))
+            if (File.Exists(targetFile)) return true;
+
+            var tempFile = Path.GetTempFileName();
+            using (var wc = new WebClient())
             {
-                using (var wc = new WebClient())
+                try
                 {
-                    var tempFile = Path.GetTempFileName();
-                    try
-                    {
-                        wc.DownloadFile(urlSource + file, tempFile);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceWarning("Download of file {0} failed: {1}", file, ex.Message);
-                        File.Delete(tempFile);
-                    }
-                    try
-                    {
-                        File.Move(tempFile, targetFile);
-                    }
-                    catch { }
+                    wc.DownloadFile($"{GlobalConst.SpringfilesBaseUrl}files/maps/{file}", tempFile);
+                    File.Move(tempFile, targetFile);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Springfiles download of {0} failed: {1}", file, ex.Message);
+                    try { File.Delete(tempFile); } catch { }
+                    return false;
                 }
             }
         }
 
-
-        public void SynchronizeFolders(string targetFolder)
+        private class SpringfilesEntry
         {
-            if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
-            foreach (var file in GetFileList())
-            {
-                DownloadFile(targetFolder, file);
-            }
+            public string filename { get; set; }
+            public string path { get; set; }
+            public string[] mirrors { get; set; }
         }
-
     }
 }

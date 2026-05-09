@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -153,31 +154,66 @@ namespace ZeroKWeb
 
         private void SynchronizeMapsFromSpringFiles()
         {
-            if (GlobalConst.Mode == ModeType.Live)
+            if (GlobalConst.Mode != ModeType.Live) return;
+
+            HashSet<string> processedFiles, triedFiles;
+            using (var db = new ZkDataContext())
             {
-                var db = new ZkDataContext();
+                processedFiles = new HashSet<string>(
+                    db.ResourceContentFiles.AsNoTracking()
+                        .Where(x => x.Resource.TypeID == ResourceType.Map)
+                        .Select(x => x.FileName.ToLower()));
+                triedFiles = new HashSet<string>(
+                    db.SpringFilesUnitsyncAttempts.AsNoTracking().Select(x => x.FileName.ToLower()));
+            }
 
-                var processedFiles = db.ResourceContentFiles.Where(x => x.Resource.TypeID == ResourceType.Map).Select(x => x.FileName.ToLower()).Distinct().ToLookup(x => x);
-                var triedFiles = db.SpringFilesUnitsyncAttempts.Select(x => x.FileName.ToLower()).Distinct().ToLookup(x => x);
+            var webSyncer = new WebFolderSyncer();
+            var autoregMaps = Path.Combine(Paths.WritableDirectory, "maps");
+            var contentMaps = Path.Combine(sitePath, "content", "maps");
+            if (!Directory.Exists(contentMaps)) Directory.CreateDirectory(contentMaps);
 
-                var webSyncer = new WebFolderSyncer();
+            foreach (var file in webSyncer.GetFileList())
+            {
+                var fileLc = file.ToLower();
+                var alreadyRegistered = processedFiles.Contains(fileLc);
+                var alreadyAttempted = triedFiles.Contains(fileLc);
+                var contentFile = Path.Combine(contentMaps, file);
+                var hasLocal = File.Exists(contentFile);
 
-                foreach (var file in webSyncer.GetFileList())
+                // skip cases:
+                //  - registered AND local copy present → nothing to do
+                //  - previously attempted but never made it into DB → known failure, don't retry
+                if (alreadyRegistered && hasLocal) continue;
+                if (alreadyAttempted && !alreadyRegistered) continue;
+
+                if (!webSyncer.DownloadFile(autoregMaps, file)) continue;
+                var srcFile = Path.Combine(autoregMaps, file);
+
+                var registered = alreadyRegistered;
+                if (!alreadyRegistered)
                 {
-                    if (processedFiles.Contains(file.ToLower()) || triedFiles.Contains(file.ToLower())) continue;
+                    var results = UnitSyncer.Scan();
+                    var ourResult = results?.FirstOrDefault(r => string.Equals(r.ResourceInfo?.ArchiveName, file, StringComparison.OrdinalIgnoreCase));
+                    registered = ourResult != null && ourResult.Status != UnitSyncer.ResourceFileStatus.RegistrationError;
 
-                    webSyncer.DownloadFile(Path.Combine(Paths.WritableDirectory,"maps"), file);
-                    
-                    UnitSyncer.Scan();
-
-                    db.SpringFilesUnitsyncAttempts.Add(new SpringFilesUnitsyncAttempt() { FileName = file });
-                    db.SaveChanges();
-
-                    try
+                    using (var db = new ZkDataContext())
                     {
-                        File.Delete(Path.Combine(Paths.WritableDirectory, "maps", file));
-                    } catch (Exception ex) { }
+                        db.SpringFilesUnitsyncAttempts.Add(new SpringFilesUnitsyncAttempt() { FileName = file });
+                        db.SaveChanges();
+                    }
+                    triedFiles.Add(fileLc);
                 }
+
+                if (registered && !hasLocal)
+                {
+                    try { File.Copy(srcFile, contentFile); }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("Copy {0} to content/maps failed: {1}", file, ex.Message);
+                    }
+                }
+
+                try { File.Delete(srcFile); } catch { }
             }
         }
 
