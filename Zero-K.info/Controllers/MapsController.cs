@@ -452,12 +452,18 @@ namespace ZeroKWeb.Controllers
                         using (var db = new ZkDataContext())
                         {
                             var resource = db.Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name);
-                            var contentFile = resource.ResourceContentFiles.FirstOrDefault(x => x.FileName == file.FileName);
-                            contentFile.Links = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{file.FileName}";
-                            contentFile.LinkCount = 1;
+                            // case-insensitive FileName match: DB row may have different casing than the
+                            // freshly-uploaded file (springfiles vs original-upload casing) — see issue #3052
+                            var contentFile = resource?.ResourceContentFiles.FirstOrDefault(
+                                x => string.Equals(x.FileName, file.FileName, StringComparison.OrdinalIgnoreCase));
+                            if (contentFile != null)
+                            {
+                                contentFile.Links = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{file.FileName}";
+                                contentFile.LinkCount = 1;
+                            }
 
                             // tag as special if required
-                            if (res.Status == UnitSyncer.ResourceFileStatus.Registered && specialMap)
+                            if (resource != null && res.Status == UnitSyncer.ResourceFileStatus.Registered && specialMap)
                             {
                                 resource.MapIsSpecial = true;
                             }
