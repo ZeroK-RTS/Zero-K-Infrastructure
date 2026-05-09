@@ -161,7 +161,7 @@ namespace ZeroKWeb
             try
             {
                 var wr = (HttpWebRequest)WebRequest.Create(url);
-                wr.Timeout = 5000;
+                wr.Timeout = 2000;
                 wr.Method = "HEAD";
                 using (var res = wr.GetResponse()) return res.ContentLength == length;
             }
