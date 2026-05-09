@@ -84,27 +84,36 @@ namespace ZeroKWeb
         {
             var thread = new Thread(() =>
             {
-                rerun:
                 try
                 {
                     Main();
-                    while (true)
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Autoregistrator startup failed: {0}", ex);
+                    return;
+                }
+
+                // loop body exceptions must NOT re-run Main(). Main() deletes all packages and maps, so a
+                // transient failure (e.g. springfiles 500) would otherwise wipe the engine + zk + chobby
+                // and prevent games from starting until everything finishes re-downloading.
+                while (true)
+                {
+                    try
                     {
                         Thread.Sleep(61 * 1000);
                         if (Downloader.PackageDownloader.DoMasterRefresh()) OnRapidChanged();
 
-                        
                         if (DateTime.UtcNow.Subtract(lastSpringFilesUpdate).TotalMinutes > 61)
                         {
                             lastSpringFilesUpdate = DateTime.UtcNow;
                             SynchronizeMapsFromSpringFiles();
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Autoregistrator failure: {0}", ex);
-                    goto rerun;
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Autoregistrator iteration failed (continuing): {0}", ex);
+                    }
                 }
             });
             thread.Start();
