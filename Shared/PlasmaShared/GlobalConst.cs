@@ -79,8 +79,6 @@ namespace ZkData
                     break;
             }
 
-            if (IsLongAfterSteam) DefaultDownloadMirrors = new[] { BaseSiteUrl +"/content/%t/%f" };
-
             ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
@@ -97,6 +95,8 @@ namespace ZkData
 
         public static string BaseImageUrl;
         public static string BaseSiteUrl;
+
+        public const string SpringfilesBaseUrl = "https://springfiles.springrts.com/";
 
         public static string DefaultZkTag => Mode == ModeType.Live ? "zk:stable" : "zk:test";
         public static string DefaultChobbyTag => Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test";
@@ -235,7 +235,6 @@ namespace ZkData
 
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
-        public static string[] DefaultDownloadMirrors = {};
         public static string LobbyServerHost;
         public static int LobbyServerPort;
         public static bool LobbyServerUpdateSpectatorsInstantly = false;
