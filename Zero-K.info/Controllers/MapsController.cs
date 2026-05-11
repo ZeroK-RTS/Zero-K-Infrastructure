@@ -452,14 +452,21 @@ namespace ZeroKWeb.Controllers
                 {
                     if (res.Status != UnitSyncer.ResourceFileStatus.RegistrationError)
                     {
-                        var subfolder = (res.ResourceInfo is Map) ? "maps" : "games";
-                        var contentFolder = Path.Combine(Server.MapPath("~/content"), subfolder);
-                        if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
-
                         // refresh mirrors (local + springfiles)
                         using (var db = new ZkDataContext())
                         {
                             var resource = db.Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name);
+
+                            // Subfolder from DB type. Don't use `res.ResourceInfo is Map`: on the
+                            // AlreadyExists path the archive cache hands us a plain ResourceInfo (not
+                            // the Map subclass), so that check is silently false and files land in
+                            // /content/games/ instead of /content/maps/ — see issue #3057.
+                            var isMap = resource?.TypeID == ResourceType.Map
+                                        || (resource == null && res.ResourceInfo is Map);
+                            var subfolder = isMap ? "maps" : "games";
+                            var contentFolder = Path.Combine(Server.MapPath("~/content"), subfolder);
+                            if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
+
                             // case-insensitive FileName match: DB row may have different casing than the
                             // freshly-uploaded file (springfiles vs original-upload casing) — see issue #3052
                             var contentFile = resource?.ResourceContentFiles.FirstOrDefault(
