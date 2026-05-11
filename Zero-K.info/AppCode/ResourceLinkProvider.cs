@@ -72,7 +72,9 @@ namespace ZeroKWeb
 
             var subfolder = content.Resource.TypeID == ResourceType.Map ? "maps" : "games";
             var localUrl = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{content.FileName}";
-            var springfilesUrl = $"{GlobalConst.SpringfilesBaseUrl}files/{subfolder}/{content.FileName}";
+            // springfiles runs on case-sensitive Apache and stores all 3500+ map filenames lowercase;
+            // probing with mixed-case yields 404 even when the map is there.
+            var springfilesUrl = $"{GlobalConst.SpringfilesBaseUrl}files/{subfolder}/{content.FileName.ToLower()}";
 
             var links = new List<string>();
             if (File.Exists(Global.MapPath($"~/content/{subfolder}/{content.FileName}"))) links.Add(localUrl);
@@ -132,7 +134,7 @@ namespace ZeroKWeb
                         && DateTime.UtcNow.Subtract(cf.Resource.LastLinkCheck.Value).TotalHours < SpringfilesRecheckHours)
                     {
                         var subfolder = cf.Resource.TypeID == ResourceType.Map ? "maps" : "games";
-                        var springfilesUrl = $"{GlobalConst.SpringfilesBaseUrl}files/{subfolder}/{cf.FileName}";
+                        var springfilesUrl = $"{GlobalConst.SpringfilesBaseUrl}files/{subfolder}/{cf.FileName.ToLower()}";
                         return !string.IsNullOrEmpty(cf.Links) && cf.Links.Split('\n').Contains(springfilesUrl);
                     }
 
@@ -169,7 +171,8 @@ namespace ZeroKWeb
         {
             var subfolder = cf.Resource.TypeID == ResourceType.Map ? "maps" : "games";
             var localUrl = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{cf.FileName}";
-            var springfilesUrl = $"{GlobalConst.SpringfilesBaseUrl}files/{subfolder}/{cf.FileName}";
+            // SF stores all map filenames lowercase; see BuildLinks for the rationale.
+            var springfilesUrl = $"{GlobalConst.SpringfilesBaseUrl}files/{subfolder}/{cf.FileName.ToLower()}";
 
             var hasSpringfiles = HeadCheck(springfilesUrl, cf.Length);
 
