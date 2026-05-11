@@ -368,6 +368,14 @@ namespace ZeroKWeb.Controllers
         }
 
         MapDetailData GetMapDetailData(Resource res, ZkDataContext db) {
+            // opportunistically reconcile mirror state on each view. Local file check is a cheap stat;
+            // springfiles probe is gated by the 24 h cache + dedup so this only HEADs once a day at most.
+            // Fixes the case where a file is on disk in content/maps but LinkCount is stale 0 — see #3057.
+            var anyChanged = false;
+            foreach (var cf in res.ResourceContentFiles)
+                if (ResourceLinkProvider.RefreshLinks(cf)) anyChanged = true;
+            if (anyChanged) db.SaveChanges();
+
             var data = new MapDetailData
             {
                 Resource = res,
@@ -433,22 +441,22 @@ namespace ZeroKWeb.Controllers
             try
             {
                 file.SaveAs(tmp);
-                var results = Global.AutoRegistrator.UnitSyncer.Scan()?.Where(x=>x.ResourceInfo?.ArchiveName == file.FileName)?.ToList();
+                // case-insensitive match: unitsync's archiveCache may report a different casing
+                // than the user uploaded; without OrdinalIgnoreCase the filter silently dropped
+                // the result and nothing got updated — see issue #3057
+                var results = Global.AutoRegistrator.UnitSyncer.Scan()
+                    ?.Where(x => string.Equals(x.ResourceInfo?.ArchiveName, file.FileName, StringComparison.OrdinalIgnoreCase))
+                    ?.ToList();
                 var model = new List<RegistrationResult>();
                 foreach (var res in results)
                 {
                     if (res.Status != UnitSyncer.ResourceFileStatus.RegistrationError)
                     {
-                        // copy to content subfolder
                         var subfolder = (res.ResourceInfo is Map) ? "maps" : "games";
                         var contentFolder = Path.Combine(Server.MapPath("~/content"), subfolder);
                         if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
 
-                        var destFile = Path.Combine(contentFolder, res.ResourceInfo.ArchiveName);
-                        if (!System.IO.File.Exists(destFile)) System.IO.File.Copy(tmp, destFile);
-
-                        
-                        // register as mirror
+                        // refresh mirrors (local + springfiles)
                         using (var db = new ZkDataContext())
                         {
                             var resource = db.Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name);
@@ -456,10 +464,19 @@ namespace ZeroKWeb.Controllers
                             // freshly-uploaded file (springfiles vs original-upload casing) — see issue #3052
                             var contentFile = resource?.ResourceContentFiles.FirstOrDefault(
                                 x => string.Equals(x.FileName, file.FileName, StringComparison.OrdinalIgnoreCase));
+
+                            // copy to content/. Prefer the DB row's canonical FileName so File.Exists
+                            // (case-sensitive on Linux) lines up with what BuildLinks probes — see #3057
+                            var destName = contentFile?.FileName ?? file.FileName;
+                            var destFile = Path.Combine(contentFolder, destName);
+                            if (!System.IO.File.Exists(destFile)) System.IO.File.Copy(tmp, destFile);
+
                             if (contentFile != null)
                             {
-                                contentFile.Links = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{file.FileName}";
-                                contentFile.LinkCount = 1;
+                                // force a fresh springfiles probe: the user explicitly re-uploaded to
+                                // fix a broken map, so honor that by bypassing the 24 h cache
+                                contentFile.Resource.LastLinkCheck = null;
+                                ResourceLinkProvider.RefreshLinks(contentFile);
                             }
 
                             // tag as special if required
@@ -470,9 +487,9 @@ namespace ZeroKWeb.Controllers
 
                             db.SaveChanges();
                         }
-                        
+
                     }
-                    
+
                     // note this is needed because of some obscure binding issue in asp.net
                     model.Add(new RegistrationResult()
                     {
@@ -482,7 +499,7 @@ namespace ZeroKWeb.Controllers
                         Author = res.ResourceInfo?.Author,
                         Url = Url.Action("Detail", new {id = new ZkDataContext().Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name)?.ResourceID})
                     });
-                    
+
                 }
                 return View("UploadResourceResult", model);
             }

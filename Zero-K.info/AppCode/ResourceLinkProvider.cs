@@ -80,18 +80,41 @@ namespace ZeroKWeb
             return links;
         }
 
+        // Recomputes cf.Links/LinkCount from live local-file check + cached/probed springfiles state.
+        // Returns true if the entity changed; caller must SaveChanges() in that case.
+        // Local check is always live (cheap stat); springfiles obeys the 24 h cache and Lazy<bool> dedup.
+        public static bool RefreshLinks(ResourceContentFile cf)
+        {
+            if (cf?.FileName == null || cf.FileName.EndsWith(".sdp") || cf.Resource.MissionID != null) return false;
+
+            var prevLinks = cf.Links;
+            var prevCount = cf.LinkCount;
+            var prevLastCheck = cf.Resource.LastLinkCheck;
+
+            var links = BuildLinks(cf);
+            cf.Links = string.Join("\n", links);
+            cf.LinkCount = links.Count;
+
+            return cf.Links != prevLinks || cf.LinkCount != prevCount || cf.Resource.LastLinkCheck != prevLastCheck;
+        }
+
         // 24 h cache + dedup: at most one HEAD per Md5 in flight regardless of caller count.
-        // LinkCount in DB encodes the cached probe result (1 = springfiles had it, 0 = it didn't).
-        static bool IsSpringfilesAvailable(ResourceContentFile content, string url)
+        // Cache state is the presence of springfilesUrl in cf.Links (set by the last probe);
+        // LinkCount is the total mirror count (local + springfiles), not a springfiles-only flag.
+        // Updates cf.Resource.LastLinkCheck on the caller's entity after a probe so the caller's
+        // db context ends up with the same LastLinkCheck the probe wrote in its own context.
+        static bool IsSpringfilesAvailable(ResourceContentFile content, string springfilesUrl)
         {
             if (content.Resource.LastLinkCheck.HasValue
                 && DateTime.UtcNow.Subtract(content.Resource.LastLinkCheck.Value).TotalHours < SpringfilesRecheckHours)
-                return content.LinkCount > 0;
+                return !string.IsNullOrEmpty(content.Links) && content.Links.Split('\n').Contains(springfilesUrl);
 
             var md5 = content.Md5;
-            return InflightProbes.GetOrAdd(md5, key => new Lazy<bool>(
+            var result = InflightProbes.GetOrAdd(md5, key => new Lazy<bool>(
                 () => RunProbe(key),
                 LazyThreadSafetyMode.ExecutionAndPublication)).Value;
+            content.Resource.LastLinkCheck = DateTime.UtcNow;
+            return result;
         }
 
         // The cache re-check inside the using block covers the gap between Lazy completion
@@ -107,7 +130,11 @@ namespace ZeroKWeb
                     if (cf == null) return false;
                     if (cf.Resource.LastLinkCheck.HasValue
                         && DateTime.UtcNow.Subtract(cf.Resource.LastLinkCheck.Value).TotalHours < SpringfilesRecheckHours)
-                        return cf.LinkCount > 0;
+                    {
+                        var subfolder = cf.Resource.TypeID == ResourceType.Map ? "maps" : "games";
+                        var springfilesUrl = $"{GlobalConst.SpringfilesBaseUrl}files/{subfolder}/{cf.FileName}";
+                        return !string.IsNullOrEmpty(cf.Links) && cf.Links.Split('\n').Contains(springfilesUrl);
+                    }
 
                     var ok = ProbeAndAssign(cf);
                     db.SaveChanges();
@@ -144,16 +171,16 @@ namespace ZeroKWeb
             var localUrl = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{cf.FileName}";
             var springfilesUrl = $"{GlobalConst.SpringfilesBaseUrl}files/{subfolder}/{cf.FileName}";
 
-            var ok = HeadCheck(springfilesUrl, cf.Length);
+            var hasSpringfiles = HeadCheck(springfilesUrl, cf.Length);
 
             var links = new List<string>();
             if (File.Exists(Global.MapPath($"~/content/{subfolder}/{cf.FileName}"))) links.Add(localUrl);
-            if (ok) links.Add(springfilesUrl);
+            if (hasSpringfiles) links.Add(springfilesUrl);
 
             cf.Links = string.Join("\n", links);
-            cf.LinkCount = ok ? 1 : 0;
+            cf.LinkCount = links.Count;
             cf.Resource.LastLinkCheck = DateTime.UtcNow;
-            return ok;
+            return hasSpringfiles;
         }
 
         static bool HeadCheck(string url, int length)
