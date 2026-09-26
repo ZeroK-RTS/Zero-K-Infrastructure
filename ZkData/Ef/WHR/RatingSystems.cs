@@ -97,6 +97,7 @@ namespace Ratings
             if (battle.IsMission) return;
             if (battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Distinct().Count() < 2) return;
             if (battle.ResourceByMapResourceID?.MapIsSpecial == true) return;
+            if (battle.ResourceByMapResourceID?.MapIsChickens == true) return;
             
             //only count balanced custom matches for elo
             if (battle.Mode == AutohostMode.None && battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber).Select(x => x.Count()).Distinct().Count() > 1) return;

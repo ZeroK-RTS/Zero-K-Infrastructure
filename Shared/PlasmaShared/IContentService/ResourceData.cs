@@ -12,6 +12,7 @@ namespace PlasmaShared
         public bool? MapIs1v1;
         public bool? MapIsTeams;
         public bool? MapIsFfa;
+        public bool? MapIsChickens;
         public bool? MapIsSpecial;
         public bool? MapIsSupported;
         public float? FeaturedOrder;
