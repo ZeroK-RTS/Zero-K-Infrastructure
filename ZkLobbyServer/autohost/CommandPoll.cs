@@ -50,7 +50,7 @@ namespace ZkLobbyServer
             Creator = creator;
             this.Topic = Topic;
 
-            int votersCount = battle.Users.Values.Count(x => EligiblitySelector(x.Name) == null);
+            int votersCount = battle.GetPotentialVoterNames().Count(x => EligiblitySelector(x) == null);
 
             winCount = votersCount / 2 + this.requiredWinMargin;
             if (winCount <= 0) {
