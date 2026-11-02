@@ -66,6 +66,10 @@ namespace PlasmaDownloader
         }
 
 
+        // News is optional. Do not hold the game start when the server does not answer
+        // (the HttpClient default is 100 s, and Mono does not apply it to the TCP connect).
+        static readonly TimeSpan PublicCommunityInfoTimeout = TimeSpan.FromSeconds(10);
+
         public static bool UpdatePublicCommunityInfo(this PlasmaDownloader downloader, IChobbylaProgress progress)
         {
             try
@@ -73,7 +77,9 @@ namespace PlasmaDownloader
                 progress.Status = "Loading community news";
                 var folder = Path.Combine(downloader.SpringPaths.WritableDirectory, "news");
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-                var info = GlobalConst.GetContentService().Query(new GetPublicCommunityInfo());
+                var query = GlobalConst.GetContentService().QueryAsync(new GetPublicCommunityInfo());
+                if (!query.Wait(PublicCommunityInfoTimeout)) throw new TimeoutException($"No answer from server in {PublicCommunityInfoTimeout.TotalSeconds} s");
+                var info = query.Result;
                 File.WriteAllText(Path.Combine(folder, "community.json"), JsonConvert.SerializeObject(info));
                 return true;
             }
