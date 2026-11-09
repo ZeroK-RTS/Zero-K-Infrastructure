@@ -322,6 +322,24 @@ namespace ZkLobbyServer
                 });
         }
 
+        /// <summary>
+        ///     Says plain text in the lobby channel, but relays markdown text to discord
+        /// </summary>
+        public async Task GhostChanSayMarkdown(string channelName, string text, string markdownText)
+        {
+            await GhostSay(new Say()
+            {
+                User = GlobalConst.NightwatchName,
+                IsEmote = true,
+                Place = SayPlace.Channel,
+                Time = DateTime.UtcNow,
+                Target = channelName,
+                Text = text,
+                AllowRelay = false
+            });
+            chatRelay.RelayFromLobby(new ChatRelayMessage(channelName, GlobalConst.NightwatchName, markdownText, SaySource.Zk, true));
+        }
+
         public async Task RequestJoinPlanet(string name, int planetId, string attackerFaction)
         {
             var conus = ConnectedUsers.Get(name);
