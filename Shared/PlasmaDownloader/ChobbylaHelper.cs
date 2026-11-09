@@ -77,7 +77,8 @@ namespace PlasmaDownloader
                 progress.Status = "Loading community news";
                 var folder = Path.Combine(downloader.SpringPaths.WritableDirectory, "news");
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-                var query = GlobalConst.GetContentService().QueryAsync(new GetPublicCommunityInfo());
+                // Run on the thread pool, so the query never needs the calling (UI) thread to finish.
+                var query = Task.Run(() => GlobalConst.GetContentService().QueryAsync(new GetPublicCommunityInfo()));
                 if (!query.Wait(PublicCommunityInfoTimeout)) throw new TimeoutException($"No answer from server in {PublicCommunityInfoTimeout.TotalSeconds} s");
                 var info = query.Result;
                 File.WriteAllText(Path.Combine(folder, "community.json"), JsonConvert.SerializeObject(info));
