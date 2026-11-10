@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Web.Mvc;
 using ZkData;
 
@@ -78,6 +79,13 @@ namespace ZeroKWeb.Controllers
                 ViewBag.Error = "Shorten the name please";
                 return View("GameModeEdit", newGameMode);
             }
+
+            var jsonError = GetGameModeJsonError(newGameMode.GameModeJson);
+            if (jsonError != null)
+            {
+                ViewBag.Error = jsonError;
+                return View("GameModeEdit", newGameMode);
+            }
             
             
             if (newGameMode.GameModeID == 0) // create new game mode
@@ -125,6 +133,28 @@ namespace ZeroKWeb.Controllers
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 } 
+            }
+        }
+
+        // Lobby clients skip mode files that their JSON decoder cannot read, so only standard JSON is saved.
+        private static string GetGameModeJsonError(string gameModeJson)
+        {
+            try
+            {
+                using (var doc = JsonDocument.Parse(gameModeJson))
+                {
+                    JsonElement name;
+                    if (doc.RootElement.ValueKind != JsonValueKind.Object || !doc.RootElement.TryGetProperty("name", out name) || name.ValueKind != JsonValueKind.String)
+                    {
+                        return "Game mode JSON must be an object with a \"name\" text field";
+                    }
+                }
+                return null;
+            }
+            catch (JsonException ex)
+            {
+                var reason = ex.Message.Split(new[] { " LineNumber:" }, StringSplitOptions.None)[0];
+                return $"Game mode JSON is not valid at line {ex.LineNumber + 1}, position {ex.BytePositionInLine + 1}: {reason}";
             }
         }
 
