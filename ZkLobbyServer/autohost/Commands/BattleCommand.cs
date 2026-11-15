@@ -109,6 +109,10 @@ namespace ZkLobbyServer
         {
             return 1;
         }
+        
+        // If false, a user with no special rights can't run this command by themselves when they are the only player.
+        // (Normally a lone player skips the vote and runs the command directly.)
+        public virtual bool AllowSoloRun => true;
 
         /// <summary>
         /// Determines command permissions
@@ -184,8 +188,16 @@ namespace ZkLobbyServer
                 if (user?.BanVotes == true) reason = "You have been banned from using votes. Check your user page for details.";
                 return RunPermission.None;
             }
-            if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
-            
+            if (defPerm == RunPermission.Vote && count <= 1)
+            {
+                if (!AllowSoloRun)
+                {
+                    reason = "A vote needs at least 2 players. Ask a moderator for help.";
+                    return RunPermission.None;
+                }
+                defPerm = RunPermission.Run;
+            }
+
             if (Access == AccessType.Anywhere) return defPerm;
 
             if ((Access == AccessType.NotIngameNotAutohost || Access == AccessType.IngameNotAutohost) && battle.IsAutohost && !hasAdminRights)
