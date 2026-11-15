@@ -10,6 +10,7 @@ namespace ZkLobbyServer
         public override string Help => "[<filters>..] - kicks a player";
         public override string Shortcut => "kick";
         public override AccessType Access => AccessType.Anywhere;
+        public override bool AllowSoloRun => false;
 
         public override BattleCommand Create() => new CmdKick();
 
