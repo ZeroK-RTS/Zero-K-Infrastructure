@@ -50,7 +50,7 @@ namespace ZeroKWeb.Controllers
                     break;
 
                 case "pull_request":
-                    values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.number, payload.pull_request.title , payload.pull_request.html_url, payload.pull_request.body};
+                    values = new object[] {payload.repository.name ,payload.sender.login,  payload.action, payload.number, payload.pull_request.title , payload.pull_request.html_url, TrimBody((string)payload.pull_request.body)};
                     text = string.Format("[{0}] {1} has {2} pull request #{3}: {4} <{5}>\n{6}",values);
                     break;
 
@@ -74,6 +74,16 @@ namespace ZeroKWeb.Controllers
             if (text != null) await Global.Server.GhostChanSay(channel, text);
 
             return Content("");
+        }
+
+        static string TrimBody(string body, int maxLength = 100)
+        {
+            if (string.IsNullOrWhiteSpace(body)) return "";
+            var lines = body.Trim().Split('\n');
+            var firstLine = lines[0].Trim();
+            bool cut = lines.Length > 1 || firstLine.Length > maxLength;
+            if (firstLine.Length > maxLength) firstLine = firstLine.Substring(0, maxLength).TrimEnd();
+            return cut ? firstLine + "..." : firstLine;
         }
     }
 }
