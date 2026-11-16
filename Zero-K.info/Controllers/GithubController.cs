@@ -76,7 +76,7 @@ namespace ZeroKWeb.Controllers
             return Content("");
         }
 
-        static string TrimBody(string body, int maxLength = 100)
+        static string TrimBody(string body, int maxLength = 2000)
         {
             if (string.IsNullOrWhiteSpace(body)) return "";
             var lines = body.Trim().Split('\n');
