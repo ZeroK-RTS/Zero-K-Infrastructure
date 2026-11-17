@@ -187,6 +187,17 @@ namespace ZkLobbyServer
             return ret.Distinct().Where(x=>x!=null).ToList();
         }
 
+        /// <summary>
+        /// Users who can count towards a poll: everyone in the battle room, plus players still connected to the running game.
+        /// Matchmaker players leave the hidden battle room when they join another lobby, but are still playing.
+        /// </summary>
+        public List<string> GetPotentialVoterNames()
+        {
+            var ret = Users.Select(x => x.Key).ToList();
+            if (spring.IsRunning) ret.AddRange(spring.Context.ActualPlayers.Where(x => x.IsIngame).Select(x => x.Name));
+            return ret.Distinct().Where(x=>x!=null).ToList();
+        }
+
         public BattleCommand GetCommandByName(string name)
         {
             BattleCommand command;
@@ -633,7 +644,7 @@ namespace ZkLobbyServer
                 map = (unwrappedCmd as CmdMap).Map.InternalName;
             }
 
-            var numVoters = Users.Values.Count(x => selector(x.Name) == null);
+            var numVoters = GetPotentialVoterNames().Count(x => selector(x) == null);
             var voteMargin = unwrappedCmd.GetPollWinMargin(this, numVoters);
 
             poll = poll ?? new CommandPoll(this, true, true, unwrappedCmd is CmdMap, map, unwrappedCmd is CmdStart, voteMargin);
