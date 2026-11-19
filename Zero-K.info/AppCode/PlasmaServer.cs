@@ -29,6 +29,7 @@ namespace ZeroKWeb
                  MapIs1v1 = r.MapIs1v1,
                  MapIsTeams = r.MapIsTeams,
                  MapIsFfa = r.MapIsFfa,
+                 MapIsChickens = r.MapIsChickens,
                  MapIsSpecial = r.MapIsSpecial,
                  MapSupportLevel = r.MapSupportLevel
              };
