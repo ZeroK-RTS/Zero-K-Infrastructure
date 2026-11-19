@@ -183,7 +183,15 @@ namespace ChobbyLauncher
                     Credentials = new Credentials(GlobalConst.CrashReportGithubToken)
                 };
 
-                var infologTruncated = TextTruncator.Truncate(infolog, MaxInfologSize, MakeRegionsOfInterest(infolog.Length, gamesFromLog.Games.Where(g => g.HasDesync).Select(g => g.FirstDesyncIdxInLog.Value), gamesFromLog.AsGameStartReadOnlyList()));
+                var pointsOfInterest = gamesFromLog.Games.Where(g => g.HasDesync).Select(g => g.FirstDesyncIdxInLog.Value).ToList();
+                var firstLuaError = infolog.IndexOf("LUA_ERR", StringComparison.Ordinal);
+                if (firstLuaError >= 0)
+                {
+                    pointsOfInterest.Add(firstLuaError);
+                    pointsOfInterest.Sort();
+                }
+
+                var infologTruncated = TextTruncator.Truncate(infolog, MaxInfologSize, MakeRegionsOfInterest(infolog.Length, pointsOfInterest, gamesFromLog.AsGameStartReadOnlyList()));
 
                 var desyncDebugInfo = MakeDesyncGameTable(gamesFromLog);
 
