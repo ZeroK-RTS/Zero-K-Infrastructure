@@ -100,6 +100,12 @@ namespace Ratings
             
             //only count balanced custom matches for elo
             if (battle.Mode == AutohostMode.None && battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber).Select(x => x.Count()).Distinct().Count() > 1) return;
+
+            //custom 1v1 and FFA games do not count for any rating
+            var playerCount = battle.SpringBattlePlayers?.Count(x => !x.IsSpectator);
+            var teamCount = battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Distinct().Count();
+            if (result.LobbyStartContext.ApplicableRating == RatingCategory.Casual && (playerCount == 2 || teamCount > 2)) return;
+
             if (battle.Duration < GlobalConst.MinDurationForElo) return;
 
             //don't mark battles for ratings if they can't be rated
