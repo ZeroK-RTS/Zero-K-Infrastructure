@@ -184,7 +184,7 @@ namespace ChobbyLauncher
                 };
 
                 var pointsOfInterest = gamesFromLog.Games.Where(g => g.HasDesync).Select(g => g.FirstDesyncIdxInLog.Value).ToList();
-                var firstLuaError = infolog.IndexOf("LUA_ERRRUN", StringComparison.Ordinal);
+                var firstLuaError = infolog.IndexOf("LUA_ERR", StringComparison.Ordinal);
                 if (firstLuaError >= 0)
                 {
                     pointsOfInterest.Add(firstLuaError);
