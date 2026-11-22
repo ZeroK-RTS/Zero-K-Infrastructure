@@ -131,6 +131,8 @@ namespace ZkData
         public const float LadderEloMinChange = 1;
         public const float LadderEloClassicEloK = 32f; //K value of classic elo
         public const float LadderEloSmoothingFactor = 0.8f; //1 for change as fast as whr, 0 for no change
+        public const float MatchMakingLadderDecayPerHour = 1; //ladder elo lost every hour while on the matchmaking ladder
+        public const float MatchMakingLadderMaxDecay = 500; //decay stops this far below the real elo
         public const int MaxLevelForMalus = 5;
         public const float MaxMalus = 400;
 

@@ -518,6 +518,7 @@ namespace Ratings
 
                 //update ladders
                 int currentDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow);
+                int decayHours = category == RatingCategory.MatchMaking ? TakeLadderDecayHours() : 0;
                 int playerCount = 0;
                 using (var db = new ZkDataContext())
                 {
@@ -539,6 +540,11 @@ namespace Ratings
                         else
                         {
                             ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
+                        }
+                        float decayFloor = elo - GlobalConst.MatchMakingLadderMaxDecay;
+                        if (decayHours > 0 && p.onLadder && ladderElo > decayFloor)
+                        {
+                            ladderElo = Math.Max(decayFloor, ladderElo - decayHours * GlobalConst.MatchMakingLadderDecayPerHour);
                         }
                         playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, p.onLadder);
                         float rating = -playerRatings[p.id].LadderElo;
@@ -672,6 +678,19 @@ namespace Ratings
             }
             PendingDebriefing discard;
             debriefings.ForEach(x => pendingDebriefings.TryRemove(x.Key, out discard));
+        }
+
+        private int TakeLadderDecayHours()
+        {
+            const string varName = "matchMakingLadderDecayHour";
+            long hour = DateTime.UtcNow.Ticks / TimeSpan.TicksPerHour;
+            long lastHour;
+            if (!long.TryParse(MiscVar.GetValue(varName), out lastHour) || lastHour > hour)
+            {
+                lastHour = hour;
+            }
+            MiscVar.SetValue(varName, hour.ToString()); // in the db, so a restart does not skip or repeat decay
+            return (int)(hour - lastHour);
         }
 
 
