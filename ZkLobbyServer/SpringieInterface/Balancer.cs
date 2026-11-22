@@ -139,16 +139,20 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 balanceItems = new List<BalanceItem>();
-                if (mode == BalanceMode.Party)
-                {
-                    var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.AccountID).ToList();
-                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
-                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
-                }
+
+                // Parties are always kept together when possible
+                if (mode == BalanceMode.Normal) mode = BalanceMode.Party;
 
                 if (mode == BalanceMode.ClanWise)
                 {
                     var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.ClanID ?? x.AccountID).ToList();
+                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Party;
+                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
+                }
+
+                if (mode == BalanceMode.Party)
+                {
+                    var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.AccountID).ToList();
                     if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
                     else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
                 }

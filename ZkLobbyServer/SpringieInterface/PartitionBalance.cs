@@ -99,6 +99,24 @@ namespace ZeroKWeb.SpringieInterface
             }
             int maxTeamSize = players.Count / 2;
 
+            // Parties are always kept together when possible
+            if (mode == BalanceMode.Normal) mode = BalanceMode.Party;
+
+            if (mode == BalanceMode.ClanWise)
+            {
+                var clanGroups = players.GroupBy(x => x.Party ?? x.Clan ?? x.Account).ToList();
+                if (2 > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize))
+                {
+                    //Clan or party too big, fall through to party balance
+                    mode = BalanceMode.Party;
+                }
+                else
+                {
+                    playerGroups = clanGroups.Select(x => x.Select(p => p.Account).ToList()).ToList();
+                    groupSkill = clanGroups.Select(x => x.Sum(g => g.Elo)).ToList();
+                }
+            }
+
             if (mode == BalanceMode.Party)
             {
                 var partyGroups = players.GroupBy(x => x.Party ?? x.Account).ToList();
@@ -111,21 +129,6 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     playerGroups = partyGroups.Select(x => x.Select(p => p.Account).ToList()).ToList();
                     groupSkill = partyGroups.Select(x => x.Sum(g => g.Elo)).ToList();
-                }
-            }
-
-            if (mode == BalanceMode.ClanWise)
-            {
-                var clanGroups = players.GroupBy(x => x.Party ?? x.Clan ?? x.Account).ToList();
-                if (2 > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize))
-                {
-                    //Clan or party too big, fall through
-                    mode = BalanceMode.Normal;
-                }
-                else
-                {
-                    playerGroups = clanGroups.Select(x => x.Select(p => p.Account).ToList()).ToList();
-                    groupSkill = clanGroups.Select(x => x.Sum(g => g.Elo)).ToList();
                 }
             }
 
