@@ -541,10 +541,10 @@ namespace Ratings
                         {
                             ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
                         }
-                        float decayFloor = elo - GlobalConst.MatchMakingLadderMaxDecay;
+                        float decayFloor = elo - DynamicConfig.Instance.MmLadderMaxDecay;
                         if (decayHours > 0 && p.onLadder && ladderElo > decayFloor)
                         {
-                            ladderElo = Math.Max(decayFloor, ladderElo - decayHours * GlobalConst.MatchMakingLadderDecayPerHour);
+                            ladderElo = Math.Max(decayFloor, ladderElo - (float)(decayHours * DynamicConfig.Instance.MmLadderDecayPerHour));
                         }
                         playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, p.onLadder);
                         float rating = -playerRatings[p.id].LadderElo;
