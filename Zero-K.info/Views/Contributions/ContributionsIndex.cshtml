@@ -1,6 +1,20 @@
-@using ZeroKWeb
+﻿@using ZeroKWeb
 @using ZkData
 @model IQueryable<Contribution>
+
+@{
+    // A templated Razor delegate, in place of an @helper block - see tools/razor-v3-check.
+    Func<Contribution, object> NameCol =
+        @<text>@if (item.AccountByAccountID != null)
+        {
+            @Html.PrintAccount(item.AccountByAccountID)
+        }
+        else
+        {
+            <span>@item.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()</span>
+        }</text>;
+}
+
 <div id="contrib">
     @Html.IncludeWiki("Donate")
 
@@ -85,19 +99,9 @@
             grid.AddCol("Admin", x => @Html.ActionLink("resend email", "ResendEmail", new { contributionID = x.ContributionID }));
         }
     }
-    @helper NameCol(Contribution c) {
-        if (c.AccountByAccountID != null)
-        {
-            @Html.PrintAccount(c.AccountByAccountID)
-        } else
-        {
-            <span>@c.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()</span>
-        }
-    }
-
     @using (Ajax.BeginForm("Index", "Contributions", Global.GetAjaxOptions("contrib")))
     {
-        @GridHelpers.RenderTable(grid)
+        @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid)
         ;
     }
 

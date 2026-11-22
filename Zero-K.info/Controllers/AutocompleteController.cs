@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using ZkData;
 
@@ -88,7 +89,18 @@ namespace ZeroKWeb.Controllers
                         x =>
                             new AutocompleteItem
                             {
-                                label = "Mission " + x.Name,
+                                // ENCODED, unlike the label above and below it - and that is the
+                                // point. Every other label here is built by a Print* helper, which
+                                // composes controlled markup around a name whose charset is
+                                // restricted (ValidLobbyNameCharacter allows only letters, digits,
+                                // underscore and brackets). A mission name carries no such
+                                // restriction - the entity has [StringLength(200)] and nothing
+                                // else - and site_main.js renders the label with
+                                // $("<a></a>").html(item.label), which parses it as HTML.
+                                //
+                                // WebUtility rather than HttpUtility so this compiles on .NET 9
+                                // too; the two agree, which Tests.Portable pins.
+                                label = "Mission " + WebUtility.HtmlEncode(x.Name),
                                 id = x.MissionID,
                                 url = Url.Action("Detail", "Missions", new { id = x.MissionID }),
                                 value = x.Name
@@ -158,12 +170,22 @@ namespace ZeroKWeb.Controllers
                             });
         }
 
+        /// <summary>
+        ///     Properties, not fields, and that is the whole difference between this endpoint
+        ///     working and not. MVC 5 serialised a JsonResult with JavaScriptSerializer, which
+        ///     writes public fields; System.Text.Json does not, so on .NET 9 every autocomplete
+        ///     answered <c>[{},{},{}]</c> - valid JSON, correct status, no data. A check that
+        ///     asserted a 200 would have passed.
+        ///
+        ///     Properties are written by both, so this stays single-sourced rather than needing
+        ///     IncludeFields configured on one stack only.
+        /// </summary>
         public class AutocompleteItem
         {
-            public int id;
-            public string label;
-            public string url;
-            public string value;
+            public int id { get; set; }
+            public string label { get; set; }
+            public string url { get; set; }
+            public string value { get; set; }
         }
     }
 }

@@ -27,7 +27,7 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
 
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} hide country to {2}", Global.Account.Name, acc.Name, hideCountry));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} hide country to {2}", Global.Account.Name, acc.Name, hideCountry));
             acc.HideCountry = hideCountry;
             // TODO reimplement ? Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
             db.SaveChanges();
@@ -59,8 +59,8 @@ namespace ZeroKWeb.Controllers
 
             if (acc.IsDeleted != isDeleted)
             {
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted));
+                await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+                await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted));
                 acc.IsDeleted = isDeleted;
             }
             db.SaveChanges();
@@ -77,30 +77,30 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
 
             var curAdmin = acc.AdminLevel > AdminLevel.None;
             if (curAdmin != zkAdmin)
             {
                 //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
                 // FIXME needs to also terminate forbidden clan/faction subscriptions
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
+                await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
                 acc.AdminLevel = zkAdmin ? AdminLevel.Moderator : AdminLevel.None;
 
             }
             if (acc.HasVpnException != vpnException)
             {
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
+                await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
                 acc.HasVpnException = vpnException;
             }
             if (acc.IsTourneyController != tourneyController)
             {
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Tourney Control: {0} -> {1}", acc.IsTourneyController, tourneyController));
+                await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Tourney Control: {0} -> {1}", acc.IsTourneyController, tourneyController));
                 acc.IsTourneyController = tourneyController;
             }
             db.SaveChanges();
 
-            await Global.Server.PublishAccountUpdate(acc);
+            await Global.LobbyApi.PublishAccountUpdate(acc.AccountID);
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
@@ -114,7 +114,7 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
             var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
                                     .Include(x => x.ResourceByMapResourceID)
                                     .Include(x => x.SpringBattlePlayers)
@@ -134,7 +134,7 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})",
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})",
                                                                                    acc.Name,
                                                                                    Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"),
                                                                                    adminAcc.Name,
@@ -317,27 +317,27 @@ namespace ZeroKWeb.Controllers
 
                 if (messageOnly && !activePenalty)
                 {
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Message sent to {0} {1} by {2} ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), punisherName));
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - message: {0} ", reason));
+                    await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Message sent to {0} {1} by {2} ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), punisherName));
+                    await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - message: {0} ", reason));
 
-                    await Global.Server.GhostPm(acc.Name, string.Format("A moderator has sent you a message: {0}", reason));
+                    await Global.LobbyApi.GhostPm(acc.Name, string.Format("A moderator has sent you a message: {0}", reason));
                 }
                 else
                 {
 
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1} issued by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), punisherName));
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
-                    await Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action, reason: {0}", reason));
+                    await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1} issued by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), punisherName));
+                    await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
+                    await Global.LobbyApi.GhostPm(acc.Name, string.Format("Your account has received moderator action, reason: {0}", reason));
 
                     if (banLobby == true)
                     {
-                        await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                        await Global.LobbyApi.KickFromServer(Global.Account.Name, acc.Name, reason);
 
                         pmAction += "Lobby banned, ";
                     }
                     if (banMute == true)
                     {
-                        await Global.Server.PublishAccountUpdate(acc);
+                        await Global.LobbyApi.PublishAccountUpdate(acc.AccountID);
                         pmAction += "Muted, ";
                     }
                     if (banForum == true)
@@ -364,23 +364,23 @@ namespace ZeroKWeb.Controllers
                     if (activePenalty)
                     {
                         pmAction = pmAction.Substring(0, Math.Max(0, pmAction.Length - 2)); // removes trailing comma and space
-                        await Global.Server.GhostPm(acc.Name, string.Format("Action taken: {0}", pmAction));
-                        await Global.Server.GhostPm(acc.Name, string.Format("Total duration: {0} hours", banHours));
+                        await Global.LobbyApi.GhostPm(acc.Name, string.Format("Action taken: {0}", pmAction));
+                        await Global.LobbyApi.GhostPm(acc.Name, string.Format("Total duration: {0} hours", banHours));
 
-                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
-                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - penalty type: {0}", pmAction));
+                        await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
+                        await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - penalty type: {0}", pmAction));
                     }
                     else
                     {
-                        await Global.Server.GhostPm(acc.Name, "Action taken: Warning");
-                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - penalty type: Warning");
+                        await Global.LobbyApi.GhostPm(acc.Name, "Action taken: Warning");
+                        await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, " - penalty type: Warning");
                     }
                 }
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.ToString());
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, ex.ToString());
+                await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, ex.ToString());
             }
             return RedirectToAction("Detail", new { id = accountID });
         }
@@ -407,6 +407,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [ValidateInput(false)]
         public async Task<ActionResult> ReportToAdminSubmit(int accountID, string text)
         {
@@ -415,7 +417,7 @@ namespace ZeroKWeb.Controllers
                 var acc = db.Accounts.Find(accountID);
                 if (acc == null) return Content("Invalid accountID");
 
-                await Global.Server.ReportUser(db, Global.Account, acc, text);
+                await Global.LobbyApi.ReportUser(Global.AccountID, acc.AccountID, text);
             }
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
@@ -441,8 +443,8 @@ namespace ZeroKWeb.Controllers
             db.Punishments.DeleteOnSubmit(todel);
             db.SaveChanges();
 
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
 
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
@@ -487,7 +489,7 @@ namespace ZeroKWeb.Controllers
 
                     try
                     {
-                        await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                        await Global.LobbyApi.KickFromServer(Global.Account.Name, acc.Name, reason);
                     }
                     catch (Exception ex)
                     {
@@ -496,7 +498,7 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SaveChanges();
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
                 name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name));
 
             return Index(new UsersIndexModel() { Name = name });
@@ -532,7 +534,7 @@ namespace ZeroKWeb.Controllers
 
                 try
                 {
-                    await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                    await Global.LobbyApi.KickFromServer(Global.Account.Name, acc.Name, reason);
                 }
                 catch (Exception ex)
                 {
@@ -540,7 +542,7 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SaveChanges();
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
                 userID, maxAge, Global.Account.Name));
 
             return RedirectToAction("Index");
@@ -558,7 +560,7 @@ namespace ZeroKWeb.Controllers
             acc.SetPasswordPlain(newPassword);
             if (!string.IsNullOrEmpty(newPassword)) acc.SteamID = null;
             db.SaveChanges();
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} password", Global.Account.Name, acc.Name));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} password", Global.Account.Name, acc.Name));
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
 
@@ -574,15 +576,15 @@ namespace ZeroKWeb.Controllers
             if (!Account.IsValidLobbyName(newUsername)) return Content("Invalid username");
             var existing = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == newUsername.ToUpper() && x.AccountID != accountID);
             if (existing != null) return Content("Name conflict with user " + existing.AccountID);
-            if (Global.Server.Battles.Any(x => x.Value.GetAllUserNames().Contains(acc.Name))) return Content(acc.Name + " is currently fighting in a battle. Rename action not advised.");
-            await Global.Server.KickFromServer(Global.Account.Name, acc.Name, "Your username has been changed from " + acc.Name + " to " + newUsername + ". Please login using your new username.");
+            if (Global.LobbyApi.IsUserInAnyBattle(acc.Name)) return Content(acc.Name + " is currently fighting in a battle. Rename action not advised.");
+            await Global.LobbyApi.KickFromServer(Global.Account.Name, acc.Name, "Your username has been changed from " + acc.Name + " to " + newUsername + ". Please login using your new username.");
 
             var oldName = acc.Name;
             acc.SetName(newUsername);
             db.SaveChanges();
 
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} renamed by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" {0} -> {1}", oldName, newUsername));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} renamed by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" {0} -> {1}", oldName, newUsername));
 
             return Content(string.Format("{0} renamed to {1}", oldName, newUsername));
         }
@@ -621,12 +623,13 @@ namespace ZeroKWeb.Controllers
                 db.AccountForumVotes.DeleteOnSubmit(vote);
             }
             db.SaveChanges();
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} forum votes deleted by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} forum votes deleted by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
 
             return Content(string.Format("Deleted all forum votes of {0}", acc.Name));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth]
         public ActionResult ChangePassword(string oldPassword, string newPassword, string newPassword2)
         {
@@ -637,7 +640,7 @@ namespace ZeroKWeb.Controllers
             if (AuthServiceClient.VerifyAccountPlain(acc.Name, oldPassword) == null)
             {
                 Trace.TraceWarning("Failed password check for {0} on attempted password change", Global.Account.Name);
-                Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
+                Global.LobbyApi.LogIpFailure(Request.UserHostAddressCompat());
                 return Content("Invalid password");
             }
             if (newPassword != newPassword2) return Content("New passwords do not match");

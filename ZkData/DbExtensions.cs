@@ -33,7 +33,7 @@ namespace ZkData
 		}
 
 
-	    public static void DeleteAllOnSubmit<T>(this IDbSet<T> dbSet, IEnumerable<T> toDel) where T: class
+	    public static void DeleteAllOnSubmit<T>(this DbSet<T> dbSet, IEnumerable<T> toDel) where T: class
 	    {
 	        foreach (var t in toDel.ToList()) dbSet.Remove(t);
 	    }
@@ -43,18 +43,18 @@ namespace ZkData
             foreach (var a in toAdd.ToList()) dbSet.Add(a);
         }
 
-        public static void InsertAllOnSubmit<T>(this IDbSet<T> dbSet, IEnumerable<T> toAdd) where T : class
+        public static void InsertAllOnSubmit<T>(this DbSet<T> dbSet, IEnumerable<T> toAdd) where T : class
         {
             foreach (var a in toAdd.ToList()) dbSet.Add(a);
         }
 
 
-        public static void InsertOnSubmit<T>(this IDbSet<T> dbSet, T target) where T : class
+        public static void InsertOnSubmit<T>(this DbSet<T> dbSet, T target) where T : class
         {
             dbSet.Add(target);
         }
 
-        public static void DeleteOnSubmit<T>(this IDbSet<T> dbSet, T target) where T : class
+        public static void DeleteOnSubmit<T>(this DbSet<T> dbSet, T target) where T : class
         {
             dbSet.Remove(target);
         }

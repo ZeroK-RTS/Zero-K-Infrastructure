@@ -7,18 +7,27 @@
     ViewBag.Title = "Post edit history";
     var grid = new UniGrid<ForumPostEdit>(Model.ForumPostEdits.OrderByDescending(x => x.ForumPostEditID).AsQueryable(), "Post edit history");
 
+    // Templated Razor delegates, in place of @helper blocks. @helper does not exist in ASP.NET
+    // Core; this form parses in BOTH Razor v3 and the .NET 9 generator, which
+    // tools/razor-v3-check/check.sh establishes rather than assumes. A templated delegate's
+    // parameter is always called `item`.
+    //
+    // They are declared HERE, above the grid, rather than below it as the @helper blocks were:
+    // a generated method can be called before its declaration and a local cannot.
+    Func<ForumPostEdit, object> Before =
+        @<text><a href='#' onclick="DynDialog('@Url.Action("ViewEntry", "PostHistory", new { id = item.ForumPostEditID })', 'Before @item.EditTime - @item.Account.Name')">before</a>
+        @Html.PostLink("revert", "RevertTo", "PostHistory", new { id = item.ForumPostEditID }, "textbutton js_confirm")</text>;
+
+    Func<ForumPostEdit, object> After =
+        @<text><a href='#' onclick="DynDialog('@Url.Action("ViewEntry", "PostHistory", new { id = item.ForumPostEditID, isAfter = true })', 'After @item.EditTime - @item.Account.Name')">after</a>
+        @Html.PostLink("revert", "RevertTo", "PostHistory", new { id = item.ForumPostEditID, isAfter = true }, "textbutton js_confirm")</text>;
+
     grid.AddCol("", x => "").SetRowSelection(x => x.ForumPostEditID).SetWidth("20px");
     grid.AddCol("Date", x => x.EditTime).SetSort(x => x.EditTime);
     grid.AddCol("Editor", x => Html.PrintAccount(x.Account)).SetSort(x => x.EditorAccountID);
     grid.AddCol("Before", Before).SetWidth("200px");
     grid.AddCol("After", After).SetWidth("200px");
-@helper Before(ForumPostEdit e) {
-    <a href='#' onclick="DynDialog('@Url.Action("ViewEntry", "PostHistory", new { id = e.ForumPostEditID })', 'Before @e.EditTime - @e.Account.Name')">before</a>
-    @Html.ActionLink("revert", "RevertTo", "PostHistory", new { id = e.ForumPostEditID }, new { @class = "textbutton js_confirm" })
-}@helper After(ForumPostEdit e) {
-     <a href='#' onclick="DynDialog('@Url.Action("ViewEntry", "PostHistory", new { id = e.ForumPostEditID, isAfter = true })', 'After @e.EditTime - @e.Account.Name')">after</a>
-     @Html.ActionLink("revert", "RevertTo", "PostHistory", new { id = e.ForumPostEditID, isAfter = true }, new { @class = "textbutton js_confirm" })
- }}
+}
 
 <div id="gridder">
     <h2>@ViewBag.Title</h2>
@@ -28,7 +37,7 @@
     {
         <span>To display differences between versions, select one or more edits in the list using checkboxes and click "diff selected"</span><br/>
         <input type="submit" value="Diff selected" class="textbutton"/>
-        @GridHelpers.RenderTable(grid)
+        @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid)
     }
 
     @if (ViewBag.DiffModel != null)

@@ -1,0 +1,43 @@
+﻿@using ZeroKWeb
+@model IUniGrid
+@*
+    The grid, as a partial view.
+
+    This and its six siblings replace App_Code/GridHelpers.cshtml, which was an @helper PAGE -
+    a WebPages feature ASP.NET Core does not have at all, and the only reason AppCode/HelperPage.cs
+    existed. A partial view is the one shape BOTH stacks have, so the 14 call sites change from
+    @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid) to @Html.Partial(...) and nothing diverges.
+
+    The optional cssClass argument of the old helper arrives through ViewData, because a partial
+    view takes a model and not a parameter list. One call site passes it.
+*@
+@{
+    Model.PrepareRenderData();
+    var cssClass = ViewData["cssClass"] as string;
+}
+@if (Model.AllowCsvExport && Model.CsvRequested)
+{
+    Model.RenderCsv();
+}
+else
+{
+    <div class="@(cssClass ?? "grid")" id="@Model.ID">
+        <div class="grid_title">@Model.Title</div>
+        @Html.Partial("~/Views/Shared/Grid/GridJs.cshtml", Model)
+        @Html.Partial("~/Views/Shared/Grid/Pager.cshtml", Model)
+        @Html.Partial("~/Views/Shared/Grid/Hidden.cshtml", Model)
+
+        <table class="grid_table">
+            @if (Model.RenderHeaders)
+            {
+                <thead>
+                    @Html.Partial("~/Views/Shared/Grid/TableHeader.cshtml", Model)
+                </thead>
+            }
+            <tbody>
+                @Html.Partial("~/Views/Shared/Grid/TableData.cshtml", Model)
+            </tbody>
+        </table>
+        @Html.Partial("~/Views/Shared/Grid/Pager.cshtml", Model)
+    </div>
+}

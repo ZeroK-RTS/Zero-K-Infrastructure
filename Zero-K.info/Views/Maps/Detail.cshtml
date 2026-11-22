@@ -10,11 +10,13 @@
 	var size = m.ScaledImageSize(200);
     var planet = m.Planets.FirstOrDefault(x => x.Galaxy.IsDefault);
 }
+@* The stars post from script, so the token has to be on the page for ZkPost to find. *@
+@Html.AntiForgeryToken()
 <script type="text/javascript">
 	$(document).ready(function () {
 		$("#rating").stars({
 			callback: function (ui, type, value) {
-				$.get('@Url.Action("Rate", new { id = m.ResourceID })?rating=' + value, function (ret) { if (ret != "") alert(ret); });
+				ZkPost('@Url.Action("Rate", new { id = m.ResourceID })', { rating: value }, function (ret) { if (ret != "") alert(ret); });
 			}
 		});
 	});

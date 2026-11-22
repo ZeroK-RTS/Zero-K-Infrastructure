@@ -1,0 +1,32 @@
+# Razor views compiled against ASP.NET Core on .NET 9.
+# GENERATED - run tools/view-port-report.sh --update.
+#
+# compiles               nothing stops this view today, verified in a small batch
+# diverged              the port compiles its OWN copy under PortedViews/ instead;
+#                        the original here is the MVC 5 one. See PortedViews/README.md.
+# child-action           COMPILES BUT CANNOT RENDER - calls Html.Action/RenderAction,
+#                        which ASP.NET Core removed; the shim throws. Needs a view
+#                        component, and that rewrite does not compile on MVC 5.
+# waiting-on-controllers names a type from the unported web project; blocked on it
+# razor-language         Razor itself rejects it; needs rewriting regardless
+# other                  a package reference or an MVC 5 API
+
+total 120
+compiles                 109
+diverged                 11
+child-action             0
+waiting-on-controllers   0
+razor-language           0
+other                    0
+
+diverged                 Battles/BattleDetail.cshtml  -> PortedViews/Battles/BattleDetail.cshtml
+diverged                 Clans/Detail.cshtml  -> PortedViews/Clans/Detail.cshtml
+diverged                 Factions/Detail.cshtml  -> PortedViews/Factions/Detail.cshtml
+diverged                 Forum/NewPost.cshtml  -> PortedViews/Forum/NewPost.cshtml
+diverged                 Forum/Thread.cshtml  -> PortedViews/Forum/Thread.cshtml
+diverged                 My/Commanders.cshtml  -> PortedViews/My/Commanders.cshtml
+diverged                 Planetwars/Galaxy.cshtml  -> PortedViews/Planetwars/Galaxy.cshtml
+diverged                 Planetwars/Planet.cshtml  -> PortedViews/Planetwars/Planet.cshtml
+diverged                 Shared/CommentList.cshtml  -> PortedViews/Shared/CommentList.cshtml
+diverged                 Shared/TopMenu.cshtml  -> PortedViews/Shared/TopMenu.cshtml
+diverged                 Shared/UserDetail.cshtml  -> PortedViews/Shared/UserDetail.cshtml

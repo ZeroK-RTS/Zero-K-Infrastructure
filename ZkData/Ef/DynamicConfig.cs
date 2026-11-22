@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
@@ -87,7 +87,7 @@ namespace ZkData
             using (var db = new ZkDataContext())
             {
                 config.Key = 1;
-                db.Entry(config).State = EntityState.Modified;
+                db.MarkModified(config);
                 db.SaveChanges();
             }
         }

@@ -54,9 +54,9 @@ namespace ZeroKWeb
             links = BuildLinks(content);
 
             if (links.Count > 0)
-                db.Database.ExecuteSqlCommand("UPDATE Resources SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                db.Database.ExecuteSqlCommandCompat("UPDATE Resources SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
             else
-                db.Database.ExecuteSqlCommand("UPDATE Resources SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                db.Database.ExecuteSqlCommandCompat("UPDATE Resources SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
             return true;
         }
 

@@ -2,10 +2,13 @@
 @{
   Layout = null;
 }
-@Html.ActionLink("Remove planet", "RemovePlanetIcon", new { resourceID = Model.ResourceID}) <br />
+<style type="text/css">
+  form.postlink { display: inline; margin: 0; padding: 0; }
+  .postlink-button { background: none; border: none; margin: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; text-decoration: underline; }
+  .postlink-button.planeticon { text-decoration: none; display: block; position: relative; float: left; }
+</style>
+@Html.PostLink("Remove planet", "RemovePlanetIcon", null, new { resourceID = Model.ResourceID }, "js_confirm") <br />
 
 @foreach (var x in Model.Icons) { 
-  <a href='@Url.Action("SubmitPlanetIcon", new { resourceID = Model.ResourceID, icon = x })'>
-    <img src='/img/planets/@x' style="display: block;	position: relative; float: left" />
-  </a>
+  @Html.PostImageLink("/img/planets/" + x, 0, "SubmitPlanetIcon", null, new { resourceID = Model.ResourceID, icon = x }, "planeticon")
 }

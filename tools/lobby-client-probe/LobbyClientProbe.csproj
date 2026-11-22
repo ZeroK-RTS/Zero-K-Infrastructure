@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Connects to a running lobby server and speaks the real protocol.
+
+    Not a new client: it drives LobbyClient's TasClient, the same type the ZeroKLobby uses, and
+    ZkLobbyServer.Core already links that source. So this project is a Program.cs and a reference -
+    if the protocol changes, this follows it, and if TasClient stops compiling on net9.0 the build
+    says so here too.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>13.0</LangVersion>
+    <AssemblyName>LobbyClientProbe</AssemblyName>
+    <RootNamespace>LobbyClientProbe</RootNamespace>
+    <NoWarn>$(NoWarn);CS0618;CS0612</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ZkLobbyServer.Core\ZkLobbyServer.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -24,23 +24,32 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="link"></param>
         [NoCache]
+        // Makes the visitor's own game client act on a command of the caller's choosing.
+        // site_main.js asked for it with a bare $.ajax, which defaults to GET - so any page
+        // could drive the lobby client of anyone who loaded it. It posts through ZkPost now.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SendCommand(string link) {
             if (Global.Account == null) return Content("You must be logged in to the site");
-            if (!Global.Server.IsLobbyConnected(Global.Account.Name)) return Content("To use this feature, you need to be running the game and be logged in there");
-            await Global.Server.SendSiteToLobbyCommand(Global.Account.Name, new SiteToLobbyCommand() { Command = link });
+            if (!Global.LobbyApi.IsLobbyConnected(Global.Account.Name)) return Content("To use this feature, you need to be running the game and be logged in there");
+            await Global.LobbyApi.SendSiteToLobbyCommand(Global.Account.Name, new SiteToLobbyCommand() { Command = link });
             return Content("");
         }
 
         [NoCache]
         [Auth]
+        // Connects the visitor to whichever battle is running on a planet - a link on
+        // Planet.cshtml, so a forged one joined you to a battle you never chose.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> WatchPlanetBattle(int id)
         {
             var db = new ZkDataContext();
             var planet = db.Planets.Find(id);
             if (planet != null)
             {
-                var battle = Global.Server.GetPlanetBattles(planet).OrderByDescending(x => x.Users.Count).FirstOrDefault();
-                if (battle != null) Global.Server.ConnectedUsers.Get(Global.Account.Name)?.Process(new RequestConnectSpring() { BattleID = id });
+                var battle = Global.LobbyApi.GetPlanetBattles(planet.Resource.InternalName).OrderByDescending(x => x.UserCount).FirstOrDefault();
+                if (battle != null) Global.LobbyApi.ConnectPlayerToBattle(Global.Account.Name, id);
             }
 
             return RedirectToAction("Planet", "Planetwars", new { id = id });
@@ -70,7 +79,7 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
 
             var str = string.Format("{0} added new blocked VPN company: {1}", Global.Account.Name, companyName);
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return  RedirectToAction("BlockedVPNs");
         }
 
@@ -89,11 +98,13 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
 
             var str = string.Format("{0} added new blocked VPN host: {1}", Global.Account.Name, hostname);
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
         //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public async Task<ActionResult> RemoveBlockedCompany(int companyID)
         {
@@ -103,11 +114,13 @@ namespace ZeroKWeb.Controllers
             db.BlockedCompanies.DeleteOnSubmit(todel);
             db.SaveChanges();
             var str = string.Format("{0} removed blocked VPN company: {1}", Global.Account.Name, name);
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
         //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public async Task<ActionResult> RemoveBlockedHost(int hostID)
         {
@@ -117,7 +130,7 @@ namespace ZeroKWeb.Controllers
             db.BlockedHosts.DeleteOnSubmit(todel);
             db.SaveChanges();
             var str = string.Format("{0} removed blocked VPN host: {1}", Global.Account.Name, name);
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
+            await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
@@ -167,6 +180,11 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        // Marks the VISITOR'S OWN private chat seen, and it is a child action of the layout -
+        // so every page they load already does this. A forged request achieves exactly what
+        // their next click achieves, which is the test that matters, rather than "it is a child
+        // action" on its own: being one does not stop it being routable, as CreateLink was.
+        [WritesOnGetByDesign("marks the visitor's own chat seen, which every page they load already does")]
         public ActionResult ChatNotification(ChatModel model)
         {
             model = model ?? new ChatModel();
@@ -175,7 +193,7 @@ namespace ZeroKWeb.Controllers
             {
                 using (var db = new ZkDataContext())
                 {
-                    db.Database.CommandTimeout = 5;
+                    db.Database.SetCommandTimeoutCompat(5);
                     var acc = db.Accounts.Where(x => x.AccountID == Global.AccountID).First();
                     var ret = db.LobbyChatHistories.AsQueryable();
                     ret = ret.Where(x => x.Target == Global.Account.Name && x.SayPlace == SayPlace.User && x.Time > acc.LastChatRead);
@@ -200,20 +218,27 @@ namespace ZeroKWeb.Controllers
             return PartialView("ChatNotification", model);
         }
         [Auth]
+        // Posts model.Message into the channel as the visitor. The panel already submits
+        // through Ajax.BeginForm, which is a POST - but the action took a GET as well, and
+        // Ajax.BeginForm emits a bare <form> with no token, so neither end was closed. The
+        // form carries @Html.AntiForgeryToken() now and the ajax submit sends it with the
+        // rest of the fields.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChatMessages(ChatModel model)
         {
             model = model ?? new ChatModel();
 
             var db = new ZkDataContext();
-            bool isMuted = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanMute) != null;
+            bool isMuted = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddressCompat(), 0, null, x => x.BanMute) != null;
             var minTime = DateTime.UtcNow.AddDays(-30);
             if (!string.IsNullOrEmpty(model.Channel))
             {
                 // only show allowed channels
-                if (!Global.Server.ChannelManager.CanJoin(Global.Account, model.Channel)) return PartialView("LobbyChatMessages", model);
+                if (!Global.LobbyApi.CanJoinChannel(Global.AccountID, model.Channel)) return PartialView("LobbyChatMessages", model);
                 if (!String.IsNullOrEmpty(model.Message) && !isMuted)
                 {
-                    await Global.Server.GhostSay(new Say()
+                    await Global.LobbyApi.GhostSay(new Say()
                     {
                         IsEmote = false,
                         Place = SayPlace.Channel,
@@ -227,15 +252,15 @@ namespace ZeroKWeb.Controllers
                 }
                 string channelName = model.Channel;
                 model.Data = db.LobbyChatHistories
-                    .SqlQuery("SELECT TOP 30 * FROM [dbo].[LobbyChatHistories] WHERE [Target] = {0} AND [SayPlace] = {1} AND [Time] > {2} ORDER BY [Time] DESC", channelName, SayPlace.Channel, minTime)
-                    .ToList().OrderBy(x => x.Time).AsQueryable();
+                    .SqlQueryCompat("SELECT TOP 30 * FROM [dbo].[LobbyChatHistories] WHERE [Target] = {0} AND [SayPlace] = {1} AND [Time] > {2} ORDER BY [Time] DESC", channelName, SayPlace.Channel, minTime)
+                    .OrderBy(x => x.Time).AsQueryable();
                 //Note if using Take(), it will be slow for uncommon channels like zktourney when ordering by Time and slow for common channels like zk if ordering by ID
             }
             else if (!string.IsNullOrEmpty(model.User))
             {
                 if (!String.IsNullOrEmpty(model.Message) && !isMuted)
                 {
-                    await Global.Server.GhostSay(new Say()
+                    await Global.LobbyApi.GhostSay(new Say()
                     {
                         IsEmote = false,
                         Place = SayPlace.User,

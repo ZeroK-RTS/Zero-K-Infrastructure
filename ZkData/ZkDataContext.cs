@@ -820,6 +820,15 @@ namespace ZkData
             public object Entity { get; private set; }
             public EntityState State { get; private set; }
             public ZkDataContext Context { get; private set; }
+            // The consumer asks "was this added?", not "does this equal System.Data.Entity's
+            // EntityState.Added". EF6 and EF Core both have an EntityState enum with the same
+            // members in different namespaces, and a TYPE cannot move behind one name the way
+            // DbCompat moves a method - so the comparison moves in here instead, where each twin
+            // already imports its own. ZkLobbyServer/ForumListManager was the only caller.
+            public bool IsAdded => State == EntityState.Added;
+            public bool IsDeleted => State == EntityState.Deleted;
+            public bool IsUnchanged => State == EntityState.Unchanged;
+
             public EntityEntry(object entity, EntityState state, ZkDataContext context)
             {
                 Entity = entity;

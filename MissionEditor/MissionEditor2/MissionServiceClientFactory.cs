@@ -28,16 +28,20 @@ namespace MissionEditor2
 		}
 
 		
-		static ChannelFactory<IMissionService> factory;
-		
-		static MissionServiceClientFactory()
-		{
-			factory = new ChannelFactory<IMissionService>(CreateBasicHttpBinding(), GlobalConst.BaseSiteUrl + "/MissionService.svc");
-		}
-
+		/// <summary>
+		/// The JSON endpoint, not MissionService.svc.
+		///
+		/// Server-side WCF has no successor on .NET 9, so the site cannot keep hosting the .svc
+		/// once it is ported. /MissionService carries the same six operations and the same
+		/// contract - see ZkData/MissionService/MissionServiceJsonClient.cs, which implements
+		/// the same IMissionService this used to hand out, so nothing calling it changes.
+		///
+		/// CreateBasicHttpBinding above is kept for now: it is what says what the WCF channel
+		/// allowed, and the JSON client matches its one-hour timeout deliberately.
+		/// </summary>
 		public static IMissionService MakeClient()
 		{
-			return factory.CreateChannel();
+			return new MissionServiceJsonClient(GlobalConst.BaseSiteUrl + "/MissionService");
 		}
 	}
 }

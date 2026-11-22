@@ -234,3 +234,15 @@ Thumbs.db
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
 **/.idea/**/indexLayout.xml
+# db/compare-ratings.sh scratch (removed on exit; listed in case of a crash)
+.ratings-compare/
+
+# The asset build output (tools/build-assets.mjs) and its toolchain.
+build/
+node_modules/
+rendered-views.tmp*
+
+# A scratch directory for working notes. Ignored rather than tidied away: this checkout is synced
+# by Synology Drive, which restores anything git deletes as an untracked file, so a stray
+# directory here is noise in every `git status` until it is named.
+/temp/

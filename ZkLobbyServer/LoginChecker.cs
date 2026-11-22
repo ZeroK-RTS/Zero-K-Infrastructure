@@ -94,7 +94,13 @@ namespace ZkLobbyServer
                     if (info != null) accBySteamID = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
                     if (!string.IsNullOrEmpty(login.Name))
                     {
-                        accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name) ?? db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name.Equals(login.Name, StringComparison.CurrentCultureIgnoreCase));
+                        // ToLower() rather than string.Equals with a StringComparison, which EF
+                        // Core cannot translate. The fallback runs only when the exact match finds
+                        // nothing - so on .NET 9 this threw for every login with a name that does
+                        // not exist, which is the ordinary "wrong username" case rather than an
+                        // exotic one. Same line, same fix, as Account.AccountByName.
+                        var loweredLogin = login.Name?.ToLower();
+                        accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name) ?? db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name.ToLower() == loweredLogin);
                     }
 
                     if (accBySteamID == null)
@@ -160,7 +166,10 @@ namespace ZkLobbyServer
 
                     db.SaveChanges();
 
-                    ret.LoginResponse.SessionToken = Guid.NewGuid().ToString(); // create session token
+                    // A bearer credential, so it comes from a cryptographic generator rather
+                    // than Guid.NewGuid - see LobbyApiProtocol.NewSessionToken for why that
+                    // distinction is worth making even though a v4 GUID is strong in practice.
+                    ret.LoginResponse.SessionToken = Api.LobbyApiProtocol.NewSessionToken();
 
                     var banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, installID, x => x.BanLobby);
 
@@ -220,7 +229,10 @@ namespace ZkLobbyServer
                     return new RegisterResponse(RegisterResponse.Code.NameAlreadyTaken);
                 }
 
-                var acc = new Account() { Name = register.Name };
+                // The name is set by SetName below, which is the one door that validates it.
+                // Setting it in the initializer as well put a second, unchecked way in for no
+                // gain - SetName was called with the same value on the next line.
+                var acc = new Account();
                 acc.SetPasswordHashed(register.PasswordHash);
                 acc.SetName(register.Name);
                 acc.SetAvatar();
@@ -392,6 +404,15 @@ namespace ZkLobbyServer
             if (entry == null)
             {
                 entry = new AccountIP { AccountID = acc.AccountID, IP = ip, FirstLogin = DateTime.UtcNow };
+                // Adding to the navigation as well, and not only setting the foreign key.
+                // On registration acc.AccountID is still 0 here - the account has not been
+                // saved - so the key above points at nothing. EF6 gets away with it because
+                // its unsaved store-generated key is ALSO 0, so fixup matches the two by
+                // coincidence; EF Core uses negative temporary keys, nothing matches, and
+                // SaveChanges throws "the value of 'AccountIP.AccountID' is unknown". The
+                // navigation says what is actually related, which both stacks read.
+                // Tests.Database/RegistrationFixupTests holds the EF6 half of this down.
+                acc.AccountIPs.Add(entry);
                 db.AccountIPs.InsertOnSubmit(entry);
             }
             entry.LoginCount++;
@@ -407,6 +428,7 @@ namespace ZkLobbyServer
                 if (entry == null)
                 {
                     entry = new AccountUserID { AccountID = acc.AccountID, UserID = user_id, FirstLogin = DateTime.UtcNow, InstallID = installID };
+                    acc.AccountUserIDs.Add(entry); // see LogIP: the foreign key alone is not enough on registration
                     db.AccountUserIDs.InsertOnSubmit(entry);
                 }
                 entry.LoginCount++;

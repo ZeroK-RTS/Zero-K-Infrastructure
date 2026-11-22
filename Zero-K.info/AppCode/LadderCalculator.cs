@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using EntityFramework.Extensions;
-using Microsoft.Linq.Translations;
 using ZkData;
 using ZkLobbyServer;
 using Ratings;
@@ -112,7 +111,7 @@ namespace ZeroKWeb
                 {
 
                     var db = new ZkDataContext();
-                    db.Database.CommandTimeout = 600;
+                    db.Database.SetCommandTimeoutCompat(600);
 
                     var awardItems = CalculateAwards(db);
                     return new AwardModel { AwardItems = awardItems };

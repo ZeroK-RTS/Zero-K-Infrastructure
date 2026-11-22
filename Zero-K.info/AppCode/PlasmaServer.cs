@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Serialization;
 using PlasmaShared;
+using PlasmaShared.Imaging;
 using ZkData.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb
 {
-    public class PlasmaServer
+    public partial class PlasmaServer
     {
         public const int PlasmaServerApiVersion = 3;
         const int ThumbnailSize = 96;
@@ -96,31 +95,6 @@ namespace ZeroKWeb
         }
 
 
-        public static byte[] GetTorrentData(ResourceContentFile cf)
-        {
-            return File.ReadAllBytes(GetTorrentPath(cf));
-        }
-
-        public static string GetTorrentFileName(string name, string md5)
-        {
-            return String.Format("{0}_{1}.torrent", name.EscapePath(), md5);
-        }
-
-        public static string GetTorrentFileName(ResourceContentFile cf)
-        {
-            return GetTorrentFileName(cf.Resource.InternalName, cf.Md5);
-        }
-
-        public static string GetTorrentPath(string name, string md5)
-        {
-            return Global.MapPath(String.Format("~/Resources/{0}", (object)GetTorrentFileName(name, md5)));
-        }
-
-        public static string GetTorrentPath(ResourceContentFile cf)
-        {
-            return GetTorrentPath(cf.Resource.InternalName, cf.Md5);
-        }
-
         public static ReturnValue RegisterResource(RegisterResourceRequest req)
         {
             if (req.Md5 == null) throw new ArgumentNullException("md5");
@@ -186,7 +160,7 @@ namespace ZeroKWeb
 
         public static void RemoveResourceFiles(Resource resource)
         {
-            var file = String.Format("{0}/{1}", Global.MapPath("~/Resources"), resource.InternalName.EscapePath());
+            var file = Path.Combine(Global.MapPath("~/" + GlobalConst.ResourceFolder), resource.InternalName.EscapePath());
             Utils.SafeDelete(String.Format("{0}.minimap.jpg", file));
             Utils.SafeDelete(String.Format("{0}.thumbnail.jpg", file));
             Utils.SafeDelete(String.Format("{0}.heightmap.jpg", file));
@@ -216,7 +190,7 @@ namespace ZeroKWeb
                                   byte[] metalMap,
                                   byte[] heightMap)
         {
-            var resPath = Global.MapPath("~/Resources");
+            var resPath = Global.MapPath("~/" + GlobalConst.ResourceFolder);
             if (!Directory.Exists(resPath)) Directory.CreateDirectory(resPath);
             var file = String.Format("{0}/{1}", resPath, resource.InternalName.EscapePath());
 
@@ -252,38 +226,18 @@ namespace ZeroKWeb
                     resource.MapWidth = map.Size.Width/512;
                     resource.MapHeight = map.Size.Height/512;
 
-                    using (var im = Image.FromStream(new MemoryStream(minimap)))
-                    {
-                        int w, h;
-                        if (resource.MapSizeRatio > 1)
-                        {
-                            w = ThumbnailSize;
-                            h = (int)(w/resource.MapSizeRatio);
-                        }
-                        else
-                        {
-                            h = ThumbnailSize;
-                            w = (int)(h*resource.MapSizeRatio);
-                        }
-
-                        using (var correctMinimap = new Bitmap(w, h, PixelFormat.Format24bppRgb))
-                        {
-                            using (var graphics = Graphics.FromImage(correctMinimap))
-                            {
-                                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                graphics.DrawImage(im, 0, 0, w, h);
-                            }
-
-                            var jgpEncoder = ImageCodecInfo.GetImageEncoders().First(x => x.FormatID == ImageFormat.Jpeg.Guid);
-                            var encoderParams = new EncoderParameters(1);
-                            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
-
-                            var target = String.Format("{0}/{1}.thumbnail.jpg",
-                                                       Global.MapPath("~/Resources"),
-                                                       resource.InternalName.EscapePath());
-                            correctMinimap.Save(target, jgpEncoder, encoderParams);
-                        }
-                    }
+                    // Through the imaging seam rather than System.Drawing: this is the last
+                    // thing in PlasmaServer that kept the file off .NET 9, and with it goes the
+                    // blocker on ContentServiceController. The size arithmetic is
+                    // ImageSizing.ScaledToFit, which was extracted from exactly these lines and
+                    // is covered by tests; quality 100 is carried explicitly because an imaging
+                    // library's default is not 100 and nobody would notice the difference until
+                    // the map thumbnails looked soft.
+                    var thumbnailSize = ImageSizing.ScaledToFit(resource.MapSizeRatio, ThumbnailSize);
+                    var target = String.Format("{0}/{1}.thumbnail.jpg",
+                                               Global.MapPath("~/" + GlobalConst.ResourceFolder),
+                                               resource.InternalName.EscapePath());
+                    Images.Processor.SaveResizedJpeg(minimap, thumbnailSize, target, 100);
                 }
             }
         }

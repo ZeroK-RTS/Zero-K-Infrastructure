@@ -10,6 +10,8 @@ namespace Tests
     [TestClass]
     public class EngineDownloadTests
     {
+        // No TestCategory("Basic"), on purpose: the Windows CI job runs
+        // /TestCaseFilter:TestCategory=Basic, and this test calls out to the network.
         [TestMethod]
         public void GetDevelopList() {
             var list = EngineDownload.GetEngineList();

@@ -11,6 +11,9 @@ namespace Tests
     [TestClass]
     public class WhoisTests
     {
+        // No TestCategory("Basic"), on purpose: the Windows CI job runs
+        // /TestCaseFilter:TestCategory=Basic, and this one both queries whois over the network and
+        // asserts on registry data for two real IP addresses, which other people can change.
         [TestMethod]
         public async Task RunQuery() {
             var whois = new Whois();

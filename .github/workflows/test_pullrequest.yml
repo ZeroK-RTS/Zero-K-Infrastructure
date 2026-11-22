@@ -1,4 +1,4 @@
-name: Test pull request
+﻿name: Test pull request
 
 on:
   pull_request:
@@ -15,7 +15,42 @@ concurrency:
 jobs:
   build:
     name: Build and test Zero-K
-    runs-on: zk
+    # `zk` is a self-hosted runner registered on ZeroK-RTS/Zero-K-Infrastructure. Self-hosted
+    # runners do not come with a fork, so on this one the label matches nothing and every run of
+    # this workflow queues until GitHub expires it - which is why no pull request here has ever
+    # compiled MissionEditor, CMissionLib, ZeroKLobby or run Tests.dll.
+    #
+    # Nothing in the steps below is machine-specific: setup-msbuild, setup-nuget and Setup-VSTest
+    # all provision a GitHub-hosted Windows image, and there is no database or game install.
+    # The publish profile this passes is Zero-K.info/Properties/PublishProfiles/Profile1.pubxml,
+    # a FileSystem publish to the relative path `Deploy`. (An earlier version of this comment
+    # named ModelBase's profile and its c:\temp\mb - that project is not in Zero-K.sln, so the
+    # solution build never reached it. It has since been deleted as a dead end.)
+    #
+    # WHAT THIS JOB ACTUALLY PROVES: that the whole Windows solution compiles - which is the
+    # valuable half, and which nothing else here does - plus the handful of tests that can only
+    # be answered on Windows. /TestCaseFilter:TestCategory=Basic is the filter; as of 2026-09-25
+    # four tests carry it, TestRsa and three in UnitSyncPixelTests that compare the port's pixel
+    # unpacking against GDI+ itself, which cannot run anywhere else in this repository. The other
+    # tests in Tests/ reach the network (whois, an engine download, PayPal), so excluding them is
+    # right. Most of the suite lives in test_portable.yml; a green tick here is "it builds, and
+    # the Windows-only claims hold".
+    #
+    # **This job's name is a required status check on master since 2026-09-29.** Its record when
+    # it was promoted: 39 green out of 40, and the one failure was real - a csproj naming a view
+    # that had been deleted, which fails in the publish step and so passes every Linux check here.
+    #
+    # Two consequences. The name is now matched by branch protection as an exact string, so
+    # renaming this job leaves every pull request blocked on a context nothing reports any more.
+    # And the `runs-on` line below is load-bearing in a way it was not before.
+    #
+    # NOTE FOR UPSTREAM: `runs-on: windows-latest` is a fork-local change; upstream has the `zk`
+    # runner and should keep `runs-on: zk`. **Do not take that line back into this fork.** A
+    # self-hosted runner does not come with a fork, so the label would match nothing, every run
+    # would queue until GitHub expired it, and - now that this is required - every pull request
+    # would block forever rather than merely losing the check. That is how it behaved here from
+    # the fork until 2026-09-24, when nothing depended on it.
+    runs-on: windows-latest
 
     steps:
       - name: Setup MSBuild Path
@@ -46,6 +81,12 @@ jobs:
           /p:DefineConstants="TEST" 
           Zero-K.sln
 
+      # TestCategory=Basic selects the four tests that need nothing but a CPU: the RSA signatures
+      # and the three RGB565/bitmap ones, which are the only place the port's unpacking is compared
+      # against real GDI+. The four it leaves out each call an external service - an IP lookup, a
+      # currency conversion, the engine list, a whois - and each says so in its own file now. One of
+      # them was written [TestMethod("Basic")], which is a display NAME and not a category, so it
+      # read as selected and was not; keep the distinction in mind before "fixing" one.
       - name: Run VSTest
         run: vstest.console.exe /Platform:x64 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/release/net48/Tests.dll
         shell: cmd

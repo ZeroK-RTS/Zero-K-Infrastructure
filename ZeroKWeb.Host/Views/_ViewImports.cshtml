@@ -1,0 +1,36 @@
+﻿@* THREE copies of this file exist - ZeroKWeb.Core, ZeroKWeb.Host and ZeroKWeb.Render - and
+   tools/check-view-imports.py requires them to stay identical.
+
+   They cannot be one linked file: the Razor SDK discovers _ViewImports.cshtml by where the
+   file physically sits under the project, not by Link metadata, so a linked one is compiled
+   and then ignored as an import. Tried, and it cost every view its namespaces - 944 errors on
+   a clean build, and zero on a dirty one, because obj/ still held the generated views.
+
+   Keeping them identical matters beyond tidiness. Most drift would break one of the builds
+   that compile the same views, but not all of it: a @@using added to one project only can
+   leave every view compiling in both while an Html helper resolves to a DIFFERENT extension
+   method in each. That is how two XSS fixes reached the MVC 5 copies of HtmlHelperExtensions
+   and not the ported ones. *@
+@* MVC 5 imported these through Views/Web.config <pages><namespaces>; ASP.NET Core uses
+   this file instead. System.Web.Mvc, System.Web.Mvc.Ajax, System.Web.Mvc.Html and
+   System.Web.Routing have no ASP.NET Core equivalent to import - the helpers they carried
+   are on IHtmlHelper or are gone. *@
+@using System
+@using System.Collections.Generic
+@using System.IO
+@using System.Linq
+@* Razor v3 imports System.Web into every view by its own defaults, not through
+   Views/Web.config, so MVC 5 views can name HttpContext.Current unqualified and one does.
+   Here it is the compat namespace of the same name - Mvc5Compat/HttpContextCurrentCompat.cs. *@
+@using System.Web
+@* not the real System.Web.Mvc - the linked helper file declares that namespace *@
+@using System.Web.Mvc
+@* AjaxOptions and InsertionMode, reimplemented in Mvc5Compat/AjaxCompat.cs against markup
+   captured from MVC 5. The namespace is MVC 5's because 18 views name these types unqualified. *@
+@using System.Web.Mvc.Ajax
+@using PlasmaShared
+@using ZkData
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using ZeroKWeb
+@using ZeroKWeb.Compat
+@inherits ZeroKWeb.Compat.ZkRazorPage<TModel>

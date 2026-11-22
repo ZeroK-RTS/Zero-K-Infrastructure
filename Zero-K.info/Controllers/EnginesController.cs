@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -39,14 +39,9 @@ namespace ZeroKWeb.Controllers
         {
             model = model ?? new EnginesModel();
 
-            if (!string.IsNullOrEmpty(model.UploadName) && model.upload != null)
-            {
-                model.Message = UploadEngine(model.UploadName, model.UploadPlatforms);
-            }
-
             var defaultPlatform = EnginePlatforms[0];
 
-            var winBasePath = Path.Combine(Server.MapPath("~"), "engine", defaultPlatform);
+            var winBasePath = Path.Combine(this.MapPath("~"), "engine", defaultPlatform);
             if (!Directory.Exists(winBasePath)) Directory.CreateDirectory(winBasePath);
 
             var items = new List<EngineItem>();
@@ -56,7 +51,7 @@ namespace ZeroKWeb.Controllers
 
                 foreach (var p in EnginePlatforms.Where(x => x != defaultPlatform))
                 {
-                    if (System.IO.File.Exists(Path.Combine(Server.MapPath("~"), "engine", p, $"{name}.zip"))) item.Platforms.Add(p);
+                    if (System.IO.File.Exists(Path.Combine(this.MapPath("~"), "engine", p, $"{name}.zip"))) item.Platforms.Add(p);
                 }
                 items.Add(item);
             }
@@ -69,18 +64,46 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        [Auth(Role = AdminLevel.SuperAdmin)]
+        /// <summary>
+        /// Uploading an engine, as its own action - which is what makes the attributes below
+        /// apply at all.
+        ///
+        /// They used to sit on a PRIVATE method that Index called, and MVC only runs filters for
+        /// actions it invokes: [Auth(SuperAdmin)], [HttpPost] and [ValidateAntiForgeryToken] were
+        /// all inert. The effective policy was the class-level [Auth(Moderator)], any verb, no
+        /// token - and the form had no method="post", so it submitted as GET with the antiforgery
+        /// token sitting unread in the query string.
+        ///
+        /// The role is deliberately left at the class's Moderator rather than raised to the
+        /// SuperAdmin the old attribute named: whoever uploads engines today keeps doing so. What
+        /// changes is that it now takes a POST with a valid token, so a link cannot make a
+        /// moderator's browser do it.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        private string UploadEngine(string uploadName, List<string> uploadPlatforms)
+        public ActionResult UploadEngine(EnginesModel model)
         {
+            model = model ?? new EnginesModel();
+            if (!string.IsNullOrEmpty(model.UploadName)) model.Message = PerformUpload(model.UploadName, model.UploadPlatforms);
+            return Index(model);
+        }
+
+        private string PerformUpload(string uploadName, List<string> uploadPlatforms)
+        {
+            // uploadName becomes a directory and a file name below. Rejected rather than stripped:
+            // an engine name is a version like 104.0.1-287-gf7b0fcc, so anything with a separator
+            // or a parent reference in it is a mistake or an attempt, and silently rewriting it
+            // would put the engine somewhere nobody asked for.
+            if (uploadName.IndexOfAny(new[] { '/', '\\', ':' }) >= 0 || uploadName.Contains(".."))
+                return "Invalid engine name: " + uploadName;
+
             for (var i = 0; i < EnginePlatforms.Length; i++)
             {
                 var platform = EnginePlatforms[i];
                 var link = uploadPlatforms[i];
                 if (string.IsNullOrEmpty(link)) continue;
 
-                var dir = Path.Combine(Server.MapPath("~"), "engine", platform);
+                var dir = Path.Combine(this.MapPath("~"), "engine", platform);
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                 var temp = Path.Combine(dir, uploadName);
@@ -94,7 +117,7 @@ namespace ZeroKWeb.Controllers
                     wc.DownloadFile(link, path7z);
                     var pi = new ProcessStartInfo();
                     pi.WorkingDirectory = temp;
-                    pi.FileName = Path.Combine(Server.MapPath("~"), "7za.exe");
+                    pi.FileName = Path.Combine(this.MapPath("~"), "7za.exe");
                     pi.CreateNoWindow = true;
                     pi.UseShellExecute = false;
                     pi.Arguments = "x " + path7z;
@@ -124,6 +147,16 @@ namespace ZeroKWeb.Controllers
             return "succcess";
         }
 
+        // Changes the default engine for everyone, starts a Steam depot rebuild and tells the
+        // lobby server - from a link, with no token. The class is [Auth(Moderator)], so the
+        // forgery needs a moderator to load a page somebody else wrote; that is the whole cost
+        // of it, and the same cost ForceRatingsUpdate had.
+        //
+        // The database write is MiscVar.DefaultEngine, a property whose SETTER writes. That is
+        // why tools/check-get-writes.py did not see this one: it matches calls, and an
+        // assignment is not a call. It does now.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult MakeDefault(string engine)
         {
             Trace.TraceInformation("Trying to change engine to {0}", engine);
@@ -131,7 +164,7 @@ namespace ZeroKWeb.Controllers
             {
                 MiscVar.DefaultEngine = engine;
                 Global.SteamDepotGenerator.RunAll();
-                Global.Server.SetEngine(engine);
+                Global.LobbyApi.SetEngine(engine);
             } else Trace.TraceWarning("Engine {0} not found in the list", engine);
             return RedirectToAction("Index");
         }

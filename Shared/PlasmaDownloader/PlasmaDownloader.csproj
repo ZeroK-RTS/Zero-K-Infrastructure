@@ -63,6 +63,8 @@
     <Compile Include="ConfigVersions.cs" />
     <Compile Include="Download.cs" />
     <Compile Include="EngineDownload.cs" />
+    <Compile Include="EngineDownload.Portable.cs" />
+    <Compile Include="UnixPermissions.cs" />
     <Compile Include="Packages\BitArray.cs" />
     <Compile Include="Packages\Sdp2Sdz.cs" />
     <Compile Include="Packages\StreamExtension.cs" />

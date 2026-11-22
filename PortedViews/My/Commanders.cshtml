@@ -1,0 +1,36 @@
+﻿ @model ZeroKWeb.Controllers.MyController.CommandersModel
+@using ZeroKWeb.Controllers
+@using ZkData
+<h2>Unlocked technologies</h2>
+<a href="/My/UnlockList">View all unlocks</a>
+@{Html.RenderPartial("UnlockedTechnologies", Model.Unlocks.OrderBy(x=> x.Unlock.UnlockType).ThenBy(x=> x.Unlock.Name));}
+<h2>HowTo</h2>
+<a href="/mediawiki/index.php?title=Commander">Official commander guide</a>
+<ol>
+ <li><a href="/My/UnlockList">Unlock</a> at least one chassis and any number of weapons and modules.
+ <li>Create different layouts below.
+ <li>Pick a commander when the game starts.
+</ol>
+ You can prepare up to 6 different commanders. Each one starts at level 1 and can morph to higher levels.
+This page lets you configure the commander name and default modules; you can change the modules before morphing ingame.
+<h2>Commanders</h2>
+@if (!Model.Unlocks.Any(x => x.Unlock.UnlockType == UnlockTypes.Chassis)) {
+	<span>You need to unlock some chassis before you can start customizing commander
+	</span>
+} else {
+	for (int i = 1; i <= GlobalConst.CommanderProfileCount; i++) {
+		using (Ajax.BeginForm("CommanderProfile", new { profileNumber = i }, new AjaxOptions() { UpdateTargetId = "com" + i, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "busy" })) {
+		@Html.AntiForgeryToken()
+		<div id='com@(i)' class="fleft border" style="min-height: 600px;">
+			@*
+				The COMPONENT renders; the ACTION this form posts to is a different thing that
+				deletes commanders and saves modules. Rendering the page used to call that action -
+				the MVC 5 copy of this file carries the same warning, and it is repeated here
+				because a reader of this copy never sees that one.
+			*@
+			@await Component.InvokeAsync("MyCommanderProfile", new { profileNumber = i })
+		</div>
+		}
+	}
+	<br class="clearfloat" /> /*to stop divs from popping out the bottom of parent*/
+}

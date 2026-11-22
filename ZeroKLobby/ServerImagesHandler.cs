@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -38,7 +38,7 @@ namespace ZeroKLobby
 
 
         public Image GetAvatarImage(User user) {
-            if (!string.IsNullOrEmpty(user.Avatar)) return GetImage(String.Format("Avatars/{0}.png", user.Avatar));
+            if (!string.IsNullOrEmpty(user.Avatar)) return GetImage(String.Format("{0}/{1}.png", GlobalConst.AvatarFolder, user.Avatar));
             else return null;
         }
 

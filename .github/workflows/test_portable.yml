@@ -1,0 +1,228 @@
+﻿# The .NET 9 test suite (Tests.Portable), run on Linux.
+#
+# This is the Phase 3 gate made self-enforcing. Tests.Portable links production sources
+# rather than referencing projects, so a green run means two things: the Whole History
+# Rating tests pass, and every file in its link list still compiles on .NET 9. A change
+# that drags a Framework-only dependency into linked code fails here.
+#
+# Unlike test_pullrequest.yml this needs no Windows, no MSBuild and no database - it runs
+# on a stock GitHub-hosted Linux runner in well under a minute.
+
+name: Test .NET 9 portable
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: dotnet test (net9.0, linux)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Test
+        run: >
+          dotnet test Tests.Portable/Tests.Portable.csproj
+          --configuration Release
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory TestResults
+
+      # The 117 Razor views have never been compiled by anything in this repository - mono
+      # ships no aspnet_compiler.exe, so tools/build-website.sh covers C# only. This
+      # compiles them against ASP.NET Core and fails when the inventory moves in either
+      # direction, so a view that starts or stops compiling is visible on the pull request.
+      - name: Check the Razor view port inventory
+        run: ./tools/view-port-report.sh --check
+
+      # Phase 1's gate. ILobbyServerApi is already compiled by projects with no reference to
+      # ZkLobbyServer, which catches a member naming a SERVER type; this catches the other half,
+      # a member passing an EF ENTITY, which compiles on both sides and only works because the
+      # two halves share a process. It walks the types transitively and needs no database.
+      # Phase 5. The first JavaScript check here, and it exists because BuildHistoryUrl replaced
+      # a 44 KB jQuery plugin: nothing else in this repository would notice if its merge went
+      # wrong, because every page renders either way and only the address bar would be quietly
+      # wrong. node is on the runner already.
+      # The bundle list exists twice - BundleConfig.cs for the live site, BundlingCompat.cs for
+      # the port, because the first is written against System.Web.Optimization and cannot be
+      # linked. Drift is silent both ways: a script the port misses, or one it renders a tag for
+      # after the site drops it. The host harness only asserts the bundle renders something.
+      - name: Check the two bundle lists agree
+        run: ./tools/check-bundles.py
+
+      - name: Check the site's JavaScript
+        run: node tools/check-site-js.js
+
+      - name: Check every POSTing form carries an anti-forgery token
+        run: ./tools/check-antiforgery.py
+
+      - name: Check no action writes on a GET
+        run: ./tools/check-get-writes.py
+
+      # The third side of it. The two above read forms and database calls; a state change that
+      # happens on the LOBBY SERVER is invisible to both, and four actions were reachable by GET
+      # that way - one of them posting a chat message in the visitor's name.
+      - name: Check no action changes the lobby on a GET
+        run: ./tools/check-lobby-writes.py
+
+      # Model binding fills every public settable property it finds a form field for, so an
+      # entity handed straight to InsertOnSubmit lets the request choose every column. Clan
+      # creation did, and the column that mattered was ForumThreadID.
+      - name: Check no action writes a request-bound entity whole
+        run: ./tools/check-model-binding.py
+
+      # Several places print a player name into HTML without encoding it, and say in a comment
+      # that they need not because the charset is validated server-side. This is what keeps that
+      # premise true: one door, Account.SetName, and nothing going round it.
+      - name: Check a player name only arrives through Account.SetName
+        run: ./tools/check-name-invariant.py
+
+      # The two JSON endpoints that replaced the WCF services dispatch on `dynamic`, so a request
+      # class with no handler is a runtime error the compiler cannot see - and the callers are
+      # shipped game clients that cannot be redeployed with the server.
+      - name: Check both JSON endpoints serve their whole contract
+        run: ./tools/check-service-contracts.py
+
+      - name: Check every C# file is in a project
+        run: ./tools/check-orphaned-sources.py
+
+      # A .resx names files by relative path, and msbuild reads them at build time. On Windows the
+      # case need not match what is on disk, so a designer wrote 67 entries into ZeroKLobby that
+      # pointed at `resources\ranks\...` while the directory is `Resources\Ranks` - correct
+      # forever on Windows, MSB3103 anywhere else. This answers it without a build.
+      - name: Check every .resx points at a file that exists
+        run: ./tools/check-resx-paths.py
+
+      # The site's resource directory, named once. It used to be written out by hand in four
+      # files, two of which spelled it in lower case - one directory on NTFS, two off Windows,
+      # and neither half complains: the lobby server's disk lookup just misses and falls back to
+      # HTTP, and a mission upload writes where nothing is served. A test cannot see a literal,
+      # so this reads the source.
+      - name: Check the site's published directories are named once
+        run: ./tools/check-site-folders.py
+
+      # A P/Invoke compiles everywhere and only fails when it runs. kernel32 in
+      # TcpTransportServerListener.Bind threw on Linux, Bind retried 120 times and gave up, and the
+      # server came up with its API listening and no player port - invisible to every build here.
+      # This does not judge whether a call is guarded; it names the libraries and demands a written
+      # verdict for each, failing if the set changes in either direction.
+      - name: Check the lobby server's native calls against their verdicts
+        run: ./tools/check-native-calls.py
+
+      # The other platform dependency, and it fails the same way: System.Drawing.Common is
+      # Windows-only on .NET 9, so new use here breaks no build and throws when the line finally
+      # runs on Linux. The surface was cut from 7 files to 3; this holds it there. It reads source
+      # rather than trusting a build, because a single failed declaration stops Roslyn binding
+      # method bodies across the whole compilation - which is how one file used Bitmap throughout
+      # and contributed none of the 84 errors that measured this.
+      - name: Check the lobby server's System.Drawing surface
+        run: ./tools/check-gdi-surface.py
+
+      # The checks above are only worth their green tick if they are looking at something. Most
+      # of them find their subjects with `git ls-files <pattern>`, and an empty list reports
+      # success - which is exactly what happened to the item guard in tools/build-website.sh when
+      # CI started passing it a project that names no files: 314 items to 0, green, for a commit.
+      # This runs each check with a `git` that returns nothing for ls-files and requires it to
+      # fail. Seconds, no container. A check that does not work that way says so in itself, with
+      # a `blinding-exempt: <why>` line.
+      # The port's asset pipeline, which nothing in CI ran. tools/build-assets.mjs resolves the
+      # bundle list, reads every file in it and hands the concatenation to esbuild, so running it
+      # is what says the bundles can still be built at all: a script that was deleted or renamed
+      # makes readFileSync throw, a jquery-{version}.js with nothing matching it throws by name,
+      # and anything that does not parse fails the transform.
+      #
+      # check-bundles.py cannot answer any of that. It compares the port's list against
+      # BundleConfig.cs and passes when they AGREE - including when they agree on a file that is
+      # not there. All 22 entries resolve today; this is what keeps that true.
+      #
+      # npm ci, not npm install, because package-lock.json is committed. Seconds, and node is on
+      # the runner already.
+      - name: Build the script and style bundles
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+
+      # `return View("Ladders")` is a string, and neither build checks it: a view that is not
+      # there under that name is a 500 the first time the action runs, and 35 of the site's 120
+      # views are rendered by no check here, which is where such a name would sit unnoticed.
+      # Case is the half that only breaks off Windows - LaddersController asked for "Ladders"
+      # against a file called ladders.cshtml, which NTFS does not care about.
+      - name: Check every view a controller names is on disk as written
+        run: ./tools/check-view-names.py
+
+      # Shared/PlasmaShared/SECRETS.md says secrets live in MiscVar and never enter source control.
+      # That was written down and nothing held it - and it has already been broken once and survived
+      # four years, because GlobalConst.CrashReportGithubToken is spelled in two literals rather than
+      # one and GitHub's scanning looks for one. This joins adjacent literals before judging them, so
+      # the trick that worked does not. It does NOT fail on that token: deleting the line is worse
+      # than leaving it, for the reasons SECRETS.md gives, so it is recorded as outstanding and
+      # printed on every run until somebody revokes it at GitHub.
+      - name: Check no new secret is compiled in
+        run: ./tools/check-secrets.py
+
+      # The thirty Html helpers that exist twice. MVC 5 compiles HtmlHelperExtensions.cs and
+      # ASP.NET Core compiles HtmlHelperExtensions.Ported.cs - two copies, because MVC 5 has
+      # HtmlHelper where ASP.NET Core has IHtmlHelper, so the file cannot simply be linked the way
+      # HtmlHelperExtensions.Portable.cs is. They drifted: 4d1be43d1 encoded a map's InternalName
+      # and a wiki page title where they are rendered, and neither fix reached the ported copy, so
+      # the .NET 9 site carried two vulnerabilities the site it replaces had already fixed.
+      - name: Check the ported Html helpers still differ the way they are recorded to
+        run: ./tools/check-ported-helpers.py
+
+      # The eleven views that exist twice. port-views.props compiles the PortedViews/ copy for
+      # .NET 9 and excludes the original, which MVC 5 still serves, so the two drift apart in
+      # silence: view-port-report --check fails when the SET changes and nothing compared the
+      # contents. An edit to the original that was not mirrored into the copy would have left the
+      # live site serving the new markup and the port serving the old, green all the way.
+      - name: Check the diverged views still differ the way they are recorded to
+        run: ./tools/check-diverged-views.py
+
+      # The seven custom routes Global.asax declares and the port did not, for most of the
+      # port's life. Nothing noticed, because every action they reach takes its parameters by
+      # NAME, so the query-string form answers 200 with the route missing entirely:
+      # /Static?name=UnitGuide works, /Static/UnitGuide was a 404, and the harness asked for
+      # the first one. Two route tables drift; this compares them as tables.
+      - name: Check the two route tables declare the same routes
+        run: ./tools/check-routes.py
+
+      # The three _ViewImports.cshtml files decide what namespaces every view in each project can
+      # see. The compiler catches an import REMOVED from one - the same views compile in more than
+      # one project - and cannot catch one ADDED to one, which leaves every view compiling in both
+      # while an Html helper resolves to a different extension method in each.
+      - name: Check the view imports are the same in every project
+        run: ./tools/check-view-imports.py
+
+      - name: Check that the checks fail when they can see nothing
+        run: ./tools/check-the-checks.sh
+
+      - name: Check the lobby-server seam
+        run: dotnet run --project ZkData.Core -- seam --check
+
+      # The lobby server on .NET 9. It links the same production sources the Framework server
+      # runs, so a green build here means the whole chain - PlasmaShared, LobbyClient,
+      # MonoTorrent, PlasmaDownloader, ZkLobbyServer - still compiles off Framework. A change
+      # that reaches for a Framework-only API fails here rather than at the eventual switch.
+      - name: Build the lobby server on .NET 9
+        run: dotnet build ZkLobbyServer.Core -warnaserror:NU1605
+
+      - name: Test report
+        # run even if the tests failed, but not for a PR from a fork
+        if: (github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request') && (success() || failure())
+        uses: dorny/test-reporter@v1
+        with:
+          name: Test results .NET 9
+          path: TestResults/test-results.trx
+          reporter: dotnet-trx

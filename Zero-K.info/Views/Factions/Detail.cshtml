@@ -46,6 +46,7 @@
     if (Global.Account.HasFactionRight(x => x.RightEditTexts))
     {
         <form action="@Url.Action("SetTopic", new{factionID = f.FactionID})" method="POST">
+        @Html.AntiForgeryToken()
             @Html.TextArea("secretTopic", f.SecretTopic, 8, 80, null)
             <input type="submit" />
         </form>

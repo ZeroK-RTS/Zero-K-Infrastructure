@@ -30,14 +30,14 @@
                                 {
                                     @:&nbsp
                                     string question = String.Format("Expelling {0} will make them sad. Are you sure you want to proceed?", a.Name);
-                                    @Html.ActionLink("kick", "KickPlayerFromClan", new { accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+                                    @Html.PostLink("kick", "KickPlayerFromClan", "Clans", new { accountID = a.AccountID }, confirmMessage: question)
                                 }
                                 else if (Global.IsModerator)
                                 {
                                     string question = String.Format("Expelling {0} will make them sad. Are you sure you want to proceed?", a.Name);
                                     @:&nbsp
                                     <span class="admin">
-                                        @Html.ActionLink("kick", "KickPlayerFromClan", new { accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+                                        @Html.PostLink("kick", "KickPlayerFromClan", "Clans", new { accountID = a.AccountID }, confirmMessage: question)
                                     </span>
                                 }
                             </td>
@@ -67,11 +67,11 @@
     </table>
     @if (c.CanJoin(Global.Account))
     {
-        @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })<br />
+        @Html.PostLink("Join this clan", "JoinClan", "Clans", new { id = c.ClanID })<br />
     }
     @if (isMember)
     {
-        @Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
+        @Html.PostLink("leave this clan", "LeaveClan", "Clans")<br />
     }
     @if (isMember)
     {

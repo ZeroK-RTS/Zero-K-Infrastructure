@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Data.Entity;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared;
@@ -25,10 +24,10 @@ namespace ZkLobbyServer {
         private void ZkDataContextOnAfterEntityChange(object sender, ZkDataContext.EntityEntry entityEntry)
         {
 
-            if (entityEntry.State == EntityState.Deleted || entityEntry.State == EntityState.Unchanged) return;
+            if (entityEntry.IsDeleted || entityEntry.IsUnchanged) return;
 
             var entity = entityEntry.Entity;
-            if (entity is ForumPost && entityEntry.State == EntityState.Added)
+            if (entity is ForumPost && entityEntry.IsAdded)
             {
                 // forum post got added, distribute to connected users 
                 var post = (ForumPost)entity;
@@ -90,7 +89,7 @@ namespace ZkLobbyServer {
             } else if (entity is ForumThread)
             {
                 var thread = (ForumThread)entity;
-                if (entityEntry.State == EntityState.Added) // thread added force refresh
+                if (entityEntry.IsAdded) // thread added force refresh
                 {
                     CachePublicForumList();
                 }

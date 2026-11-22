@@ -93,17 +93,19 @@
       <br />
     </span>
   </div>
+  @* The stars post from script, so the token has to be on the page for ZkPost to find. *@
+  @Html.AntiForgeryToken()
   <script type="text/javascript">
     $(document).ready(function () {
       $("#rating").stars({
         callback: function (ui, type, value) {
-          $.get('@Url.Action("Rate", "Missions", new { id = m.MissionID })?rating=' + value, function (ret) { if (ret != "") alert(ret); });
+          ZkPost('@Url.Action("Rate", "Missions", new { id = m.MissionID })', { rating: value }, function (ret) { if (ret != "") alert(ret); });
         }
       });
 
       $("#difficulty").stars({
         callback: function (ui, type, value) {
-          $.get('@Url.Action("Rate", "Missions", new { id = m.MissionID })?difficulty=' + value, function (ret) { if (ret != "") alert(ret); });
+          ZkPost('@Url.Action("Rate", "Missions", new { id = m.MissionID })', { difficulty: value }, function (ret) { if (ret != "") alert(ret); });
         }
       });
 
@@ -167,9 +169,9 @@
         <input type="submit" />
     </form>  
    	if (!m.IsDeleted) {
-      <a href='@Url.Action("Delete", "Missions", new { id = m.MissionID })' class='js_confirm'>Delete mission</a>
+      <span>@Html.PostLink("Delete mission", "Delete", "Missions", new { id = m.MissionID }, "js_confirm")</span>
     } else {
-      <a href='@Url.Action("Undelete", "Missions", new { id = m.MissionID })' >Undelete</a>
+      <span>@Html.PostLink("Undelete", "Undelete", "Missions", new { id = m.MissionID })</span>
     }
   }
 </div>

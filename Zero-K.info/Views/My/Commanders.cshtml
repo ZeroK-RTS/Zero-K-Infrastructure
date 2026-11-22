@@ -20,8 +20,13 @@ This page lets you configure the commander name and default modules; you can cha
 } else {
 	for (int i = 1; i <= GlobalConst.CommanderProfileCount; i++) {
 		using (Ajax.BeginForm("CommanderProfile", new { profileNumber = i }, new AjaxOptions() { UpdateTargetId = "com" + i, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "busy" })) {
+		@Html.AntiForgeryToken()
 		<div id='com@(i)' class="fleft border" style="min-height: 600px;">
-			@{Html.RenderAction("CommanderProfile", new { profileNumber = i });}
+			@*
+				CommanderProfileView, not CommanderProfile: the second one deletes commanders and
+				saves modules, and rendering the page used to call it.
+			*@
+			@{Html.RenderAction("CommanderProfileView", new { profileNumber = i });}
 		</div>
 		}
 	}

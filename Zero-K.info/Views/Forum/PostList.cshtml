@@ -4,7 +4,15 @@
 @model ZeroKWeb.Controllers.ForumController.PostListModel
 @{
     var grid = new UniGrid<ForumPost>(Model.Data) { PageSize = GlobalConst.ForumPostsPerPage };
-    grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x => x.ForumPostID).SetWidth("100%");
+    // Html.Partial, not Html.DisplayFor(m => x). MVC 5 evaluates that expression and picks a
+    // display template from the runtime type; ASP.NET Core resolves DisplayFor against the
+    // MODEL, and `x` is a captured loop variable rather than a property of it - so the
+    // template was never invoked and every row rendered empty, with no error.
+    // Naming the template outright is equivalent here. PartialString rather than Partial: a grid
+    // cell is formatted with ToString(), and ASP.NET Core Html.Partial returns IHtmlContent,
+    // whose ToString is the type name. See AppCode/HtmlCompat.cs.
+    grid.AddCol("sort", x => Html.PartialString("~/Views/Shared/DisplayTemplates/ForumPost.cshtml", x))
+        .SetSort(x => x.ForumPostID).SetWidth("100%");
     if (Model.GoToPost != 0)
     {
         grid.PageNumber = 1 + ForumController.GetPostPage(Model.Thread.ForumPosts.First(x => x.ForumPostID == Model.GoToPost));
@@ -26,7 +34,7 @@
             Player: @Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete", new { threadID = Model.ThreadID }), data_autocomplete_action = "submit" })&nbsp;
             <input type="submit" value="Search" />
         </span>
-        @GridHelpers.RenderTable(grid, "")
+        @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid, new ViewDataDictionary(ViewData) { { "cssClass", "" } })
         ;
     }
 

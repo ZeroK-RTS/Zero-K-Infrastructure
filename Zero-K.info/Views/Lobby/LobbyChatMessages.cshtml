@@ -12,34 +12,38 @@
     {
         gridTitle = "#" + Model.Channel;
     }
+    // Templated Razor delegates, in place of the @helper blocks that used to sit below this
+    // one. @helper does not exist in ASP.NET Core; this form parses in BOTH Razor v3 and the
+    // .NET 9 generator, which tools/razor-v3-check/check.sh is what establishes rather than
+    // assumes. The parameter of a templated delegate is always called `item`.
+    //
+    // They moved ABOVE the grid because a local has to be declared before it is used, where a
+    // generated method did not.
+    Func<LobbyChatHistory, object> TxtChatCol =
+        @<text>@if (item.IsEmote)
+        {
+            <span style="color: violet">@item.Text</span>
+        }
+        else
+        {
+            <span>@item.Text</span>
+        }</text>;
+
+    Func<LobbyChatHistory, object> UserChatCol =
+        @<text>@{ var acc = Account.AccountByName(new ZkDataContext(), item.User); }
+        @if (acc != null)
+        {
+            @Html.PrintAccount(acc)
+        }
+        else
+        {
+            <span>@item.User</span>
+        }</text>;
+
     var chatGrid = new UniGrid<LobbyChatHistory>(Model.Data, gridTitle, "chatgrid");
     chatGrid.AddCol("Time", x => Html.PrintDate(x.Time)).SetSort(x => x.Time).SetWidth("120px");
     chatGrid.AddCol("User", UserChatCol).SetSort(x => x.User).SetWidth("200px");
     chatGrid.AddCol("Text", TxtChatCol).SetSort(x => x.Text);
 }
 
-@helper TxtChatCol(LobbyChatHistory x)
-{
-    if (x.IsEmote)
-    {
-        <span style="color: violet">@x.Text</span>
-    }
-    else
-    {
-        <span>@x.Text</span>
-    }
-}
-
-@helper UserChatCol(LobbyChatHistory x)
-{
-    var acc = Account.AccountByName(new ZkDataContext(), x.User);
-    if (acc != null)
-    {
-        @Html.PrintAccount(acc)
-    }
-    else
-    {
-        <span>@x.User</span>
-    }
-}
-@GridHelpers.RenderTable(chatGrid)
+@Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", chatGrid)

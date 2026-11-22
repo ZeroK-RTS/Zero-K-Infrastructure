@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -69,6 +69,11 @@ namespace LobbyClient
             scriptPath = null;
             gamePrivateMessages = null;
             process = null;
+
+            // Closed, not just dropped: Close is what sets the listener's exit flag, so nulling the
+            // field on its own left the thread running and its socket bound for the life of the
+            // process. ExitGame below has always closed it; this path had not.
+            talker?.Close();
             talker = null;
         }
 
@@ -492,7 +497,19 @@ namespace LobbyClient
                         Context.PlayersUnreadyOnStart = Context.ActualPlayers.Where(x => !x.IsSpectator && !(x.IsIngameReady && x.IsIngame)).Select(x => x.Name).ToList();
                         foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator)) p.IsIngameReady = true;
 
-                        process.PriorityClass = ProcessPriorityClass.High;
+                        // Raising priority needs privileges on Linux - an unprivileged process may
+                        // only lower its nice value - so this throws Win32Exception(13) there. It sits
+                        // inside talker_SpringEvent's catch, which means the throw took BattleStarted
+                        // with it and the lobby never learned the game had started. The priority is an
+                        // optimisation; it must not be able to do that.
+                        try
+                        {
+                            process.PriorityClass = ProcessPriorityClass.High;
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceWarning("Could not raise the dedicated server's priority, continuing at default: {0}", ex.Message);
+                        }
 
                         BattleStarted(this, Context);
                         break;

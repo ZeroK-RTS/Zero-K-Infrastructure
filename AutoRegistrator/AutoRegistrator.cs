@@ -244,5 +244,45 @@ namespace ZeroKWeb
                 }
             }
         }
-    }
+    
+        /// <summary>
+        /// Registers one resource again from its archive, so its stored minimap, metal map and
+        /// height map are regenerated.
+        ///
+        /// **This is the lossless half of the ToBytes backfill.** The re-stretching backfill
+        /// (ZkData.Core -- backfill-minimaps) fixes the geometry of what is stored but cannot
+        /// bring back detail the old rule resized away; going back to the archive can, because
+        /// unitsync renders the images afresh.
+        ///
+        /// It downloads the archive first: a map registered long ago is usually not on this
+        /// machine, and Scan only sees archives it can find. Returns a line saying what happened,
+        /// because the caller is a person deciding whether to do the next one.
+        ///
+        /// One resource per call, deliberately. Every part of this - unitsync, the archive
+        /// download, the upload - is something the repository cannot exercise in a test, so the
+        /// unit of work is the one a person can check the result of.
+        /// </summary>
+        public string ReregisterResource(string internalName, TimeSpan? downloadTimeout = null)
+        {
+            if (string.IsNullOrEmpty(internalName)) return "no resource named";
+            if (UnitSyncer == null) return "the registrar is not running yet - try again once it has started";
+
+            var timeout = downloadTimeout ?? TimeSpan.FromMinutes(10);
+
+            lock (Locker)
+            {
+                var download = Downloader.GetResource(DownloadType.MAP, internalName);
+                if (download != null && !download.WaitHandle.WaitOne(timeout))
+                    return string.Format("{0}: the archive did not finish downloading within {1}", internalName, timeout);
+
+                var results = UnitSyncer.Scan(new[] { internalName });
+                var ours = results?.FirstOrDefault(x => string.Equals(x.ResourceInfo?.Name, internalName, StringComparison.OrdinalIgnoreCase));
+
+                if (ours == null)
+                    return string.Format("{0}: unitsync did not find that archive - it may not be downloadable any more", internalName);
+
+                return string.Format("{0}: {1}", internalName, ours.Status);
+            }
+        }
+}
 }

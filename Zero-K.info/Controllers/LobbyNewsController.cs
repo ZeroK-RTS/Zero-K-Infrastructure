@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
 using ZkData;
+using PlasmaShared.Imaging;
 
 namespace ZeroKWeb.Controllers
 {
@@ -28,6 +29,8 @@ namespace ZeroKWeb.Controllers
             return View("LobbyNewsEdit", db.LobbyNews.Find(id));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Delete(int id)
         {
@@ -35,7 +38,10 @@ namespace ZeroKWeb.Controllers
             var n = db.LobbyNews.Find(id);
             db.LobbyNews.Remove(n);
             db.SaveChanges();
-            Global.Server.NewsListManager.OnNewsChanged();
+            // Best-effort, and guarded for the same reason the other eight guarded calls on this
+            // site are: the row is already gone, so a host with no lobby server should still get
+            // its redirect rather than a 500 over work that succeeded.
+            Global.LobbyApi?.OnNewsChanged();
             return RedirectToAction("Index");
         }
 
@@ -45,6 +51,7 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="nn">The existing <see cref="News"/> item, if editing</param>
         /// <remarks>Also makes or edits a <see cref="ForumThread"/> and its starting <see cref="ForumPost"/></remarks>
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         [ValidateInput(false)]
@@ -73,26 +80,31 @@ namespace ZeroKWeb.Controllers
                 news.PinnedOrder = nn.PinnedOrder;
                 
 
-                Image im = null;
+                byte[] uploadedImage = null;
                 if (image != null && image.ContentLength > 0)
                 {
-                    im = Image.FromStream(image.InputStream);
+                    uploadedImage = Images.ReadAll(image.InputStream);
                     news.ImageExtension = Path.GetExtension(image.FileName);
                 }
 
                 db.SaveChanges();
 
-                if (im != null)
+                if (uploadedImage != null)
                 {
-                    Image thumb = im.GetResized(256, (int)Math.Round(256.0 / im.Width * im.Height), InterpolationMode.HighQualityBicubic);
-                    var targetPath = Server.MapPath(news.ImageRelativeUrl);
+                    var targetPath = this.MapPath(news.ImageRelativeUrl);
                     var folder = Path.GetDirectoryName(targetPath);
                     if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-                    thumb.Save(targetPath);
+                    var uploadedSize = Images.Processor.Measure(uploadedImage);
+                    Images.Processor.SaveResized(uploadedImage,
+                        new Size(256, ImageSizing.ProportionalHeight(uploadedSize.Width, uploadedSize.Height, 256)),
+                        targetPath);
                 }
                 scope.Complete();
             }
-            Global.Server.NewsListManager.OnNewsChanged();
+            // After scope.Complete(), so the news is saved whatever happens here. Unguarded, this
+            // threw on a host with no lobby server: the write landed, the moderator got a 500,
+            // and posting again made a second copy of news that was already there.
+            Global.LobbyApi?.OnNewsChanged();
 
             return RedirectToAction("Index", "LobbyNews");
         }

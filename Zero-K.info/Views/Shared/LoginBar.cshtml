@@ -6,6 +6,7 @@
     if (!(Global.IsAccountAuthorized))
     {
         <form method="post" action="@Url.Action("Logon", "Home")" style="padding: 0; margin: 0;">
+            @Html.AntiForgeryToken()
             <a href="#" id="steamloginsubmit" onclick="$(this).closest('form').submit();" nicetitle="Login using Steam (must create account in-game first)">
                 <img src="~/Img/sits_small.png" style="vertical-align: middle;" />
             </a>

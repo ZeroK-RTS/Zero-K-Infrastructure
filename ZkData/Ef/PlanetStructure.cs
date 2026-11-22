@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using PlasmaShared;
+using PlasmaShared.Imaging;
 
 namespace ZkData
 {
@@ -103,14 +104,11 @@ namespace ZkData
 
         public void GenerateResized(int size, string folder, bool destroyed)
         {
-            using (var image = Image.FromFile(folder + "/" + (!IsActive ? StructureType.DisabledMapIcon : StructureType.MapIcon)))
-            {
-                using (var resized = image.GetResized(size, size, InterpolationMode.HighQualityBilinear))
-                {
-                    var fileNameResized = GetFileNameResized(size);
-                    resized.Save(folder + "/" + fileNameResized);
-                }
-            }
+            // Through the imaging seam, so this entity carries no imaging dependency - see
+            // Shared/PlasmaShared/IMAGING-MIGRATION.md. Note the resampler: the seam is
+            // bicubic where this was HighQualityBilinear, so icons differ very slightly.
+            var source = System.IO.File.ReadAllBytes(folder + "/" + (!IsActive ? StructureType.DisabledMapIcon : StructureType.MapIcon));
+            Images.Processor.SaveResized(source, new System.Drawing.Size(size, size), folder + "/" + GetFileNameResized(size));
         }
 
 

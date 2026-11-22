@@ -18,19 +18,37 @@
     }
 }
 
+@*
+    The outer Ajax.BeginForm that used to wrap all of this is gone. It posted to MatchMaker,
+    contained no input of any kind, and nothing submitted it - "mmForm" appeared nowhere else in
+    the repository, in markup or in script. It had to go rather than stay, because a form cannot
+    nest inside another: each Join is its own form now, and inside that one the browser would have
+    dropped them.
+*@
 <div id="matchMaker">
-    @using (Ajax.BeginForm("MatchMaker","PlanetWars", null, Global.GetAjaxOptions("matchMaker", false), new {@id="mmForm"}))
-    {
         <span id="pwTimer">
             Deadline: @Utils.PrintTimeRemaining(pw.DeadlineSeconds)
         </span>
         <span>@text</span>
-        foreach (PwMatchCommand.VoteOption opt in pw.Options)
+        @foreach (PwMatchCommand.VoteOption opt in pw.Options)
         {
             <span style="border: 1px solid cyan;">
                 @if (opt.CanSelectForBattle)
                 {
-                    @Ajax.ActionLink("Join", "MatchMakerJoin", new { planetID = opt.PlanetID, attackerFaction = opt.AttackerFaction }, new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace })
+                    @*
+                        Was an Ajax.ActionLink: a GET, so a crafted link signed the player up to a
+                        PlanetWars battle they had not chosen. Ajax.BeginForm renders method="post"
+                        and jquery.unobtrusive-ajax serialises the form, token included, so this
+                        stays an in-place replace rather than becoming a page load.
+                    *@
+                    using (Ajax.BeginForm("MatchMakerJoin", "Planetwars",
+                        new { planetID = opt.PlanetID, attackerFaction = opt.AttackerFaction },
+                        new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace },
+                        new { @class = "postlink" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="postlink-button">Join</button>
+                    }
                 }
                 @Html.PrintPlanet(db.Planets.First(x => x.PlanetID == opt.PlanetID))
                 <span>[@opt.AttackerFaction]</span>
@@ -46,5 +64,4 @@
             </span>
             <text>&nbsp; &nbsp;&nbsp;</text>
         }
-    }
 </div>

@@ -1,0 +1,381 @@
+### AccountAvatar(this IHtmlHelper helper, Account account)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,2 +1,3 @@
+-public static MvcHtmlString AccountAvatar(this IHtmlHelper helper, Account account) {
++public static MvcHtmlString AccountAvatar(this IHtmlHelper helper, Account account)
++{
+ if (account.IsDeleted) return null;
+
+### BBCode(this IHtmlHelper helper, string str)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,4 +1,5 @@
+-public static MvcHtmlString BBCode(this IHtmlHelper helper, string str) {
++public static MvcHtmlString BBCode(this IHtmlHelper helper, string str)
++{
+ if (str == null) return null;
+-return new MvcHtmlString(new ForumWikiParser().TranslateToHtml(str, helper));
++return new MvcHtmlString(new ZeroKWeb.ForumParser.ForumWikiParser().TranslateToHtml(str, helper));
+ }
+
+### PrintAccount(this IHtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false, bool makeLinks = true)
+    (identical)
+
+### PrintBadges(this IHtmlHelper helper, Account account, int? maxWidth = null, bool newlines = true)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,2 +1,3 @@
+-public static MvcHtmlString PrintBadges(this IHtmlHelper helper, Account account, int? maxWidth = null, bool newlines = true)
++public static MvcHtmlString PrintBadges(this IHtmlHelper helper, Account account,
++int? maxWidth = null, bool newlines = true)
+ {
+@@ -4,3 +5,4 @@
+ var badges = account.GetBadges();
+-return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/>{(newlines ? "<br/>" : "")}")));
++return new MvcHtmlString(string.Join("\n", badges.Select(x =>
++$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'" : "")}/>{(newlines ? "<br/>" : "")}")));
+ }
+
+### PrintBattle(this IHtmlHelper helper, SpringBattle battle, bool? isVictory = null)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,3 +1,3 @@
+-public static MvcHtmlString PrintBattle(this IHtmlHelper helper, SpringBattle battle, bool? isVictory = null) {
+-var url = Global.UrlHelper();
++public static MvcHtmlString PrintBattle(this IHtmlHelper helper, SpringBattle battle, bool? isVictory = null)
++{
+ var icon = "";
+@@ -9,11 +9,10 @@
+ if (battle.HasBots) icon += " <img src='/img/battles/robot.png' alt='Bots' class='vcenter' />";
+-if (battle.BattleType == "Multiplayer") icon += " <img src='/img/battles/multiplayer.png' alt='Multiplayer' class='vcenter' />";
+-else if (battle.BattleType == "Singleplayer") icon += " <img src='/img/battles/singleplayer.png' alt='Singleplayer' class='vcenter' />";
+-return
+-new MvcHtmlString(string.Format("<span><a href='{0}'>{4} B{1}</a> {2} on {3}</span>",
+-url.Action("Detail", "Battles", new { id = battle.SpringBattleID }),
+-battle.SpringBattleID,
+-battle.PlayerCount,
+-PrintMap(helper, battle.ResourceByMapResourceID?.InternalName),
+-icon));
++if (battle.BattleType == "Multiplayer")
++icon += " <img src='/img/battles/multiplayer.png' alt='Multiplayer' class='vcenter' />";
++else if (battle.BattleType == "Singleplayer")
++icon += " <img src='/img/battles/singleplayer.png' alt='Singleplayer' class='vcenter' />";
++var map = Render(PrintMap(helper, battle.ResourceByMapResourceID?.InternalName));
++return new MvcHtmlString(string.Format("<span><a href='{0}'>{4} B{1}</a> {2} on {3}</span>",
++Url(helper).Action("Detail", "Battles", new { id = battle.SpringBattleID }),
++battle.SpringBattleID, battle.PlayerCount, map, icon));
+ }
+
+### PrintBattle(this IHtmlHelper helper, SpringBattlePlayer battlePlayer)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,4 +1,6 @@
+-public static MvcHtmlString PrintBattle(this IHtmlHelper helper, SpringBattlePlayer battlePlayer) {
++public static MvcHtmlString PrintBattle(this IHtmlHelper helper, SpringBattlePlayer battlePlayer)
++{
+ if (battlePlayer == null) return null;
+-return PrintBattle(helper, battlePlayer.SpringBattle, battlePlayer.IsSpectator ? null : (bool?)battlePlayer.IsInVictoryTeam);
++return PrintBattle(helper, battlePlayer.SpringBattle,
++battlePlayer.IsSpectator ? null : (bool?)battlePlayer.IsInVictoryTeam);
+ }
+
+### PrintBombers(this IHtmlHelper helper, Account account)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,13 +1,7 @@
+-public static MvcHtmlString PrintBombers(this IHtmlHelper helper, Account account) {
+-if (account != null && account.Faction != null) {
+-var ownShips = account.GetBombersAvailable();
+-var factionShips = account.Faction.Bombers;
+-return
+-new MvcHtmlString(
+-string.Format("<span nicetitle='Bombers available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
+-GlobalConst.BomberIcon,
+-Math.Floor(ownShips),
+-Math.Floor(factionShips)));
++public static MvcHtmlString PrintBombers(this IHtmlHelper helper, Account account)
++{
++if (account == null || account.Faction == null) return null;
++return new MvcHtmlString(string.Format(
++"<span nicetitle='Bombers available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
++GlobalConst.BomberIcon, Math.Floor(account.GetBombersAvailable()), Math.Floor(account.Faction.Bombers)));
+ }
+-else return null;
+-}
+
+### PrintBombers(this IHtmlHelper helper, double? count)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,3 +1,3 @@
+-public static MvcHtmlString PrintBombers(this IHtmlHelper helper, double? count) {
+-return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.BomberIcon));
+-}
++public static MvcHtmlString PrintBombers(this IHtmlHelper helper, double? count)
++=> new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>",
++count ?? 0, GlobalConst.BomberIcon));
+
+### PrintClan(this IHtmlHelper helper, Clan clan, bool colorize = true, bool big = false)
+    (identical)
+
+### PrintDate(this IHtmlHelper helper, DateTime? dateTime)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,3 +1,2 @@
+-public static MvcHtmlString PrintDate(this IHtmlHelper helper, DateTime? dateTime) {
+-return new MvcHtmlString($"<span nicetitle=\"{dateTime}\">{dateTime.ToAgoString()}</span>");
+-}
++public static MvcHtmlString PrintDate(this IHtmlHelper helper, DateTime? dateTime)
++=> new MvcHtmlString($"<span nicetitle=\"{dateTime}\">{dateTime.ToAgoString()}</span>");
+
+### PrintDropships(this IHtmlHelper helper, Account account)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,14 +1,8 @@
+-public static MvcHtmlString PrintDropships(this IHtmlHelper helper, Account account) {
+-if (account != null && account.Faction != null) {
+-var ownShips = account.GetDropshipsAvailable();
+-var factionShips = account.Faction.Dropships;
+-return
+-new MvcHtmlString(
+-string.Format(
++public static MvcHtmlString PrintDropships(this IHtmlHelper helper, Account account)
++{
++if (account == null || account.Faction == null) return null;
++return new MvcHtmlString(string.Format(
+ "<span nicetitle='Dropships available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
+-account.Faction.GetShipImageUrl(),
+-Math.Floor(ownShips),
+-Math.Floor(factionShips)));
++account.Faction.GetShipImageUrl(), Math.Floor(account.GetDropshipsAvailable()),
++Math.Floor(account.Faction.Dropships)));
+ }
+-else return null;
+-}
+
+### PrintDropships(this IHtmlHelper helper, double? count, Faction faction)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,4 +1,3 @@
+-public static MvcHtmlString PrintDropships(this IHtmlHelper helper, double? count, Faction faction) {
+-return
+-new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), faction.GetShipImageUrl()));
+-}
++public static MvcHtmlString PrintDropships(this IHtmlHelper helper, double? count, Faction faction)
++=> new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>",
++Math.Floor(count ?? 0), faction.GetShipImageUrl()));
+
+### PrintEnergy(this IHtmlHelper helper, double? count)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,3 +1,3 @@
+-public static MvcHtmlString PrintEnergy(this IHtmlHelper helper, double? count) {
+-return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), GlobalConst.EnergyIcon));
+-}
++public static MvcHtmlString PrintEnergy(this IHtmlHelper helper, double? count)
++=> new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>",
++Math.Floor(count ?? 0), GlobalConst.EnergyIcon));
+
+### PrintFaction(this IHtmlHelper helper, Faction fac, bool big = true)
+    (identical)
+
+### PrintFactionTreaty(this IHtmlHelper helper, FactionTreaty treaty)
+    (identical)
+
+### PrintInfluence(this IHtmlHelper helper, Faction fac, double influence)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,4 +1,4 @@
+-public static MvcHtmlString PrintInfluence(this IHtmlHelper helper, Faction fac, double influence) {
+-var formattedString = string.Format("<span style='color:{0}'>{1:0.#} ({2:0.#}%)</span>", Faction.FactionColor(fac, Global.FactionID), influence, 100 * influence / GlobalConst.PlanetWarsMaximumIP);
+-return new MvcHtmlString(formattedString);
+-}
++public static MvcHtmlString PrintInfluence(this IHtmlHelper helper, Faction fac, double influence)
++=> new MvcHtmlString(string.Format("<span style='color:{0}'>{1:0.#} ({2:0.#}%)</span>",
++Faction.FactionColor(fac, Global.FactionID), influence,
++100 * influence / GlobalConst.PlanetWarsMaximumIP));
+
+### PrintInfluence(this IHtmlHelper helper, Faction faction, int influence, int shadowInfluence)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,6 +1,7 @@
+-public static MvcHtmlString PrintInfluence(this IHtmlHelper helper, Faction faction, int influence, int shadowInfluence) {
++public static MvcHtmlString PrintInfluence(this IHtmlHelper helper, Faction faction, int influence, int shadowInfluence)
++{
+ var formatString = "<span style='color:{0}'>{1}</span>";
+ if (shadowInfluence > 0) formatString += "&nbsp({2}&nbsp+&nbsp<span style='color:gray'>{3}</span>)";
+-var formattedString = string.Format(formatString, faction.Color, influence + shadowInfluence, influence, shadowInfluence);
+-return new MvcHtmlString(formattedString);
++return new MvcHtmlString(string.Format(formatString, faction.Color,
++influence + shadowInfluence, influence, shadowInfluence));
+ }
+
+### PrintInfluence(this IHtmlHelper helper, PlanetFaction planetFaction)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,3 +1,2 @@
+-public static MvcHtmlString PrintInfluence(this IHtmlHelper helper, PlanetFaction planetFaction) {
+-return PrintInfluence(helper, planetFaction.Faction, planetFaction.Influence);
+-}
++public static MvcHtmlString PrintInfluence(this IHtmlHelper helper, PlanetFaction planetFaction)
++=> PrintInfluence(helper, planetFaction.Faction, planetFaction.Influence);
+
+### PrintLines(this IHtmlHelper helper, IEnumerable<object> lines)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,2 +1,3 @@
+-public static MvcHtmlString PrintLines(this IHtmlHelper helper, IEnumerable<object> lines) {
++public static MvcHtmlString PrintLines(this IHtmlHelper helper, IEnumerable<object> lines)
++{
+ var sb = new StringBuilder();
+
+### PrintLines(this IHtmlHelper helper, string text)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,3 +1,2 @@
+-public static MvcHtmlString PrintLines(this IHtmlHelper helper, string text) {
+-return new MvcHtmlString(helper.Encode(text).Replace("\n", "<br/>"));
+-}
++public static MvcHtmlString PrintLines(this IHtmlHelper helper, string text)
++=> new MvcHtmlString(System.Net.WebUtility.HtmlEncode(text).Replace("\n", "<br/>"));
+
+### PrintMap(this IHtmlHelper helper, string name)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,5 +1,6 @@
+-public static MvcHtmlString PrintMap(this IHtmlHelper helper, string name) {
+-var url = Global.UrlHelper();
++public static MvcHtmlString PrintMap(this IHtmlHelper helper, string name)
++{
+ var encoded = System.Net.WebUtility.HtmlEncode(name);
+-return new MvcHtmlString(string.Format("<a href='{0}' title='$map${1}'>{1}</a>", url.Action("DetailName", "Maps", new { name }), encoded));
++return new MvcHtmlString(string.Format("<a href='{0}' title='$map${1}'>{1}</a>",
++Url(helper).Action("DetailName", "Maps", new { name }), encoded));
+ }
+
+### PrintMediaWikiEdit(this IHtmlHelper helper, MediaWikiRecentChanges.MediaWikiEdit edit)
+    (identical)
+
+### PrintMetal(this IHtmlHelper helper, Account account)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,14 +1,7 @@
+-public static MvcHtmlString PrintMetal(this IHtmlHelper helper, Account account) {
+-if (account != null && account.Faction != null) {
+-var ownMetal = account.GetMetalAvailable();
+-var factionMetal = Math.Floor(account.Faction.Metal);
+-return
+-new MvcHtmlString(
+-string.Format(
++public static MvcHtmlString PrintMetal(this IHtmlHelper helper, Account account)
++{
++if (account == null || account.Faction == null) return null;
++return new MvcHtmlString(string.Format(
+ "<span style='color:#00FFFF' nicetitle='Metal available to you/owned by faction'><img src='{0}' width='20' height='20'/>{1} / {2}</span>",
+-GlobalConst.MetalIcon,
+-Math.Floor(ownMetal),
+-Math.Floor(factionMetal)));
++GlobalConst.MetalIcon, Math.Floor(account.GetMetalAvailable()), Math.Floor(account.Faction.Metal)));
+ }
+-else return null;
+-}
+
+### PrintMetal(this IHtmlHelper helper, double? cost)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,6 +1,3 @@
+-public static MvcHtmlString PrintMetal(this IHtmlHelper helper, double? cost) {
+-return
+-new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' class='icon20'/></span>",
+-Math.Floor(cost ?? 0),
+-GlobalConst.MetalIcon));
+-}
++public static MvcHtmlString PrintMetal(this IHtmlHelper helper, double? cost)
++=> new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' class='icon20'/></span>",
++Math.Floor(cost ?? 0), GlobalConst.MetalIcon));
+
+### PrintPlanet(this IHtmlHelper helper, Planet planet)
+    (identical)
+
+### PrintRoleType(this IHtmlHelper helper, RoleType rt)
+    (identical)
+
+### PrintStructureType(this IHtmlHelper helper, StructureType stype)
+    (identical)
+
+### PrintWarps(this IHtmlHelper helper, Account account)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,14 +1,7 @@
+-public static MvcHtmlString PrintWarps(this IHtmlHelper helper, Account account) {
+-if (account != null && account.Faction != null) {
+-var ownWarps = account.GetWarpAvailable();
+-var factionWarps = account.Faction.Warps;
+-return
+-new MvcHtmlString(
+-string.Format(
++public static MvcHtmlString PrintWarps(this IHtmlHelper helper, Account account)
++{
++if (account == null || account.Faction == null) return null;
++return new MvcHtmlString(string.Format(
+ "<span nicetitle='Warp cores available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
+-GlobalConst.WarpIcon,
+-Math.Floor(ownWarps),
+-Math.Floor(factionWarps)));
++GlobalConst.WarpIcon, Math.Floor(account.GetWarpAvailable()), Math.Floor(account.Faction.Warps)));
+ }
+-else return null;
+-}
+
+### PrintWarps(this IHtmlHelper helper, double? count)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,3 +1,3 @@
+-public static MvcHtmlString PrintWarps(this IHtmlHelper helper, double? count) {
+-return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.WarpIcon));
+-}
++public static MvcHtmlString PrintWarps(this IHtmlHelper helper, double? count)
++=> new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>",
++count ?? 0, GlobalConst.WarpIcon));
+
+### Stars(this IHtmlHelper helper, StarType type, double? rating)
+--- MVC 5
++++ ASP.NET Core
+@@ -1,17 +1,13 @@
+-public static MvcHtmlString Stars(this IHtmlHelper helper, StarType type, double? rating) {
+-if (rating.HasValue) {
+-var totalWidth = 5*14;
+-var starWidth = (int)(rating*14.0);
+-return
+-new MvcHtmlString(string.Format("<span class='{0}' style='width:{1}px'></span><span style='width:{3}px'></span>",
+-type,
+-starWidth,
+-rating,
+-totalWidth - starWidth));
++public static MvcHtmlString Stars(this IHtmlHelper helper, StarType type, double? rating)
++{
++if (rating.HasValue)
++{
++var totalWidth = 5 * 14;
++var starWidth = (int)(rating * 14.0);
++return new MvcHtmlString(string.Format(
++"<span class='{0}' style='width:{1}px'></span><span style='width:{3}px'></span>",
++type, starWidth, rating, totalWidth - starWidth));
+ }
+-else {
+-return
+-new MvcHtmlString(string.Format("<span class='{0}' style='width:70px' title='No votes'></span>",
++return new MvcHtmlString(string.Format("<span class='{0}' style='width:70px' title='No votes'></span>",
+ type == StarType.RedSkull ? StarType.WhiteSkull : StarType.WhiteStarSmall));
+ }
+-}
+
+### BoolSelect(this IHtmlHelper helper, string name, bool? selected, string anyItem)
+    only in HtmlHelperExtensions.cs (MVC 5)
+
+### Select(this IHtmlHelper helper, string name, IEnumerable<SelectOption> items, string selected)
+    only in HtmlHelperExtensions.cs (MVC 5)
+
+### Select(this IHtmlHelper helper, string name, Type etype, int? selected, string anyItem)
+    only in HtmlHelperExtensions.cs (MVC 5)
+

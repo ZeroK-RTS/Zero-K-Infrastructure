@@ -16,13 +16,34 @@ namespace ZeroKWeb.Controllers
         }
 
 
+        // PayPal sends IPN as a POST, and the body is the whole message. Without this a GET
+        // reached the handler too - with no body, so ParseIpn read nulls - and the endpoint is
+        // anonymous by necessity, so there was nothing else saying what method it took. No
+        // anti-forgery token: PayPal cannot carry one, which is why verification with PayPal is
+        // what this endpoint trusts, and why that now happens before anything is written.
+        [HttpPost]
+        [NoAntiForgeryTokenByDesign("PayPal is the caller and has no session here; the postback"
+            + " to PayPal, which ImportIpnPayment makes before writing anything, is what says"
+            + " the notification is genuine")]
         public ActionResult Ipn() {
-             Global.PayPalInterface.ImportIpnPayment(Request.Params, Request.BinaryRead(Request.ContentLength));
+            // One call, because the parsed fields and the raw bytes must describe the same request:
+            // PayPal verification posts the bytes back. See ControllerCompat.ReadIpnRequest.
+            byte[] raw;
+            var values = this.ReadIpnRequest(out raw);
+            Global.PayPalInterface.ImportIpnPayment(values, raw);
             return Content("");
         }
 
 
         [Auth]
+        // The reason this is safe is not that the redeemer benefits - it is that POSSESSION OF
+        // THE CODE IS THE CREDENTIAL. Anyone holding one can redeem it by visiting the link
+        // themselves, so forging a visit gives an attacker nothing they could not already have,
+        // and costs them the kudos. The earlier wording recorded the conclusion and invited the
+        // wrong objection: that a crafted link spends somebody else's code on a stranger. It
+        // does, and so does the attacker simply clicking it, which is why a token changes
+        // nothing here. What would change it is a code that could be guessed; it is a Guid.
+        [WritesOnGetByDesign("holding the code is the credential, so a forged visit gains an attacker nothing")]
         public ActionResult Redeem(string code) {
             var db = new ZkDataContext();
             if (string.IsNullOrEmpty(code)) return Content("Code is empty");
@@ -44,6 +65,7 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Manually input a contribution
         /// </summary>
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AddContribution(int accountID,int kudos, string item, string currency, double gross, double grossEur, double netEur, string email, string comment, bool isSpring, DateTime date) {

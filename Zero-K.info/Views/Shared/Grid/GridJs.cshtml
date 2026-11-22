@@ -1,0 +1,28 @@
+@using ZeroKWeb
+@model IUniGrid
+<script type="text/javascript">
+    gridData = typeof (gridData) == 'undefined' ? {} : gridData; // declare griddate if it does not already exist
+
+    gridData['@Model.ID'] = {};
+
+    // fill up griddata with values
+    @foreach (var sel in Model.SelectedKeys)
+    {
+        @: gridData['@Model.ID'][@sel] = '1';
+    }
+
+
+    $(document).ready(function() {
+        $("#@(Model.ID)_pager_prefix").each(function(i, prefix) {
+            $(prefix).prependTo($(".@(Model.ID)_pager"));
+        });
+
+        $("#@(Model.ID)_pager_suffix").each(function(i, suffix) {
+            $(suffix).appendTo($(".@(Model.ID)_pager"));
+        });
+
+
+        // copy griddata to hidden fields for submission
+        gridFormHookSelections('@Model.ID', getGridForm('@Model.ID'));
+    });
+</script>

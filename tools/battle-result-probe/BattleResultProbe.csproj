@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Writes a battle result through the real handler, on .NET 9, against a real database.
+
+    The end of the chain the dedicated-server probe walks: that one produces a SpringBattleContext
+    from a live engine, this one takes a context and stores it. Split because storing needs a
+    database and no engine, and running needs an engine and no database - so tying them together
+    would make each untestable without the other.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>13.0</LangVersion>
+    <AssemblyName>BattleResultProbe</AssemblyName>
+    <RootNamespace>BattleResultProbe</RootNamespace>
+    <NoWarn>$(NoWarn);CS0618;CS0612</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ZkLobbyServer.Core\ZkLobbyServer.Core.csproj" />
+  </ItemGroup>
+
+</Project>

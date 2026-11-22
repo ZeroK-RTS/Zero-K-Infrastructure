@@ -18,6 +18,7 @@ using LobbyClient;
 using PlasmaShared;
 using ZkData;
 using ZkLobbyServer;
+using ZkLobbyServer.Api;
 using Ratings;
 
 namespace ZeroKWeb
@@ -102,7 +103,26 @@ namespace ZeroKWeb
 
         public static PayPalInterface PayPalInterface { get; private set; }
         //public static PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
+        /// <summary>
+        /// The raw lobby server. Prefer <see cref="LobbyApi"/> - this stays public only for the
+        /// Fixer tool, which still reads the PlanetWars matchmaker directly.
+        /// </summary>
         public static ZkLobbyServer.ZkLobbyServer Server { get; private set; }
+
+        /// <summary>
+        /// The website's view of the lobby server, and now its only one. Every member of
+        /// <see cref="ZkLobbyServer.ILobbyServerApi"/> can survive the server moving to its own
+        /// process, which is what Zero-K.info/HOSTING.md is about. Null until the server starts.
+        ///
+        /// The type is the NARROW interface on purpose. It was ILobbyServerApiInProcess, which
+        /// also exposed the live battle list, the live Battle objects and the server itself; now
+        /// that nothing here needs those, declaring the narrow type is what stops them coming
+        /// back. Reaching for one is a compile error in this build, not just in the .NET 9 port.
+        ///
+        /// The object behind it is still an InProcessLobbyServerApi, and the server still runs in
+        /// this process. What changed is that the website can no longer tell.
+        /// </summary>
+        public static ZkLobbyServer.ILobbyServerApi LobbyApi { get; private set; }
 
         public static ServerRunner ZkServerRunner { get; private set; }
         public static ForumPostCache ForumPostCache { get; private set; }= new ForumPostCache();
@@ -134,18 +154,54 @@ namespace ZeroKWeb
             Trace.Listeners.Add(listener);
             Trace.TraceInformation("Starting Zero-K.info web and application");
 
+            // Says that THIS build reports who calls the two deprecated WCF endpoints.
+            //
+            // Without it their silence in LogEntries means either "nobody calls them" or "this
+            // build never reported", and those lead to opposite decisions - the second one to
+            // deleting an endpoint that mission editors still publish through. The line above
+            // cannot serve: it predates the instrumentation and an old build writes it too.
+            //
+            // ZkData.Core -- legacy-callers reads it back and refuses to conclude without it.
+            Trace.TraceInformation(
+                LegacyCallAudit.WatchMarker + ": MissionService.svc and ContentService.svc report their callers");
+
             GlobalConst.SiteDiskPath = MapPath("~");
             
             AwardCalculator = new AwardCalculator();
             AwardCalculator.RecomputeNow();
 
             var sitePath = mvcApplication.Server.MapPath("~");
-            ZkServerRunner = new ServerRunner(sitePath, new PlanetwarsEventCreator());
-            Server = ZkServerRunner.ZkLobbyServer;
 
-            Trace.TraceInformation("Starting lobby server");
-            ZkServerRunner.Run();
-            listener.ZkLobbyServer = Server;
+            // Phase 1: the lobby server runs here, or somewhere else.
+            //
+            // Setting the LobbyApiUrl MiscVar is the entire switch. Unset - which is every
+            // deployment that has not been changed on purpose - means this process starts the
+            // server as it always has, and nothing below behaves differently.
+            //
+            // Set, and this process starts NO lobby server. That is the point: two servers
+            // against one database would both accept logins and both run PlanetWars turns.
+            // Server and ZkServerRunner stay null, and the things that use them directly -
+            // the trace listener and the tourney console - are the remaining in-process
+            // dependencies, which is why ILobbyServerApiInProcess still exists.
+            var lobbyApiUrl = MiscVar.GetValue(LobbyApiConfiguration.UrlKey);
+            if (LobbyApiConfiguration.IsRemote(lobbyApiUrl))
+            {
+                Trace.TraceInformation("Using a lobby server at {0}", lobbyApiUrl);
+                LobbyApi = LobbyApiConfiguration.CreateClient(
+                    lobbyApiUrl,
+                    MiscVar.GetValue(LobbyApiConfiguration.SecretKey),
+                    LobbyApiConfiguration.AllowInsecureTransport(
+                        MiscVar.GetValue(LobbyApiProtocol.AllowInsecureKey)));
+            }
+            else
+            {
+                ZkServerRunner = new ServerRunner(sitePath, new PlanetwarsEventCreator());
+                Server = ZkServerRunner.ZkLobbyServer;
+                LobbyApi = new ZkLobbyServer.InProcessLobbyServerApi(Server);
+
+                Trace.TraceInformation("Starting lobby server");
+                ZkServerRunner.Run();
+            }
 
             ForumPostIndexer = new ForumPostIndexer();
 
@@ -162,7 +218,7 @@ namespace ZeroKWeb
             AutoRegistrator.NewZkReleaseRegistered += (game, chobby) =>
             {
                 SteamDepotGenerator.RunAll();
-                Server.SetGame(game);
+                LobbyApi.SetGame(game);
             };
 
             AutoRegistrator.RunMainAndMapSyncAsync();
@@ -236,7 +292,7 @@ namespace ZeroKWeb
             PayPalInterface = new PayPalInterface();
             PayPalInterface.Error +=
                 (e) => {
-                    Server.GhostSay(new Say() {
+                    LobbyApi.GhostSay(new Say() {
                         IsEmote = true,
                         Target = "zkdev",
                         User = GlobalConst.NightwatchName,
@@ -248,10 +304,10 @@ namespace ZeroKWeb
                 var message = string.Format("WOOHOO! {0:d} New contribution of {1:F2}€ - for the jar {2}", c.Time, c.Euros,
                     c.ContributionJar.Name);
 
-                Server.GhostSay(new Say() { IsEmote = true, Target = "zk", User = GlobalConst.NightwatchName, Text = message });
+                LobbyApi.GhostSay(new Say() { IsEmote = true, Target = "zk", User = GlobalConst.NightwatchName, Text = message });
 
                 if (c.AccountByAccountID != null) {
-                    Server.GhostSay(new Say() {
+                    LobbyApi.GhostSay(new Say() {
                         IsEmote = true,
                         Target = "zk",
                         User = GlobalConst.NightwatchName,

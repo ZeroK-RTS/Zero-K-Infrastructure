@@ -13,6 +13,7 @@ namespace ZeroKWeb.Controllers
         // GET: /Missions/
         
 
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder, string script)
@@ -31,6 +32,8 @@ namespace ZeroKWeb.Controllers
         }
 
         //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Delete(int id)
         {
@@ -40,6 +43,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        [WritesOnGetByDesign("the mission's forum thread is marked read by looking at the page")]
         public ActionResult Detail(int id)
         {
             var db = new ZkDataContext();
@@ -118,6 +122,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Rate(int id, int? difficulty, int? rating)
         {
             var db = new ZkDataContext();
@@ -153,6 +159,8 @@ namespace ZeroKWeb.Controllers
         }
 
         //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Undelete(int id)
         {

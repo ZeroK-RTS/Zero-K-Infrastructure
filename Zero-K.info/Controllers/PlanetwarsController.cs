@@ -12,12 +12,14 @@ using Ratings;
 
 namespace ZeroKWeb.Controllers
 {
-    public class PlanetwarsController : Controller
+    public partial class PlanetwarsController : Controller
     {
         //
         // GET: /Planetwars/
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult BombPlanet(int planetID, int count, bool? useWarp)
         {
             var db = new ZkDataContext();
@@ -26,7 +28,7 @@ namespace ZeroKWeb.Controllers
             Planet planet = db.Planets.Single(x => x.PlanetID == planetID);
             bool accessible =(useWarp == true) ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
             if (!accessible) return Content("You cannot attack here");
-            if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
+            if (Global.LobbyApi.GetPlanetBattles(planet.Resource.InternalName).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
 
             bool selfbomb = acc.FactionID == planet.OwnerFactionID;
             if (count < 0) count = 0;
@@ -131,12 +133,14 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult BuildStructure(int planetID, int structureTypeID)
         {
             using (var db = new ZkDataContext())
             {
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
-                if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot build structures");
+                if (Global.LobbyApi.GetPlanetBattles(planet.Resource.InternalName).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot build structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 if (acc.FactionID != planet.OwnerFactionID) return Content("Planet is not under your control.");
 
@@ -173,12 +177,14 @@ namespace ZeroKWeb.Controllers
         /// Demolish an existing structure (not destroyed from bombing or such)
         /// </summary>
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult DestroyStructure(int planetID, int structureTypeID)
         {
             using (var db = new ZkDataContext())
             {
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
-                if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
+                if (Global.LobbyApi.GetPlanetBattles(planet.Resource.InternalName).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 StructureType structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
                 Faction faction = planet.Faction;
@@ -250,99 +256,6 @@ namespace ZeroKWeb.Controllers
             return View(ret);
         }
 
-        /// <summary>
-        /// Makes an image: galaxy background with planet images drawn on it (cheaper than rendering each planet individually)
-        /// </summary>
-        // FIXME: having issues with bitmap parameters; setting AA factor to 1 as fallback (was 4)
-        public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 1)
-        {
-            zoom *= antiAliasingFactor;
-            using (var db = new ZkDataContext())
-            {
-                Galaxy gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
-
-                using (Image background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName)))
-                {
-                    //var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
-                    var im = new Bitmap(background.Width, background.Height);
-                    using (Graphics gr = Graphics.FromImage(im))
-                    {
-                        gr.DrawImage(background, 0, 0, im.Width, im.Height);
-
-                        /*
-						using (var pen = new Pen(Color.FromArgb(255, 180, 180, 180), (int)(1*zoom)))
-						{
-							foreach (var l in gal.Links)
-							{
-								gr.DrawLine(pen,
-								            (int)(l.PlanetByPlanetID1.X*im.Width),
-								            (int)(l.PlanetByPlanetID1.Y*im.Height),
-								            (int)(l.PlanetByPlanetID2.X*im.Width),
-								            (int)(l.PlanetByPlanetID2.Y*im.Height));
-							}
-						}*/
-
-                        foreach (Planet p in gal.Planets)
-                        {
-                            string planetIconPath = null;
-                            try
-                            {
-                                planetIconPath = "/img/planets/" + (p.Resource.MapPlanetWarsIcon ?? "1.png"); // backup image is 1.png
-                                using (Image pi = Image.FromFile(Server.MapPath(planetIconPath)))
-                                {
-                                    double aspect = pi.Height / (double)pi.Width;
-                                    var width = (int)(p.Resource.PlanetWarsIconSize * zoom);
-                                    var height = (int)(width * aspect);
-                                    gr.DrawImage(pi, (int)(p.X * im.Width) - width / 2, (int)(p.Y * im.Height) - height / 2, width, height);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new ApplicationException(
-                                    string.Format("Cannot process planet image {0} for planet {1} map {2}",
-                                                  planetIconPath,
-                                                  p.PlanetID,
-                                                  p.MapResourceID),
-                                    ex);
-                            }
-                        }
-                        if (antiAliasingFactor == 1) return im;
-                        else
-                        {
-                            zoom /= antiAliasingFactor;
-                            return im.GetResized((int)(background.Width * zoom), (int)(background.Height * zoom), InterpolationMode.HighQualityBicubic);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Go to main Planetwars page
-        /// </summary>
-        public ActionResult Index(int? galaxyID = null)
-        {
-            var db = new ZkDataContext();
-            
-            Galaxy gal;
-            if (galaxyID != null) gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
-            else gal = db.Galaxies.Single(x => x.IsDefault);
-
-            string cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
-            if (gal.IsDirty || !System.IO.File.Exists(cachePath))
-            {
-                using (Bitmap im = GenerateGalaxyImage(gal.GalaxyID))
-                {
-                    im.SaveJpeg(cachePath, 85);
-                    gal.IsDirty = false;
-                    gal.Width = im.Width;
-                    gal.Height = im.Height;
-                    db.SaveChanges();
-                }
-            }
-            
-            return View("Galaxy", gal);
-        }
 
 
         public ActionResult Minimap()
@@ -353,6 +266,7 @@ namespace ZeroKWeb.Controllers
         }
 
 
+        [WritesOnGetByDesign("the planet's forum thread is marked read by looking at the page")]
         public ActionResult Planet(int id)
         {
             var db = new ZkDataContext();
@@ -367,6 +281,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SendDropships(int planetID, int count, bool? useWarp)
         {
             var db = new ZkDataContext();
@@ -376,7 +292,7 @@ namespace ZeroKWeb.Controllers
             int there = planet.PlanetFactions.Where(x => x.FactionID == acc.FactionID).Sum(x => (int?)x.Dropships) ?? 0;
             bool accessible = useWarp == true ? planet.CanDropshipsWarp(acc.Faction) : planet.CanDropshipsAttack(acc.Faction);
             if (!accessible) return Content(string.Format("That planet cannot be attacked"));
-            if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
+            if (Global.LobbyApi.GetPlanetBattles(planet.Resource.InternalName).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
             
             int cnt = Math.Max(count, 0);
 
@@ -395,7 +311,7 @@ namespace ZeroKWeb.Controllers
                 }
 
                 if (planet.Account != null) {
-                    Global.Server.GhostPm(planet.Account.Name, string.Format(
+                    Global.LobbyApi.GhostPm(planet.Account.Name, string.Format(
                         "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} {3}/Planetwars/Planet/{2}",
                         cnt,
                         planet.Name,
@@ -426,6 +342,18 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Planet", new { id = planetID });
         }
 
+        /// <summary>
+        /// Recomputes planet ownership from influence.
+        ///
+        /// Nothing links to this - no view, no script, no other action - so the only way to reach
+        /// it is to type the URL, which is what an operator's escape hatch looks like. It had no
+        /// [Auth] of any kind, which meant an anonymous request ran a turn handler that writes
+        /// planet ownership and inserts events.
+        ///
+        /// Gated rather than deleted, because "nothing references it" is how a hand-typed ops tool
+        /// looks from inside the repository. If nobody recognizes it as one, it should go.
+        /// </summary>
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult RunSetPlanetOwners()
         {
             using (var db = new ZkDataContext()) PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db);
@@ -439,6 +367,8 @@ namespace ZeroKWeb.Controllers
 
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SubmitRenamePlanet(int planetID, string newName, int teamSize, string map)
         {
@@ -461,6 +391,9 @@ namespace ZeroKWeb.Controllers
         }
 
 
+        [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult RecallRole(int accountID, int roletypeID)
         {
             var db = new ZkDataContext();
@@ -475,13 +408,16 @@ namespace ZeroKWeb.Controllers
                                                             role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction,
                                                             role,
                                                             myAccount));
-                Global.Server.GhostPm(targetAccount.Name, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
+                Global.LobbyApi.GhostPm(targetAccount.Name, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
                 db.SaveChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }
             else return Content("Cannot recall");
         }
 
+        [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult AppointRole(int accountID, int roletypeID)
         {
             var db = new ZkDataContext();
@@ -528,7 +464,7 @@ namespace ZeroKWeb.Controllers
                                                                 role,
                                                                 myAccount));
                 }
-                Global.Server.GhostPm(targetAccount.Name, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
+                Global.LobbyApi.GhostPm(targetAccount.Name, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
                 db.SaveChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }
@@ -536,6 +472,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ConfiscateStructure(int planetID, int structureTypeID)
         {
             using (var db = new ZkDataContext())
@@ -572,6 +510,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SetEnergyPriority(int planetID, int structuretypeID, EnergyPriority priority)
         {
             var db = new ZkDataContext();
@@ -586,6 +526,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SetStructureTarget(int planetID, int structureTypeID, int targetPlanetID)
         {
             var db = new ZkDataContext();
@@ -609,13 +551,33 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
 
+        /// <summary>
+        /// Fires a structure at the target <see cref="SetStructureTarget"/> aimed it at.
+        ///
+        /// The comment that used to stand here said "this call is never to be called
+        /// before/outside of SetStructureTarget". That was the intent, not the behaviour: this is
+        /// a public method on a controller, so the default {controller}/{action} route invokes it
+        /// for anyone who types the URL. The only thing that made it look internal was
+        /// Planet.cshtml, which shows the Activate link only when CanSetStructureTarget says so -
+        /// and a link the template declines to draw is not an authorization check.
+        ///
+        /// So the check the view was already making is made here too. Without it any logged-in
+        /// account could fire a structure it has nothing to do with at the target that structure's
+        /// owner had aimed it at, spending their single-use planet buster for them.
+        /// </summary>
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ActivateTargetedStructure(int planetID, int structureTypeID)
         {
-            //This call is never to be called before/outside of SetStructureTarget
             var db = new ZkDataContext();
             //Get the pre-set target planet ID
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
+            if (structure == null) return Content("No such structure");
+
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            if (!acc.CanSetStructureTarget(structure)) return Content("Cannot activate this structure");
+
             int targetID = structure.TargetPlanetID ?? -1;
             if (targetID == -1) return Content("Structure has no target");
 
@@ -650,8 +612,16 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Planet", new { id = planetID });
         }
 
-        [Auth]
-        public ActionResult CreateLink(int planetID, int structureTypeID, int targetID)
+        /// <summary>
+        /// Only ever called from <see cref="ActivateTargetedStructure"/>, which is where the
+        /// authorization check lives.
+        ///
+        /// It was public, and a public method on a controller is an action: under the default
+        /// route any logged-in account could call it directly. It checks only that the two planets
+        /// share a galaxy, so it would link any two planets in that galaxy on request - a
+        /// permanent change to who can attack whom, made by someone who owns neither planet.
+        /// </summary>
+        private ActionResult CreateLink(int planetID, int structureTypeID, int targetID)
         {
             var db = new ZkDataContext();
 
@@ -671,7 +641,10 @@ namespace ZeroKWeb.Controllers
             return null;
         }
 
-        [Auth]
+        // No [Auth] here, and there never was one that did anything: the attribute this method
+        // used to carry was an authorization filter on a private method, which MVC never runs.
+        // An attribute that reads as a check but is not one is how CreateLink stayed unnoticed.
+        // The caller, ActivateTargetedStructure, is what authorizes.
         private ActionResult FirePlanetBuster(int planetID, int structureTypeID, int targetID)
         {
             var db = new ZkDataContext();
@@ -793,6 +766,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult MatchMakerAttack(int planetID)
         {
             var db = new ZkDataContext();
@@ -800,8 +775,8 @@ namespace ZeroKWeb.Controllers
             var account = db.CurrentAccount();
             if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && account?.FactionID != null && planet.CanMatchMakerPlay(account.Faction))
             {
-                Global.Server.PlanetWarsMatchMaker.AddAttackOption(planet, account.FactionID.Value);
-                Global.Server.RequestJoinPlanet(Global.Account.Name, planet.PlanetID, account.Faction.Shortcut);
+                Global.LobbyApi.AddPlanetWarsAttackOption(planet.PlanetID, account.FactionID.Value);
+                Global.LobbyApi.RequestJoinPlanet(Global.Account.Name, planet.PlanetID, account.Faction.Shortcut);
             }
             return RedirectToAction("Planet", new { id = planetID });
         }
@@ -810,25 +785,28 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult MatchMaker()
         {
-            var pwm = Global.Server.PlanetWarsMatchMaker;
-            if (pwm != null)
+            if (Global.LobbyApi.IsPlanetWarsMatchMakerRunning)
             {
                 // admin view gets a per-viewer command so per-option flags render correctly
-                var state = Global.Server.PlanetWarsMatchMaker.GenerateLobbyCommand(Global.Account?.Name, Global.Account?.Faction?.Shortcut);
+                var state = Global.LobbyApi.GeneratePlanetWarsLobbyCommand(Global.Account?.Name, Global.Account?.Faction?.Shortcut);
                 if (state != null) return View("PwMatchMaker", state);
             }
             return Content("Match maker offline");
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult MatchMakerJoin(int planetID, string attackerFaction)
         {
-            Global.Server.RequestJoinPlanet(Global.Account.Name, planetID, attackerFaction);
+            Global.LobbyApi.RequestJoinPlanet(Global.Account.Name, planetID, attackerFaction);
             return MatchMaker();
         }
 
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult RushActivation(int planetID, int structureTypeID)
         {
             using (var db = new ZkDataContext())

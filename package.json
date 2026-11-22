@@ -1,0 +1,11 @@
+{
+  "name": "zero-k-assets",
+  "private": true,
+  "description": "The asset build for the .NET 9 port. See tools/build-assets.mjs and ZeroKWeb.Core/Mvc5Compat/BundlingCompat.cs.",
+  "scripts": {
+    "build": "node tools/build-assets.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  }
+}

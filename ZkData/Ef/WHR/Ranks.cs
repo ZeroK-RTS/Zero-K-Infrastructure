@@ -133,7 +133,7 @@ namespace Ratings
             if (rating != null)
             {
                 rating.UpdateLadderElo(ladderElo);
-                db.Entry(rating).State = System.Data.Entity.EntityState.Modified;
+                db.MarkModified(rating);
             }
             else
             {

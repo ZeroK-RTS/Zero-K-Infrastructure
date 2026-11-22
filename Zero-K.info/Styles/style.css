@@ -641,3 +641,36 @@ div#busy
 .video-container {
     max-width: 100%;
 }
+
+/* Action links that POST instead of GET so they can carry an anti-forgery token.
+   Renders <form class="postlink"><button class="postlink-button">, styled to look like <a>. */
+form.postlink {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.postlink-button {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: #38bfec;
+    cursor: pointer;
+    text-decoration: none;
+    vertical-align: baseline;
+}
+
+.postlink-button:hover {
+    color: #fff;
+}
+
+.postlink-button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+.postlink-button img {
+    vertical-align: middle;
+}

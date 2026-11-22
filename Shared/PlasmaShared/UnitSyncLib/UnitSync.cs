@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,6 +11,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Serialization;
 using PlasmaShared.UnitSyncLib;
+
+using PlasmaShared.Imaging;
 
 namespace ZkData.UnitSyncLib
 {
@@ -134,17 +136,17 @@ namespace ZkData.UnitSyncLib
             return new ArchiveCache(UnitsyncWritableFolder);
         }
 
-        public Bitmap GetHeightMap(string mapName)
+        public MapImage GetHeightMap(string mapName)
         {
             return GetInfoMap(mapName, "height", 1);
         }
 
-        public Bitmap GetMetalMap(string mapName)
+        public MapImage GetMetalMap(string mapName)
         {
             return GetInfoMap(mapName, "metal", 1);
         }
 
-        public Bitmap GetMinimap(Map map)
+        public MapImage GetMinimap(Map map)
         {
             return FixAspectRatio(map, GetSquareMinimap(map.Name, 0));
         }
@@ -263,18 +265,15 @@ namespace ZkData.UnitSyncLib
             return CompleteFindFilesInVfs(searchHandle);
         }
 
-        private static Bitmap FixAspectRatio(Map map, Image squareMinimap)
+        private static MapImage FixAspectRatio(Map map, MapImage squareMinimap)
         {
-            var newSize = map.Size.Width > map.Size.Height
-                ? new Size(squareMinimap.Width, (int)(squareMinimap.Height / ((float)map.Size.Width / map.Size.Height)))
-                : new Size((int)(squareMinimap.Width * ((float)map.Size.Width / map.Size.Height)), squareMinimap.Height);
+            // Extracted to ImageSizing.MinimapAspectCorrection, which is tested on both stacks -
+            // unitsync renders every minimap square, and this is what stretches it back. The
+            // resize itself is MapImage's, so this method no longer knows which imaging library
+            // is underneath it.
+            var newSize = ImageSizing.MinimapAspectCorrection(squareMinimap.Size, map.Size);
 
-            var correctMinimap = new Bitmap(newSize.Width, newSize.Height, PixelFormat.Format24bppRgb);
-            using (var graphics = Graphics.FromImage(correctMinimap))
-            {
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.DrawImage(squareMinimap, new Rectangle(Point.Empty, newSize));
-            }
+            var correctMinimap = squareMinimap.ResizeTo(newSize);
             squareMinimap.Dispose();
             return correctMinimap;
         }
@@ -313,7 +312,7 @@ namespace ZkData.UnitSyncLib
             return CompleteFindFilesInVfs(searchHandle);
         }
 
-        private unsafe Bitmap GetInfoMap(string mapName, string name, int bytesPerPixel)
+        private MapImage GetInfoMap(string mapName, string name, int bytesPerPixel)
         {
             var width = 0;
             var height = 0;
@@ -323,19 +322,13 @@ namespace ZkData.UnitSyncLib
             try
             {
                 var infoMapPointer = Marshal.UnsafeAddrOfPinnedArrayElement(infoMapData, 0);
-                var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
                 if (!NativeMethods.GetInfoMap(mapName, name, infoMapPointer, bytesPerPixel)) throw new UnitSyncException("GetInfoMap " + name + " failed");
-                var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-                const int PixelSize = 3;
-                var p = (byte*)bitmapData.Scan0;
-                for (var i = 0; i < infoMapData.Length; i++)
-                {
-                    var v = infoMapData[i];
-                    var d = i / width * bitmapData.Stride + i % width * PixelSize;
-                    p[d] = p[d + 1] = p[d + 2] = v;
-                }
-                bitmap.UnlockBits(bitmapData);
-                return bitmap;
+
+                // The expansion of one byte per pixel into three identical channels is
+                // PixelBuffers.GreyscaleToRgb24 now - the same arithmetic, minus the pointer walk
+                // and the stride it had to compute, and tested on .NET 9 where this cannot run.
+                var size = new Size(width, height);
+                return MapImage.FromRgb24(PixelBuffers.GreyscaleToRgb24(infoMapData, size), size);
             }
             finally
             {
@@ -502,16 +495,24 @@ namespace ZkData.UnitSyncLib
             return sides.Select(side => ReadVfsFile("SidePics\\" + side + ".bmp")).ToArray();
         }
 
-        private Bitmap GetSquareMinimap(string mapName, int mipLevel)
+        private MapImage GetSquareMinimap(string mapName, int mipLevel)
         {
             if ((mipLevel < 0) || (mipLevel > MaxMipLevel)) throw new ArgumentOutOfRangeException("mipLevel", string.Format("Mip level must range from 0 to {0}.", MaxMipLevel));
 
             var size = 1024 >> mipLevel;
             var pointer = NativeMethods.GetMinimap(mapName, mipLevel);
-            const PixelFormat format = PixelFormat.Format16bppRgb565;
-            var pixelFormatSize = Image.GetPixelFormatSize(format) / 8;
-            var stride = size * pixelFormatSize;
-            return new Bitmap(size, size, stride, format, pointer);
+            const int bytesPerPixel = 2;   // RGB565
+            var stride = size * bytesPerPixel;
+
+            // The old line was `new Bitmap(size, size, stride, Format16bppRgb565, pointer)`: GDI+
+            // wrapped unitsync's buffer without copying and unpacked 5-6-5 to 8-8-8 by its own
+            // rule. Both halves of that are now explicit - the bytes are copied out, so nothing
+            // downstream holds a pointer unitsync owns and may free, and the unpacking is
+            // PixelBuffers.Rgb565ToRgb24, which Tests/UnitSyncPixelTests.cs checks against GDI+
+            // itself for all 65,536 values on the Windows CI job.
+            var square = new Size(size, size);
+            var raw = NativeBuffer.CopyFrom(pointer, stride * size);
+            return MapImage.FromRgb24(PixelBuffers.Rgb565ToRgb24(raw, square, stride), square);
         }
 
 

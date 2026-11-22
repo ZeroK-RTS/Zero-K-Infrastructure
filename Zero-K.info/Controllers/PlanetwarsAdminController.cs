@@ -25,42 +25,29 @@ namespace ZeroKWeb.Controllers
             public IQueryable<Galaxy> Galaxies;
         }
 
-        // GET: PlanetwarsAdmin
-        public ActionResult Index(PlanetwarsAdminModel model, string set, string purge, string futureset)
+        /// <summary>
+        /// The admin page, which now only reads.
+        ///
+        /// It used to be the form handler as well, branching on which of the submit buttons -
+        /// "set", "purge", "futureset" - had a value. That made the whole thing a GET: a link
+        /// could switch PlanetWars off, or purge a galaxy, with a moderator's cookies.
+        ///
+        /// The three writes are their own actions below, and each submit button is its own form in
+        /// the view. Splitting the form was needed anyway: the page also renders Html.PostLink
+        /// buttons, and those were INSIDE the one big form. A form cannot nest inside another, so
+        /// the browser dropped the inner ones and their buttons submitted to Index instead of to
+        /// SetDefault, Delete or the map utilities.
+        /// </summary>
+        [HttpGet]
+        public ActionResult Index(PlanetwarsAdminModel model)
+        {
+            return View("PlanetwarsAdminIndex", Refresh(model));
+        }
+
+        /// <summary>Fills in what the page displays, whatever was just done to it.</summary>
+        private PlanetwarsAdminModel Refresh(PlanetwarsAdminModel model)
         {
             var db = new ZkDataContext();
-
-            if (model != null)
-            {
-                if (!string.IsNullOrEmpty(set))
-                {
-                    MiscVar.PlanetWarsMode = model.PlanetWarsMode;
-                    db.Events.Add(PlanetwarsEventCreator.CreateEvent("{0} changed PlanetWars status to {1}",
-                        db.Accounts.Find(Global.AccountID),
-                        model.PlanetWarsMode.Description()));
-
-                    db.SaveChanges();
-                }
-
-                if (!string.IsNullOrEmpty(purge))
-                {
-                    PurgeGalaxy(model.LastSelectedGalaxyID, model.UnassignFactions, model.ResetRoles, model.DeleteClans);
-                }
-
-                if (!string.IsNullOrEmpty(futureset))
-                {
-                    if (model.PlanetWarsNextMode == MiscVar.PlanetWarsMode || model.PlanetWarsNextModeDate == null ||
-                        model.PlanetWarsNextModeDate < DateTime.UtcNow || model.PlanetWarsNextMode == null)
-                    {
-                        model.PlanetWarsNextMode = null;
-                        model.PlanetWarsNextModeDate = null;
-                    }
-
-                    MiscVar.PlanetWarsNextMode = model.PlanetWarsNextMode;
-                    MiscVar.PlanetWarsNextModeTime = model.PlanetWarsNextModeDate;
-                }
-            }
-
             model = model ?? new PlanetwarsAdminModel();
 
             model.PlanetWarsMode = MiscVar.PlanetWarsMode;
@@ -70,15 +57,58 @@ namespace ZeroKWeb.Controllers
             model.Galaxies = db.Galaxies.OrderByDescending(x=>x.IsDefault).ThenByDescending(x => x.GalaxyID);
             model.LastSelectedGalaxyID = model.Galaxies.FirstOrDefault(x => x.IsDefault)?.GalaxyID ?? 0;
 
+            return model;
+        }
 
-            return View("PlanetwarsAdminIndex", model);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SetMode(PlanetwarsAdminModel model)
+        {
+            model = model ?? new PlanetwarsAdminModel();
+            using (var db = new ZkDataContext())
+            {
+                MiscVar.PlanetWarsMode = model.PlanetWarsMode;
+                db.Events.Add(PlanetwarsEventCreator.CreateEvent("{0} changed PlanetWars status to {1}",
+                    db.Accounts.Find(Global.AccountID),
+                    model.PlanetWarsMode.Description()));
+
+                db.SaveChanges();
+            }
+            return View("PlanetwarsAdminIndex", Refresh(model));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SetFutureMode(PlanetwarsAdminModel model)
+        {
+            model = model ?? new PlanetwarsAdminModel();
+            if (model.PlanetWarsNextMode == MiscVar.PlanetWarsMode || model.PlanetWarsNextModeDate == null ||
+                model.PlanetWarsNextModeDate < DateTime.UtcNow || model.PlanetWarsNextMode == null)
+            {
+                model.PlanetWarsNextMode = null;
+                model.PlanetWarsNextModeDate = null;
+            }
+
+            MiscVar.PlanetWarsNextMode = model.PlanetWarsNextMode;
+            MiscVar.PlanetWarsNextModeTime = model.PlanetWarsNextModeDate;
+
+            return View("PlanetwarsAdminIndex", Refresh(model));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Purge(PlanetwarsAdminModel model)
+        {
+            model = model ?? new PlanetwarsAdminModel();
+            PurgeGalaxy(model.LastSelectedGalaxyID, model.UnassignFactions, model.ResetRoles, model.DeleteClans);
+            return View("PlanetwarsAdminIndex", Refresh(model));
         }
 
         private static void PurgeGalaxy(int galaxyID, bool unassignFactions, bool resetRoles, bool deleteClans)
         {
             using (var db = new ZkDataContext())
             {
-                db.Database.CommandTimeout = 300;
+                db.Database.SetCommandTimeoutCompat(300);
 
                 var gal = db.Galaxies.Find(galaxyID);
                 gal.IsDirty = true;
@@ -149,6 +179,8 @@ namespace ZeroKWeb.Controllers
 
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SetDefault(int galaxyid)
         {
             var db = new ZkDataContext();
@@ -158,6 +190,8 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.SuperAdmin)]
         public ActionResult Delete(int galaxyid)
         {
@@ -168,6 +202,8 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SetPlanetTeamSizes(int galaxyID)
         {
             var db = new ZkDataContext();
@@ -189,6 +225,8 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult RandomizeMaps(int galaxyID)
         {
             using (var db = new ZkDataContext())
@@ -209,6 +247,15 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Rewrites every PlanetWars battle and rating in the database.
+        ///
+        /// It was a GET, reached by an ActionLink, and tools/check-get-writes.py could not see it:
+        /// EntityFramework.Extensions' .Update(x => new ...) issues SQL straight at the server and
+        /// never touches SaveChanges, which was the only shape that check knew. It knows both now.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ResetRatings()
         {
             using (var db = new ZkDataContext())
@@ -227,11 +274,13 @@ namespace ZeroKWeb.Controllers
                     LadderElo = WholeHistoryRating.DefaultRating.LadderElo,
                 });
             }
-            (RatingSystems.GetRatingSystem(RatingCategory.Planetwars) as WholeHistoryRating).ResetAll();
+            Global.LobbyApi?.ResetPlanetwarsRatings();
 
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult AddWormholes(int galaxyID)
         {
             var db = new ZkDataContext();
@@ -246,6 +295,8 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult OwnPlanets(int galaxyID)
         {
             var db = new ZkDataContext();
@@ -290,6 +341,8 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult StartGalaxy(int galaxyID)
         {
             AddWormholes(galaxyID);

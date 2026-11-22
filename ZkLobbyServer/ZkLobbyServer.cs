@@ -41,7 +41,9 @@ namespace ZkLobbyServer
         public PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public SpringPaths SpringPaths { get; private set; }
 
-        public ConcurrentDictionary<string,int> SessionTokens = new ConcurrentDictionary<string, int>();
+        /// <summary>Single sign-on tokens, with a lifetime - see SessionTokenStore.</summary>
+        public SessionTokenStore SessionTokens = new SessionTokenStore(
+            SessionTokenStore.ParseLifetime(MiscVar.GetValue(SessionTokenStore.LifetimeHoursKey)));
 
         private BattleListUpdater battleListUpdater;
 
@@ -586,11 +588,7 @@ namespace ZkLobbyServer
 
         public void RemoveSessionsForAccountID(int accountID)
         {
-            foreach (var todel in SessionTokens.Where(x => x.Value == accountID).Select(x => x.Key).ToList())
-            {
-                int entry;
-                SessionTokens.TryRemove(todel, out entry);
-            }
+            SessionTokens.RemoveForAccount(accountID);
         }
 
         public async Task ReportUser(ZkDataContext db, Account reporter, Account reported, string report)

@@ -1,0 +1,10 @@
+@using ZeroKWeb
+@model IUniGrid
+<tr>
+    @foreach (var col in Model.BaseCols.Where(x => x.AllowWeb))
+    {
+        <th style="width: @col.Width;">
+            @Html.Partial("~/Views/Shared/Grid/Column.cshtml", new GridColumnModel { Grid = Model, Col = col })
+        </th>
+    }
+</tr>

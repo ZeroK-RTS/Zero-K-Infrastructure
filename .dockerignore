@@ -1,0 +1,7 @@
+# Build output and caches - large, and rebuilt inside the image anyway.
+**/bin/
+**/obj/
+.git/
+PortedViews/**/obj/
+# The generated view set is written by tools/view-set.sh inside the build.
+ZeroKWeb.Host/view-set.props

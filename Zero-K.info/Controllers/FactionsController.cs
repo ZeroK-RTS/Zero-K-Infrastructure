@@ -20,6 +20,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult JoinFaction(int id) {
             if (Global.Account.FactionID != null) return Content("Already in faction");
             if (Global.Account.Clan != null && Global.Account.Clan.FactionID != id) return Content("Must leave current clan first");
@@ -31,8 +33,8 @@ namespace ZeroKWeb.Controllers
             if (faction.IsDeleted && !(Global.Account.Clan != null && Global.Account.Clan.FactionID == id)) throw new ApplicationException("Cannot join deleted faction");
             db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} joins {1}", acc, faction));
             db.SaveChanges();
-            Global.Server.PublishAccountUpdate(acc);
-            Global.Server.PublishUserProfileUpdate(acc);
+            Global.LobbyApi.PublishAccountUpdate(acc.AccountID);
+            Global.LobbyApi.PublishUserProfileUpdate(acc.AccountID);
             return RedirectToAction("Index", "Factions");
         }
 
@@ -68,14 +70,16 @@ namespace ZeroKWeb.Controllers
                 acc2.FactionID = null;
                 db2.SaveChanges();
 
-                Global.Server.PublishAccountUpdate(acc2);
-                Global.Server.PublishUserProfileUpdate(acc2);
+                Global.LobbyApi.PublishAccountUpdate(acc2.AccountID);
+                Global.LobbyApi.PublishUserProfileUpdate(acc2.AccountID);
                 PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db2);
             }
             return faction;
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult LeaveFaction() {
             PerformLeaveFaction(Global.AccountID);
             return RedirectToAction("Index", "Factions");
@@ -116,6 +120,9 @@ namespace ZeroKWeb.Controllers
         /// <param name="delete">Delete the specified <see cref="TreatyEffect"/>?</param>
         /// <param name="propose">If not null or empty, this is a newly proposed treaty</param>
         /// <returns></returns>
+        [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ModifyTreaty(int factionTreatyID,
                                          int? turns,
                                          int? acceptingFactionID,
@@ -203,6 +210,9 @@ namespace ZeroKWeb.Controllers
 
      
 
+        [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult CancelTreaty(int id) {
             var db = new ZkDataContext();
             var treaty = db.FactionTreaties.Single(x => x.FactionTreatyID == id);
@@ -218,6 +228,9 @@ namespace ZeroKWeb.Controllers
             return Content("Cannot cancel");
         }
 
+        [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult CounterProposal(int id) {
             var db = new ZkDataContext();
             var treaty = db.FactionTreaties.Single(x => x.FactionTreatyID == id);
@@ -256,6 +269,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult AcceptTreaty(int id) {
             var db = new ZkDataContext();
             var treaty = db.FactionTreaties.Single(x => x.FactionTreatyID == id);
@@ -292,13 +307,16 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Set faction secret topic (applied to lobby channel as well)
         /// </summary>
+        [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SetTopic(int factionID, string secretTopic) {
             var db = new ZkDataContext();
             var fac = db.Factions.Single(x => x.FactionID == factionID);
             if (Global.Account.FactionID == fac.FactionID && Global.Account.HasFactionRight(x=>x.RightEditTexts)) {
                 fac.SecretTopic = secretTopic;
                 db.SaveChanges();
-                Global.Server.SetTopic(fac.Shortcut,secretTopic, Global.Account.Name);
+                Global.LobbyApi.SetTopic(fac.Shortcut,secretTopic, Global.Account.Name);
                 return RedirectToAction("Detail", new { id = fac.FactionID });
             }
             return Content("Denied");

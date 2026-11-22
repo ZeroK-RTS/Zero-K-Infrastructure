@@ -111,7 +111,7 @@ namespace ZkLobbyServer
                     connectedUser.Connections.TryRemove(otherConnection, out oth);
                 }
 
-                server.SessionTokens[ret.LoginResponse.SessionToken] = user.AccountID;
+                server.SessionTokens.Add(ret.LoginResponse.SessionToken, user.AccountID);
 
                 await SendCommand(ret.LoginResponse); // login accepted
 

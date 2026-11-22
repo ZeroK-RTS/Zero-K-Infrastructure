@@ -3,6 +3,43 @@
 @model ZeroKWeb.Controllers.LobbyController.ChatHistoryModel
 
 @{
+    // Templated Razor delegates, in place of @helper blocks. @helper does not exist in ASP.NET
+    // Core; this form parses in BOTH Razor v3 and the .NET 9 generator, which
+    // tools/razor-v3-check/check.sh establishes rather than assumes. A templated delegate's
+    // parameter is always called `item`.
+    Func<LobbyChatHistory, object> TxtCol =
+        @<text>@if (item.IsEmote)
+        {
+            <span style="color: violet">@item.Text</span>
+        }
+        else
+        {
+            <span>@item.Text</span>
+        }</text>;
+
+    Func<LobbyChatHistory, object> TargetCol =
+        @<text>@if (item.Target != null)
+        {
+            <span>@item.Target</span>
+        }
+        else
+        {
+            <span>--</span>
+        }</text>;
+
+    Func<LobbyChatHistory, object> UserCol =
+        @<text>@{ var acc = Account.AccountByName(new ZkDataContext(), item.User); }
+        @if (acc != null)
+        {
+            @Html.PrintAccount(acc)
+        }
+        else
+        {
+            <span>@item.User</span>
+        }</text>;
+}
+
+@{
     Page.Title = "Lobby chat history";
     var grid = new UniGrid<LobbyChatHistory>(Model.Data, "History of #" + Model.Channel);
     grid.AddCol("Target", TargetCol).SetSort(x => x.Target).SetWidth("200px");
@@ -10,37 +47,6 @@
     grid.AddCol("User", UserCol).SetSort(x => x.User).SetWidth("200px");
     grid.AddCol("Text", TxtCol).SetSort(x=>x.Text);
 }
-
-@helper TxtCol(LobbyChatHistory x) {
-    if (x.IsEmote)
-    {
-        <span style="color: violet">@x.Text</span>
-    } else
-    {
-        <span>@x.Text</span>
-    }
-}
-
-@helper TargetCol(LobbyChatHistory x) {
-    if (x.Target != null)
-    {
-        <span>@x.Target</span>
-    } else {
-        <span>--</span>
-    }
-}
-
-@helper UserCol(LobbyChatHistory x) {
-var acc = Account.AccountByName(new ZkDataContext(), x.User);
-    if (acc != null)
-    {
-        @Html.PrintAccount(acc)
-    } else
-    {
-        <span>@x.User</span>
-    }
-}
-
 <div id="grid">
     <h1>@Page.Title</h1>
 
@@ -62,6 +68,6 @@ var acc = Account.AccountByName(new ZkDataContext(), x.User);
         <input type="submit" />
 
 
-        @GridHelpers.RenderTable(grid)
+        @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid)
     }
 </div>

@@ -1,4 +1,4 @@
-// Implementation of WHR " + category +" based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
+﻿// Implementation of WHR " + category +" based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
 
 using Newtonsoft.Json;
 using PlasmaShared;
@@ -201,21 +201,64 @@ namespace Ratings
         }
 
 
+        /// <summary>
+        /// The top <paramref name="count"/> accounts, best first.
+        ///
+        /// The database branch runs whenever this instance has not finished its own pass, not
+        /// only for large counts. Without that, a process that reads ratings but does not
+        /// compute them - the website, once the lobby server is elsewhere - gets an EMPTY
+        /// ladder rather than an error: topPlayers is empty, so the second branch below loads
+        /// nothing and the page renders a heading over no rows. The ordering key, LadderElo, is
+        /// persisted on AccountRatings, so the query is not an approximation of the in-memory
+        /// answer; it is the same ordering from the rows the pass writes.
+        /// </summary>
+        /// <summary>
+        /// Accounts ordered by their stored LadderElo. This is the fallback answer: it knows
+        /// nothing about ladder activity, so it will happily return players whose last game was
+        /// years ago - which is why the caller has to decide when it is the right question.
+        /// </summary>
+        private List<Account> TopByLadderElo(int count)
+        {
+            using (ZkDataContext db = new ZkDataContext())
+            {
+                return db.Accounts
+                    .Include(a => a.Clan)
+                    .Include(a => a.Faction)
+                    // DefaultIfEmpty(-1) after a Select over a navigation is not translatable by EF Core 9:
+                    // it hands IQueryable<double?> back to Where<AccountRating> and throws
+                    // ArgumentException while compiling the query. Rewritten to be equivalent BY
+                    // CONSTRUCTION rather than by argument - LadderElo is nullable, so "no rating
+                    // row" and "a row whose LadderElo is NULL" are different cases and a COALESCE
+                    // would have quietly merged them.
+                    .OrderByDescending(x => x.AccountRatings.Any(r => r.RatingCategory == category)
+                        ? x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).FirstOrDefault()
+                        : -1)
+                    .Take(count)
+                    .ToList();
+            }
+        }
+
         public List<Account> GetTopPlayers(int count)
         {
-            if (count > 200)
+            // A request for more than 200 is not a request for the ladder - the ladder is 50 - and
+            // it is answered from the database whatever the pass has done. Returned WITHOUT being
+            // cached, because the cache below is the ladder's: one big call used to leave its
+            // database ordering there, and the next ordinary call found laddersCache.Count no
+            // smaller than the count it wanted and served that instead of the ladder.
+            //
+            // Nothing asks for more than 200 today, so this is closing a door rather than fixing
+            // a symptom.
+            if (count > 200) return TopByLadderElo(count);
+
+            if (!completelyInitialized)
             {
-                using (ZkDataContext db = new ZkDataContext())
-                {
-                    laddersCache = db.Accounts
-                        .Include(a => a.Clan)
-                        .Include(a => a.Faction)
-                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).DefaultIfEmpty(-1).FirstOrDefault())
-                        .Take(count)
-                        .ToList();
-                }
+                // The degraded answer, and it IS this process's best answer until the pass ends.
+                // Cached like any other, and cleared where completelyInitialized is set.
+                laddersCache = TopByLadderElo(count);
             }
-            if (laddersCache.Count < count)
+            // Only worth topping up from topPlayers when there IS a topPlayers - otherwise this
+            // overwrites the rows the database branch just produced with an empty list.
+            if (laddersCache.Count < count && completelyInitialized)
             {
 
                 using (ZkDataContext db = new ZkDataContext())
@@ -225,7 +268,15 @@ namespace Ratings
                         .Where(a => retIDs.Contains(a.AccountID))
                         .Include(a => a.Clan)
                         .Include(a => a.Faction)
-                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).DefaultIfEmpty(-1).FirstOrDefault())
+                        // DefaultIfEmpty(-1) after a Select over a navigation is not translatable by EF Core 9:
+                        // it hands IQueryable<double?> back to Where<AccountRating> and throws
+                        // ArgumentException while compiling the query. Rewritten to be equivalent BY
+                        // CONSTRUCTION rather than by argument - LadderElo is nullable, so "no rating
+                        // row" and "a row whose LadderElo is NULL" are different cases and a COALESCE
+                        // would have quietly merged them.
+                        .OrderByDescending(x => x.AccountRatings.Any(r => r.RatingCategory == category)
+                            ? x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).FirstOrDefault()
+                            : -1)
                         .ToList();
                 }
             }
@@ -327,6 +378,20 @@ namespace Ratings
                         UpdateRankings(players.Values);
                         completelyInitialized = true;
                         cachedDbRatings.Clear();
+
+                        // ...and the ladder cache, because everything in it was built by the
+                        // degraded path. While this flag is false GetTopPlayers answers from the
+                        // database ordered by LadderElo, which ignores ladder activity - and this
+                        // class calls GetTopPlayers(LadderSize) itself during the update, before
+                        // the flag is set. UpdateRankings above has already cleared the cache, so
+                        // that internal call is the last writer and nothing clears it afterwards
+                        // until the next ladder pass, hours later.
+                        //
+                        // The result was a ladder served from a database ordering long after the
+                        // real one was available. It surfaced as a test that failed intermittently
+                        // in CI, always with a message about the fixture rather than about this.
+
+                        laddersCache = new List<Account>();
                     });
                 }
                 else if (DateTime.UtcNow.Subtract(lastUpdateTime).TotalHours >= GlobalConst.LadderUpdatePeriod)
@@ -564,7 +629,13 @@ namespace Ratings
                 List<float> newPercentileBrackets = new List<float>();
                 newPercentileBrackets.Add(playerRatings[sortedPlayers.First().Value].LadderElo);
                 float percentile;
-                float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
+                // Enumerable.Reverse by name, not by extension syntax. Percentiles is a
+                // float[], and from C# 14 an array converts to Span, which brings
+                // MemoryExtensions.Reverse - an in-place reverse returning void - into
+                // overload resolution ahead of this one. Here that is a compile error; the
+                // same expression with its result discarded would silently start mutating
+                // the array instead of returning a reversed copy.
+                float[] percentilesRev = Enumerable.Reverse(Ranks.Percentiles).ToArray();
                 foreach (var pair in sortedPlayers)
                 {
                     if (playerRatings[pair.Value].Ranked)

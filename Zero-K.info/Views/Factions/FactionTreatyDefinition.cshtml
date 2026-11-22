@@ -5,6 +5,7 @@
 }
 
 <form method="POST" action="@Url.Action("ModifyTreaty")">
+@Html.AntiForgeryToken()
 
     <input type="hidden" name="factionTreatyID" value="@tr.FactionTreatyID" />
     <input type="hidden" name="delete" id="delete" />

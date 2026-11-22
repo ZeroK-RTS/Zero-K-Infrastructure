@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
 using PlasmaShared;
+using PlasmaShared.Imaging;
 
 namespace ZkData
 {
@@ -104,23 +105,7 @@ namespace ZkData
 
         public Size ScaledImageSize(int maxSize)
         {
-            var s = new Size();
-            if (MapSizeRatio > 1)
-            {
-                s.Width = maxSize;
-                s.Height = (int)(maxSize / MapSizeRatio);
-            }
-            else if (MapSizeRatio < 1)
-            {
-                s.Height = maxSize;
-                s.Width = (int)(maxSize * MapSizeRatio);
-            }
-            else
-            {
-                s.Width = maxSize;
-                s.Height = maxSize;
-            }
-            return s;
+            return ImageSizing.ScaledToFit(MapSizeRatio, maxSize);
         }
         public string MapNameWithDimensions()
         {

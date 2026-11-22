@@ -10,7 +10,7 @@ using LobbyClient;
 
 namespace Ratings
 {
-    public class RatingSystems
+    public partial class RatingSystems
     {
         public static Dictionary<RatingCategory, WholeHistoryRating> whr = new Dictionary<RatingCategory, WholeHistoryRating>();
 
@@ -22,11 +22,31 @@ namespace Ratings
 
         private static object processingLock = new object();
 
+        /// <summary>
+        /// Creates the rating systems without computing anything.
+        ///
+        /// **This is what a process that only READS ratings calls.** It is the first two lines of
+        /// <see cref="Init"/> and nothing else: no battles are read, no pass runs, and it returns
+        /// immediately. What it buys is that <c>GetRatingSystem</c> stops throwing - the systems
+        /// exist, and each one answers <c>GetPlayerRating</c> out of the AccountRatings table
+        /// until its own pass has finished, which for a reader is always.
+        ///
+        /// Phase 1 is why this exists. The website reads ratings in fifteen places and only
+        /// ZkLobbyServer ever called Init(), so those pages worked because the two shared a
+        /// process - and threw KeyNotFoundException, not a default rating, the moment they did
+        /// not. The persisted AccountRatings rows are the rating of record; a reader wants those.
+        /// </summary>
+        public static void CreateRatingSystems()
+        {
+            ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(category));
+        }
+
+        /// <summary>Creates the systems AND runs the pass over every battle. The lobby server.</summary>
         public static void Init()
         {
             Trace.TraceInformation("WHR: Initializing Rating Systems..");
             Initialized = false;
-            ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(category));
+            CreateRatingSystems();
 
             Task.Factory.StartNew(() => {
                 lock (processingLock)
@@ -36,7 +56,7 @@ namespace Ratings
                         using (ZkDataContext data = new ZkDataContext())
                         {
                             int battles = 0;
-                            data.Database.CommandTimeout = 240;
+                            data.Database.SetCommandTimeoutCompat(240);
                             for (int month = 10*12; month > 0; month--)
                             {
                                 DateTime minStartTime = DateTime.Now.AddMonths(-month);
@@ -176,14 +196,6 @@ namespace Ratings
             }
         }
 
-        public static int ConvertDateToDays(DateTime date)
-        {
-            return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
-        }
-        public static DateTime ConvertDaysToDate(int days)
-        {
-            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddDays(days);
-        }
 
         private static bool IsCategory(SpringBattle battle, RatingCategory category)
         {

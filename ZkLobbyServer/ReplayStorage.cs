@@ -71,8 +71,21 @@ namespace ZkLobbyServer
             return sas.ToString();
         }
         
+        /// <summary>
+        /// The stored file, or NULL when there is nowhere to get it from - which is what
+        /// GetLocalFileContent already means by null, so the two agree.
+        ///
+        /// The constructor returns early when ReplaysConnectionString or ReplaysContainerName is
+        /// unset, leaving azureContainer null after tracing a warning. Every other method here
+        /// survives that: UploadAndDeleteFileAsync has its own try/catch, and GetFileUrl is only
+        /// ever called inside ReplaysController.Download's. This one had neither, and its single
+        /// caller - BattlesController.Logs, which moderators use to read a game's infolog - has no
+        /// catch either, so on any deployment without blob storage that page was a 500.
+        /// </summary>
         public async Task<byte[]> GetFileContent(string replayName)
         {
+            if (azureContainer == null) return null;
+
             var blobClient = azureContainer.GetBlobClient(replayName);
             var stream = new MemoryStream();
             await blobClient.DownloadToAsync(stream);

@@ -60,27 +60,120 @@ function DynDialog(url, title) {
     });
 }
 
-function ReplaceHistory(params) {
-    // replace # is a hack for IE
-    var res = jQuery.param.querystring(window.location.toString().replace("#", ""), params.replace("#", ""));
-    res = res.replace(/%5B%5D=/g, "="); // hack for bbq adding extra [] to multiplied values
-    window.History.replaceState(params, "", res);
-    //var res = jQuery.param.querystring(window.location.toString(), params);
-    //window.history.replaceState(params, "", res);
+// Merges a query string into a URL, replacing whole keys rather than adding to them: the
+// callers pass "tab=2" or a serialized form, and both mean "this is the state now".
+//
+// Pure, exported for tools/check-site-js.js, and separate from ReplaceHistory for the same
+// reason GalaxyMapGeometry is separate from the view that draws with it - the arithmetic is
+// the part worth testing, and the browser API around it is not.
+//
+// It replaced jQuery.param.querystring from jquery.ba-bbq.js. Two hacks went with it:
+//   - stripping "#" "for IE", which URL parses correctly
+//   - undoing the "[]" bbq appends to repeated keys, which nothing here adds now
+function BuildHistoryUrl(currentUrl, params) {
+    var url = new URL(currentUrl);
+    var incoming = new URLSearchParams(String(params).replace(/^[?#]/, ""));
+
+    // Every key the caller mentions is replaced outright, repeats included; keys it does not
+    // mention are left alone. That is what merging a form's state into the address bar means.
+    var mentioned = [];
+    incoming.forEach(function (value, key) { if (mentioned.indexOf(key) < 0) mentioned.push(key); });
+    mentioned.forEach(function (key) { url.searchParams.delete(key); });
+    incoming.forEach(function (value, key) { url.searchParams.append(key, value); });
+
+    url.hash = "";
+    return url.toString();
 }
 
+function ReplaceHistory(params) {
+    // window.history, not window.History: the capitalised one was History.js, a polyfill for
+    // pushState on IE6-8. Every browser has had this natively since IE10.
+    window.history.replaceState(params, "", BuildHistoryUrl(window.location.toString(), params));
+}
+
+/*
+    A POST from script, carrying the anti-forgery token the page was rendered with.
+
+    The rating stars used $.get, which made rating a map or a mission a GET: a crafted link set
+    somebody else's rating, and [ValidateAntiForgeryToken] could not be used because there was no
+    token anywhere in the request. Use this instead of $.post so the token cannot be forgotten.
+
+    The token is read from any @Html.AntiForgeryToken() on the page - they are all equivalent for a
+    given visitor and request, so the first one will do. Returns null and does NOT send when the
+    page has none, because a POST that silently 400s is worse than one that never leaves: the
+    caller can say so.
+*/
+function ZkPost(url, data, done) {
+    var token = $('input[name="__RequestVerificationToken"]').first().val();
+    if (!token) return null;
+    var payload = $.extend({}, data || {});
+    payload.__RequestVerificationToken = token;
+    return $.post(url, payload, done);
+}
+
+/*
+    Asks a question, puts the answer in one of the form's fields, and lets the submit go ahead.
+
+    Use as onsubmit="return ZkPrompt(this, 'text', 'What is your slogan?', 'vote me!');".
+
+    It replaces a pattern that did the same thing to a link's own href:
+
+        onclick="var text = prompt(...); if (text != null) $(this).attr('href', $(this).attr('href') + '&text=' + text);"
+
+    which had three faults. The link was a GET, so a crafted one started a poll in the visitor's
+    name. The answer was pasted into a URL unescaped, so a slogan containing & or # was truncated
+    or mangled. And cancelling the prompt left the navigation to happen anyway, because the handler
+    returned undefined - the poll was created with no text at all.
+
+    Returning false cancels the submit, which is the fix for the third.
+*/
+function ZkPrompt(form, field, question, suggestion) {
+    var answer = prompt(question, suggestion);
+    if (answer === null) return false;
+    $(form).find('input[name="' + field + '"]').val(answer);
+    return true;
+}
+
+/*
+    Casts a forum vote, from the onclick of the +N / -N / cancel controls.
+
+    They were <a href> - GETs - so a crafted link voted on the visitor's behalf, and they could not
+    become forms: the vote widget renders inside PostList's Ajax.BeginForm, which is a real filter
+    form with its own inputs, and a form cannot nest inside another.
+
+    The server answers "" when the vote was taken and a sentence when it was refused - banned from
+    the forum, too low a level, not enough karma - so an empty reply means reload to show the new
+    count, and anything else is a message for the voter. That is why VotePost stopped redirecting:
+    a redirect tells an XHR nothing it can act on.
+*/
+function ZkVote(url) {
+    var sent = ZkPost(url, {}, function (reply) {
+        if (reply) alert(reply);
+        else window.location.reload();
+    });
+    if (!sent) alert("Cannot vote: this page carries no anti-forgery token.");
+    return false;
+}
+
+if (typeof module !== "undefined" && module.exports) module.exports = { BuildHistoryUrl: BuildHistoryUrl, ZkPost: ZkPost, ZkPrompt: ZkPrompt, ZkVote: ZkVote };
+
+/*
+    Tells the visitor's own game client to act on a command.
+
+    This used a bare $.ajax, and $.ajax with no `type` is a GET - so /Lobby/SendCommand accepted
+    one, and any page the visitor loaded could drive their lobby client. The action is [HttpPost]
+    with a token now, which this has to match.
+*/
 function SendLobbyCommand(link) {
-    $.ajax({
-        url: "/Lobby/SendCommand",
-        data: {
-            link: link
-        },
-        success: function(data) {
-            if (data != null && data.length > 0) alert(data);
-        },
-        error: function() {
-            alert("Error sending the command to lobby, please try again later");
-        }
+    var sent = ZkPost("/Lobby/SendCommand", { link: link }, function (data) {
+        if (data != null && data.length > 0) alert(data);
+    });
+    if (!sent) {
+        alert("Cannot send to lobby: this page carries no anti-forgery token.");
+        return;
+    }
+    sent.fail(function () {
+        alert("Error sending the command to lobby, please try again later");
     });
 }
 
@@ -184,6 +277,14 @@ function GlobalPageInit(root) {
         return answer;
     });
 
+    // Same idea, with the question spelled out. PostLink's confirmMessage puts the text in an
+    // attribute rather than building an onclick="return confirm('...')" by string concatenation,
+    // which is what the links this replaced did - so a quote in an interpolated planet name can
+    // no longer end the JavaScript string early.
+    s.find("[data-confirm]").click(function() {
+        return confirm($(this).attr("data-confirm"));
+    });
+
     s.find(".js_dialog").dialog(
         {
             autoOpen: true,
@@ -205,8 +306,8 @@ function GlobalPageInit(root) {
     s.find(".js_datetimepicker").datetimepicker();
 
     // buttonification
-    s.find(":submit").button();
-    s.find(":button").button();
+    s.find(":submit").not(".postlink-button").button();
+    s.find(":button").not(".postlink-button").button();
     s.find(".js_button").button();
     s.find(".js_accordion").accordion();
 

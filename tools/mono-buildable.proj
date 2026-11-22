@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Every project in Zero-K.sln that mono can build, in one build.
+
+      ./tools/build-website.sh tools/mono-buildable.proj
+
+  Zero-K.sln itself cannot be the target. Four of its twenty projects are WPF, and mono
+  builds no WPF: PresentationCore, PresentationFramework and WindowsBase have no mono
+  implementation, so the solution build fails with ~109 errors that no change to this
+  repository can fix. Those four are listed at the bottom, excluded and named, so that a
+  project missing from this file reads as a decision rather than an oversight.
+
+  What this is for: before it existed, CI's mono builds named asp.net and
+  ZkLobbyServer.Standalone, which pull in five shared projects between them - nine of the
+  twenty. The other seven had no Framework build anywhere, and rotted exactly as you would
+  expect. ZeroKLobby accumulated 67 .resx entries pointing at directories that are not
+  there, and guards against mshtml and System.Speech written for a compiler nobody uses,
+  before anyone compiled it.
+
+  The projects are listed even where a ProjectReference would pull them in anyway. The
+  point is that each one is built on purpose, so that dropping a reference cannot quietly
+  drop a project out of CI again.
+-->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup>
+    <Buildable Include="..\AutoRegistrator\AutoRegistrator.csproj" />
+    <Buildable Include="..\Benchmarker\Benchmarker.csproj" />
+    <Buildable Include="..\ChobbyLauncher\ChobbyLauncher.csproj" />
+    <Buildable Include="..\DotNetWikiBot\DotNetWikiBot.csproj" />
+    <Buildable Include="..\Fixer\Fixer.csproj" />
+    <Buildable Include="..\MigrateDatabase\MigrateDatabase.csproj" />
+    <Buildable Include="..\Shared\LobbyClient\LobbyClient.csproj" />
+    <Buildable Include="..\Shared\MonoTorrent\MonoTorrent.csproj" />
+    <Buildable Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj" />
+    <Buildable Include="..\Shared\PlasmaShared\PlasmaShared.csproj" />
+    <Buildable Include="..\Tests\Tests.csproj" />
+    <Buildable Include="..\ZeroKLobby\ZeroKLobby.csproj" />
+    <Buildable Include="..\Zero-K.info\asp.net.csproj" />
+    <Buildable Include="..\ZkData\ZkData.csproj" />
+    <Buildable Include="..\ZkLobbyServer\ZkLobbyServer.csproj" />
+    <Buildable Include="..\ZkLobbyServer.Standalone\ZkLobbyServer.Standalone.csproj" />
+  </ItemGroup>
+
+  <!--
+    Excluded, all four for the same reason: a <Reference> to PresentationCore,
+    PresentationFramework or WindowsBase. This is not a port gap to be closed later - WPF
+    is Windows-only and mono never implemented it. They are built by Visual Studio and
+    nowhere else.
+
+      MissionEditor\CMissionLib\CMissionLib.csproj
+      MissionEditor\MissionEditor2\MissionEditor.csproj
+      GalaxyDesigner\GalaxyDesigner.csproj
+      PlanetWarsReplayCreator\PlanetWarsReplayCreator.csproj
+  -->
+
+  <Target Name="Build">
+    <!--
+      No Properties attribute: the global properties build-website.sh sets - Configuration,
+      Platform=x64 and DebugType=none - flow to each project on their own, which is what the
+      solution build does too. Sequential rather than parallel so that the first error in the
+      log belongs to the project named just above it.
+    -->
+    <MSBuild Projects="@(Buildable)" />
+  </Target>
+
+</Project>

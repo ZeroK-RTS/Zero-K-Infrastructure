@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
@@ -205,7 +205,7 @@ namespace ZeroKWeb.Controllers
             var res = new NewPostResult();
             var db = new ZkDataContext();
 
-            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddressCompat(), 0, null, x => x.BanForum);
             if (penalty != null)
             {
                 return
@@ -258,7 +258,18 @@ namespace ZeroKWeb.Controllers
         /// <param name="threadID">The <see cref="ForumThread" /> ID, if not a new thread</param>
         /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost" /> is/will be in</param>
         /// <param name="forumPostID">The <see cref="ForumPost" /> ID, if editing an existing post</param>
+        // Both forms that post here - Forum/NewPost.cshtml and Shared/CommentList.cshtml -
+        // have always emitted @Html.AntiForgeryToken(). Nothing validated it. The token was sent
+        // on every forum post on the site and thrown away, so an auto-submitting cross-site form
+        // could write a post, start a thread or edit an existing one as the visitor, and both
+        // CSRF checks passed: one saw the token in the view, the other saw [HttpPost] and
+        // stopped there.
+        //
+        // PostHistoryController borrows this controller and calls SubmitPost directly, in
+        // process. A filter does not run on a method call, so that path is unaffected - and
+        // RevertTo carries its own [HttpPost] and token.
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth]
         [ValidateInput(false)]
         public ActionResult SubmitPost(
@@ -279,7 +290,7 @@ namespace ZeroKWeb.Controllers
                 forumPostID == null && gameModeID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
             if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
 
-            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddressCompat(), 0, null, x => x.BanForum);
             if (penalty != null)
             {
                 return
@@ -298,6 +309,14 @@ namespace ZeroKWeb.Controllers
                 // update title
                 if (thread != null && !string.IsNullOrEmpty(title))
                 {
+                    // The same rule the new-thread branch below applies. It was missing here, so a
+                    // key that creation refuses - anything outside letters, digits, underscore and
+                    // brackets - could be set by editing instead, and the site would then build
+                    // /Wiki/<that> links from it. Account.IsValidLobbyName is what makes the wiki
+                    // route's segment safe; see Tests.Portable/WikiKeyRouteSafetyTests.cs.
+                    if (!string.IsNullOrEmpty(wikiKey) && !Account.IsValidLobbyName(wikiKey))
+                        return Content("You need to set a valid wiki key");
+
                     currentTitle = thread.Title;
                     thread.Title = title;
                     thread.WikiKey = wikiKey;
@@ -500,6 +519,7 @@ namespace ZeroKWeb.Controllers
         /// <param name="lastSeen">UNUSED</param>
         /// <param name="postID">A specific <see cref="ForumPost" /> ID to go to</param>
         /// <returns></returns>
+        [WritesOnGetByDesign("reading a thread is what marks it read")]
         public ActionResult Thread(int? id, int? postID) {
             if (id == null) {
               if (postID == null)
@@ -538,6 +558,7 @@ namespace ZeroKWeb.Controllers
             return View(res);
         }
 
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AdminThread(int threadID, int newcat, bool isPinned, bool isLocked) {
@@ -557,11 +578,13 @@ namespace ZeroKWeb.Controllers
         /// <param name="delta">+1 or -1</param>
         /// <returns></returns>
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult VotePost(int forumPostID, int delta) {
             var db = new ZkDataContext();
             var myAcc = Global.Account;
 
-            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddressCompat(), 0, null, x => x.BanForum);
             if (penalty != null)
                 return Content(string.Format("You cannot vote while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
 
@@ -611,13 +634,18 @@ namespace ZeroKWeb.Controllers
 
             db.SaveChanges();
 
-            return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
+            // Empty, not a redirect. ZkVote posts this by XHR and reads the reply: "" means the
+            // vote was taken and the page should be redrawn, anything else is a refusal to show
+            // the voter. A redirect tells an XHR nothing it can act on.
+            return Content("");
         }
 
         /// <summary>
         ///     Removes an existing vote on a post
         /// </summary>
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult CancelVotePost(int forumPostID) {
             var db = new ZkDataContext();
             var existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
@@ -641,7 +669,10 @@ namespace ZeroKWeb.Controllers
 
             db.SaveChanges();
 
-            return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
+            // Empty, not a redirect. ZkVote posts this by XHR and reads the reply: "" means the
+            // vote was taken and the page should be redrawn, anything else is a refusal to show
+            // the voter. A redirect tells an XHR nothing it can act on.
+            return Content("");
         }
 
         public static int GetPostPage(ForumPost post) {
@@ -688,6 +719,8 @@ namespace ZeroKWeb.Controllers
         ///     subforums; a thread is read if its last post is older than this date
         /// </remarks>
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult MarkAllAsRead(int? categoryID) {
             var db = new ZkDataContext();
             if (categoryID != null)

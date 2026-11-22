@@ -1,4 +1,5 @@
 ﻿<form action="@Url.Action("SubmitSearch","Forum")" method="POST">
+@* csrf-exempt: SubmitSearch runs a query and writes nothing *@
     <div>
         <input type="text" name="keywords" id="keywords" style="width:140px" data-autocomplete="@Url.Action("Index", "Autocomplete")" data-autocomplete-action="goto"/>
         <input value="Search" alt="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;"/>

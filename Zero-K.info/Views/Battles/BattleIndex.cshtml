@@ -4,6 +4,7 @@
     Page.Title = "Replay Search";
 }
 <form action="@Url.Action("Index")" id="ajaxScrollForm" method="post">
+@* csrf-exempt: filtering and paging, Index only reads *@
     <table class="inputTable">
         <tr>
             <td>Title: </td>

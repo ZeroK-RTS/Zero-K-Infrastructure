@@ -18,9 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionEditor", "MissionEditor\MissionEditor2\MissionEditor.csproj", "{713275BF-2FAB-4F51-8766-1E8182BCDAA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fixer", "Fixer\Fixer.csproj", "{D6BB29E2-0559-4B7E-8535-9A15230ABA9A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB} = {016C2B52-AFD5-4A3A-A960-E9FB51C014BB}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asp.net", "Zero-K.info\asp.net.csproj", "{06EE7D11-6403-4ABF-AD73-24F8394BA69B}"
 EndProject
@@ -33,6 +30,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkData", "ZkData\ZkData.csproj", "{61D3BE0A-282D-462C-BA26-06670E5ACB3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkLobbyServer", "ZkLobbyServer\ZkLobbyServer.csproj", "{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkLobbyServer.Standalone", "ZkLobbyServer.Standalone\ZkLobbyServer.Standalone.csproj", "{7F3D1C2A-6B4E-4F58-9A21-0C5D8E7B4A13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoRegistrator", "AutoRegistrator\AutoRegistrator.csproj", "{01FAEBBC-02E0-42FE-972C-F17045BA3807}"
 EndProject
@@ -126,6 +125,10 @@ Global
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Release|x64.Build.0 = Release|x64
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Debug|x64.ActiveCfg = Debug|x64
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Debug|x64.Build.0 = Debug|x64
+		{7F3D1C2A-6B4E-4F58-9A21-0C5D8E7B4A13}.Release|x64.ActiveCfg = Release|x64
+		{7F3D1C2A-6B4E-4F58-9A21-0C5D8E7B4A13}.Release|x64.Build.0 = Release|x64
+		{7F3D1C2A-6B4E-4F58-9A21-0C5D8E7B4A13}.Debug|x64.ActiveCfg = Debug|x64
+		{7F3D1C2A-6B4E-4F58-9A21-0C5D8E7B4A13}.Debug|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

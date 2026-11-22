@@ -7,6 +7,7 @@
 <h2>@ViewBag.Title</h2>
 
 <form action="@Url.Action("EditDynamicConfigSubmit")" method="post">
+@Html.AntiForgeryToken()
     @Html.EditorForModel()
     <input type="submit"/>
 </form>

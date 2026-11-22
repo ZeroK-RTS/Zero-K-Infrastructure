@@ -1,0 +1,110 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Phase 3 gate: tests that run on .NET 9 today, on Linux, with `dotnet test`.
+
+    This project does not reference ZkData or PlasmaShared - those are .NET Framework
+    4.8 and cannot load here. It LINKS their source files instead. That has two
+    purposes at once: the tests exercise the real production code, and every file
+    listed below is thereby proven to compile clean on .NET 9. The link list is the
+    running inventory of what the port has already cleared.
+
+    Run it with:
+        docker run (see HOSTING.md) with image mcr.microsoft.com/dotnet/sdk:9.0 and:
+            dotnet test Tests.Portable/Tests.Portable.csproj
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13.0</LangVersion>
+    <!-- linked legacy sources, not new code: do not fail the build on their warnings -->
+    <NoWarn>$(NoWarn);CS0618;CS0649;CS0168;CS1998</NoWarn>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.6.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.6.1" />
+    <!-- the imaging implementation under test; see Linked/ImageSharpImageProcessor.cs -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.13" />
+  </ItemGroup>
+
+  <!--
+    Steam's OpenID 2.0 exchange, which the .NET 9 port implements itself because DotNetOpenAuth
+    has no .NET Core version. SteamOpenIdProtocol.cs deliberately has no ASP.NET Core types so
+    it can be linked here and every branch driven against a stubbed provider - the refusals
+    above all, since an implementation that trusts the query string works fine for honest users.
+  -->
+  <ItemGroup>
+    <Compile Include="..\ZeroKWeb.Core\Mvc5Compat\SteamOpenIdProtocol.cs" Link="Linked\SteamOpenIdProtocol.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\SteamOpenIdResult.cs" Link="Linked\SteamOpenIdResult.cs" />
+  </ItemGroup>
+
+  <!-- Whole History Rating: the Bayesian core, free of Entity Framework -->
+  <ItemGroup>
+    <Compile Include="..\ZkData\Ef\WHR\Game.cs"                Link="Linked\WHR\Game.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\Player.cs"              Link="Linked\WHR\Player.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\PlayerDay.cs"           Link="Linked\WHR\PlayerDay.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\RatingSystems.Dates.cs" Link="Linked\WHR\RatingSystems.Dates.cs" />
+  </ItemGroup>
+
+  <!-- PlanetWars galaxy map geometry (Phase 5) -->
+  <ItemGroup>
+    <Compile Include="..\Zero-K.info\AppCode\GalaxyMapGeometry.cs" Link="Linked\GalaxyMapGeometry.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\DosProtector.Portable.cs" Link="Linked\DosProtector.Portable.cs" />
+  </ItemGroup>
+
+  <!-- The counting behind ContentService.svc's deprecation notice (Phase 2) -->
+  <ItemGroup>
+    <Compile Include="..\Zero-K.info\AppCode\LegacyCallReporter.cs" Link="Linked\LegacyCallReporter.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\LegacyCallAudit.cs" Link="Linked\LegacyCallAudit.cs" />
+  </ItemGroup>
+
+  <!-- Diagrams vector math. Uses System.Drawing.Point, which lives in
+       System.Drawing.Primitives and is part of the .NET 9 shared framework - unlike the
+       imaging types in System.Drawing.Common. Linking it here proves that. -->
+  <ItemGroup>
+    <Compile Include="..\Shared\PlasmaShared\Diagrams\Vector.cs" Link="Linked\Vector.cs" />
+  </ItemGroup>
+
+  <!-- Image target sizing. Pure arithmetic, no System.Drawing.Common. -->
+  <ItemGroup>
+    <Compile Include="..\Shared\PlasmaShared\BoundedWorkQueue.cs" Link="Linked\BoundedWorkQueue.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Imaging\ImageSizing.cs" Link="Linked\ImageSizing.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Imaging\PixelBuffers.cs" Link="Linked\PixelBuffers.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Imaging\IImageProcessor.cs" Link="Linked\IImageProcessor.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Imaging\ImageSharpImageProcessor.cs" Link="Linked\ImageSharpImageProcessor.cs" />
+    <!-- The .NET 9 half of the MapImage twin. MapImage.cs, the GDI+ half, must stay out: it
+         would pull System.Drawing.Common in and ImagesProcessorChoiceTests asserts there is none. -->
+    <Compile Include="..\Shared\PlasmaShared\Imaging\MapImageCore.cs" Link="Linked\MapImageCore.cs" />
+    <!-- The .NET 9 half of the UnixPermissions twin, so the engine-permissions test calls the
+         same code EngineDownload does rather than a copy of it. -->
+    <Compile Include="..\Shared\PlasmaDownloader\UnixPermissionsCore.cs" Link="Linked\UnixPermissionsCore.cs" />
+    <!-- The UDP autohost listener. 225 lines that reference only Trace and Utils, so it links
+         without dragging the rest of LobbyClient in. -->
+    <Compile Include="..\Shared\PlasmaShared\Crc.cs" Link="Linked\Crc.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Utils.cs" Link="Linked\Utils.cs" /> <!-- SafeThread, which Talker uses; GDI-free since Utils.Imaging.cs was split out -->
+    <Compile Include="..\Shared\LobbyClient\Talker.cs" Link="Linked\Talker.cs" />
+    <!-- Images.cs picks the implementation. Linkable only because that choice is now
+         ImageSharp: while it named SystemDrawingImageProcessor it dragged in System.Drawing. -->
+    <Compile Include="..\Shared\PlasmaShared\Imaging\Images.cs" Link="Linked\Images.cs" />
+  </ItemGroup>
+
+  <!-- support types the above need -->
+  <ItemGroup>
+    <Compile Include="..\Shared\PlasmaShared\ISpringieService\RatingCategory.cs" Link="Linked\RatingCategory.cs" />
+    <Compile Include="..\Shared\PlasmaShared\GlobalConst.Portable.cs"                Link="Linked\GlobalConst.Portable.cs" />
+    <!-- Only the P/Invoke declarations. UnitSync.cs itself is not linked: this asks how the
+         runtime RESOLVES the library name, and pulling in the wrapper would drag its image
+         handling along for no gain. A partial class is happy with one part present. -->
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\NativeMethods.cs" Link="Linked\UnitSyncNativeMethods.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\MapInfo.cs" Link="Linked\UnitSyncMapInfo.cs" /> <!-- a struct one declaration returns -->
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\StartPos.cs" Link="Linked\UnitSyncStartPos.cs" /> <!-- which MapInfo holds -->
+    <Compile Include="..\Shared\PlasmaShared\ModeType.cs"                          Link="Linked\ModeType.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Utils.Enumerable.cs"                  Link="Linked\Utils.Enumerable.cs" />
+  </ItemGroup>
+
+</Project>

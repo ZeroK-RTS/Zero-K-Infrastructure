@@ -3,22 +3,26 @@
 @model EnginesController.EnginesModel
 
 @{
+    // Templated Razor delegates, in place of @helper blocks. @helper does not exist in ASP.NET
+    // Core; this form parses in BOTH Razor v3 and the .NET 9 generator, which
+    // tools/razor-v3-check/check.sh establishes rather than assumes. A templated delegate's
+    // parameter is always called `item`.
+    Func<EnginesController.EngineItem, object> DefEngine =
+        @<text>@if (item.IsDefault)
+        {
+            <b style="color: red">*DEFAULT*</b>  @Html.PostLink("rebuild steam", "MakeDefault", "Engines", new { engine = item.Name })
+        }
+        else
+        {
+            @Html.PostLink("make default", "MakeDefault", "Engines", new { engine = item.Name })
+        }</text>;
+}
+@{
     Page.Title = "Engine list";
     var grid = new UniGrid<EnginesController.EngineItem>(Model.Data);
     grid.AddCol("Name", x => x.Name).SetSort(x => x.Name);
     grid.AddCol("Platforms", x => string.Join(", ", x.Platforms));
     grid.AddCol("Default", DefEngine).SetSort(x => x.IsDefault);
-}
-@helper DefEngine(EnginesController.EngineItem item)
-{
-    if (item.IsDefault)
-    {
-        <b style="color: red">*DEFAULT*</b>  @Html.ActionLink("rebuild steam", "MakeDefault", new { engine = item.Name });
-    }
-    else
-    {
-        @Html.ActionLink("make default", "MakeDefault", new {engine=item.Name});
-    }
 }
 
 <div id="grid">
@@ -28,7 +32,8 @@
         @Model.Message
     </div>
 
-    <form action="@Url.Action("Index", "Engines")">
+    @* method="post" is the point: without it this submitted as GET and the token below rode along in the query string, unread. *@
+    <form action="@Url.Action("UploadEngine", "Engines")" method="post">
         @Html.AntiForgeryToken()
         <div>
             <h3>Upload a new engine</h3>
@@ -58,6 +63,6 @@
         <input type="submit" value="Search" />
 
 
-        @GridHelpers.RenderTable(grid)
+        @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid)
     }
 </div>

@@ -16,7 +16,7 @@
             <select name="newcat">
                 @foreach (var c in db.ForumCategories.OrderBy(x => x.SortOrder))
                 {
-                    <option value="@c.ForumCategoryID" @(c.ForumCategoryID == Model.CurrentThread.ForumCategoryID ? "selected='selected'" : "")>@Html.Raw(string.Join(" > ", c.GetPath().Select(x => Html.Encode(x.Title))))</option>
+                    <option value="@c.ForumCategoryID" selected="@(c.ForumCategoryID == Model.CurrentThread.ForumCategoryID ? "selected" : null)">@Html.Raw(string.Join(" > ", c.GetPath().Select(x => Html.Encode(x.Title))))</option>
                 }
             </select>&nbsp;<label>Pinned: @Html.CheckBox("isPinned", Model.CurrentThread.IsPinned)</label>&nbsp;<label>Locked: @Html.CheckBox("isLocked", Model.CurrentThread.IsLocked)</label>&nbsp;<input type="submit" value="Save" />
         </form>

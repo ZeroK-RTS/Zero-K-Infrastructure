@@ -54,20 +54,76 @@ namespace ZkData
             return string.Format("ZK_ID_{0}_JAR_{1}", accountID, jarID);
         }
 
+        /// <summary>
+        /// How a notification is checked with PayPal. A field so that a test can answer without a
+        /// network: nothing else replaces it, and the default is the real postback.
+        /// </summary>
+        public Func<byte[], bool> Verifier = VerifyRequest;
+
+        /// <summary>
+        /// Takes a PayPal IPN notification and records the payment it describes.
+        ///
+        /// **PayPal is asked whether the notification is genuine BEFORE anything is written.**
+        /// It used to be asked after: AddPayPalContribution ran first and verification was a
+        /// postscript, so one unauthenticated request to /Contributions/Ipn - the endpoint is
+        /// anonymous, as it must be - already had its full effect by the time PayPal said the
+        /// notification was invalid. The effects were not nominal. The sender chooses every
+        /// field, so a forged notification inserted a Contribution of any size under any name
+        /// onto the public /Contributions page, set HasKudos on whichever account the item code
+        /// named (ZK_ID_{accountID}_JAR_{jarID} is attacker-supplied text), mailed a working
+        /// redeem code from the team address to an address of the sender's choosing, and
+        /// announced "WOOHOO! New contribution" to the public zk lobby channel. The remedy was a
+        /// comment on the row and a message to zkdev; the grants stood.
+        ///
+        /// Three outcomes, because "could not ask" is not "the answer was no":
+        ///
+        /// - INVALID - PayPal says it did not send this. Nothing is written. The parsed fields go
+        ///   into the alert so that a genuine payment misread this way is still recoverable by
+        ///   hand. That matters more than it looks: VerifyRequest posts the bytes back as ASCII,
+        ///   so a donor whose name is not ASCII may fail a verification they should pass.
+        /// - could not reach PayPal - recorded and flagged, which is what happened before this
+        ///   change anyway (VerifyRequest threw, the outer catch logged it, and the row written a
+        ///   moment earlier stayed). A network fault must not lose a real donation.
+        /// - VERIFIED - recorded, and the grants happen.
+        /// </summary>
         public void ImportIpnPayment(NameValueCollection values, byte[] rawRequest) {
             try {
                 var parsed = ParseIpn(values);
-                var contribution = AddPayPalContribution(parsed);
-                var verified = VerifyRequest(rawRequest);
-                if (contribution != null && !verified) {
+
+                bool? verified;
+                try {
+                    verified = Verifier(rawRequest);
+                } catch (Exception ex) {
+                    // Asking failed, which says nothing about the notification.
+                    Trace.TraceError("PayPal verification could not be performed: {0}", ex);
+                    verified = null;
+                }
+
+                if (verified == false) {
                     Error(
                         string.Format(
-                            "Warning, transaction {0} by {1} VERIFICATION FAILED, check that it is not a fake! {2}/Contributions ",
+                            "Rejected an IPN that PayPal says it did not send - NOTHING was recorded. " +
+                            "If this was a real payment it must be entered by hand. " +
+                            "txn {0}, name {1}, email {2}, {3} {4}, item {5}",
+                            parsed.TransactionID,
+                            parsed.Name,
+                            parsed.Email,
+                            parsed.Gross,
+                            parsed.Currency,
+                            parsed.ItemCode));
+                    return;
+                }
+
+                var contribution = AddPayPalContribution(parsed, granted: verified == true);
+                if (contribution != null && verified == null) {
+                    Error(
+                        string.Format(
+                            "Warning, transaction {0} by {1} COULD NOT BE VERIFIED with PayPal, check that it is not a fake! {2}/Contributions ",
                             parsed.TransactionID,
                             parsed.Name,
                             GlobalConst.BaseSiteUrl));
                     using (var db = new ZkDataContext()) {
-                        db.Contributions.First(x => x.ContributionID == contribution.ContributionID).Comment = "VERIFICATION FAILED";
+                        db.Contributions.First(x => x.ContributionID == contribution.ContributionID).Comment = "VERIFICATION UNAVAILABLE";
                         db.SaveChanges();
                     }
                 }
@@ -166,7 +222,14 @@ namespace ZkData
             return strResponse == "VERIFIED";
         }
 
-        Contribution AddPayPalContribution(ParsedData parsed) {
+        /// <summary>
+        /// Records the payment. <paramref name="granted"/> is whether PayPal confirmed the
+        /// notification: when it did not, the row is still written - an unverifiable payment is
+        /// worth having in the table where a human can look at it - but none of the things a
+        /// forged notification would be sent to obtain happen. HasKudos stays as it was, no
+        /// redeem code is mailed out, and nothing is announced in the lobby.
+        /// </summary>
+        Contribution AddPayPalContribution(ParsedData parsed, bool granted = true) {
             try {
                 if ((parsed.Status != "Completed" && parsed.Status != "Cleared") || parsed.Gross <= 0) return null; // not a contribution!
 
@@ -224,6 +287,8 @@ namespace ZkData
                     db.Contributions.Add(contrib);
 
                     db.SaveChanges();
+
+                    if (!granted) return contrib;
 
                     if (acc != null) acc.HasKudos = true;
                     db.SaveChanges();

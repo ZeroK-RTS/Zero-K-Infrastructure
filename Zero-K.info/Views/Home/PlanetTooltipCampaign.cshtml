@@ -25,7 +25,12 @@
 <table><tr>
 <td>@Html.Partial("PlanetIconCampaign", Model)</td>
 <td>
-@Html.Partial("MapInfoBox", map)
+@* MapInfoBox dereferences its model on its first line, so a missing map took the tooltip with
+   it - the same FirstOrDefault above. *@
+@if (map != null)
+{
+    @Html.Partial("MapInfoBox", map)
+}
 </td>
 </tr></table>
 <small>

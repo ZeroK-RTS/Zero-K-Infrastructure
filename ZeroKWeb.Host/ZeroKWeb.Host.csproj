@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    An ASP.NET Core application that serves a real Zero-K page over HTTP.
+    
+    ZeroKWeb.Core asks whether the views compile. ZeroKWeb.Render asks whether one renders.
+    Neither has routing, a controller, or a request - and the views are full of
+    Html.ActionLink, which needs all three. This is the first thing here that answers a
+    request.
+
+        ./tools/run-host.sh             serve it and check the response
+        ./tools/run-host.sh (with 'serve') leave it running on http://localhost:5199
+
+    Only the views the inventory says compile are included, for the same reason as
+    ZeroKWeb.Render: a project that does not build serves nothing.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13.0</LangVersion>
+    <RootNamespace>ZeroKWeb.Host</RootNamespace>
+    <NoWarn>$(NoWarn);CS0618;CS0649;CS0168;CS1998;CS0108;CS0114;CS0169;CS0067</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      DbCloner and ForumPostIndexer use System.Data.SqlClient directly. On .NET 9 that
+      namespace lives in a compatibility package rather than the framework, and the package is
+      deprecated in favour of Microsoft.Data.SqlClient.
+      
+      Referenced anyway, and deliberately: changing those files to Microsoft.Data.SqlClient is
+      a production edit that would break the Framework build, which has no such package. The
+      package is how the linked sources compile unedited today; migrating them is a separate
+      change for when the Framework build no longer has to work.
+    -->
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <ProjectReference Include="..\ZkData.Core\ZkData.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Phase 1's seam. Linked here on purpose: this project has no reference to
+         ZkLobbyServer, so a member that names a server-side type fails this build. That is
+         what keeps ILobbyServerApi crossable rather than merely intended to be. -->
+    <Compile Include="..\ZeroKWeb.Core\Mvc5Compat\*.cs" Link="Linked\%(Filename).cs" />
+    <!-- The view components that replace MVC 5 child actions. Same reason as Mvc5Compat:
+         ZeroKWeb.Core owns these files, these two projects link them. -->
+    <Compile Include="..\ZeroKWeb.Core\ViewComponents\*.cs" Link="Linked\ViewComponents\%(Filename).cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\Zero-K.info\Views\**\*.cshtml" Link="Views\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <Import Project="view-set.props" Condition="Exists('view-set.props')" />
+
+  <Import Project="..\port-views.props" />
+
+  <Import Project="..\port-sources.props" />
+
+</Project>

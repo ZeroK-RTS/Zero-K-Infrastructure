@@ -1,0 +1,21 @@
+# What is left between the schema the EF6 migrations produce and the one the EF Core
+# model produces. GENERATED body - run db/efcore-schema.sh --update; the note is kept.
+#
+# One table, and it is EF6's own bookkeeping. __MigrationHistory is where EF6 records
+# which migrations have run; EF Core keeps the same information in __EFMigrationsHistory
+# and creates it itself, so the port replaces this table rather than reproducing it. The
+# live database gets its row written once, at the baseline.
+#
+# Everything else matches: 90 tables, 742 columns, 266 indexes and 163 foreign keys, with
+# their types, nullability, defaults, collations, filters, clustering and delete
+# behaviour. ./db/efcore-schema.sh --check fails if that stops being true - or if this gap
+# closes without anyone saying so.
+
+1352,1358d1351
+< 
+< TABLE __MigrationHistory
+<   ContextKey                         nvarchar(300) NOT NULL
+<   MigrationId                        nvarchar(150) NOT NULL
+<   Model                              varbinary(max) NOT NULL
+<   ProductVersion                     nvarchar(32) NOT NULL
+<   PRIMARY KEY (MigrationId, ContextKey)  [clustered]

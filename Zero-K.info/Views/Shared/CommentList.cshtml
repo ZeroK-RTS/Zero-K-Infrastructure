@@ -1,6 +1,7 @@
 ﻿@model ZeroKWeb.Models.CommentList
 <div id="comments" class="border-test">
   <form method="post" action="@Url.Action("SubmitPost", "Forum", Model.ActionData ?? new { threadID = Model.Thread.ForumThreadID })">
+  @Html.AntiForgeryToken()
   <textarea name="text" rows="8" cols="80"></textarea><br />
   <input class="textbutton" type="submit" value="Submit Comment" /><span class="textbutton" data-preview="text">Preview</span>
   </form>

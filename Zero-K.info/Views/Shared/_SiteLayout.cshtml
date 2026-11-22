@@ -43,7 +43,7 @@
             // We use this to seed the RNG so that it picks a new background once per day
             int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
             var random = new Random(date);
-            string file = Path.GetFileName(files[random.Next(files.Length)]);
+            string file = System.IO.Path.GetFileName(files[random.Next(files.Length)]);
             <style type="text/css">
                 html {
                     background: #000 url("/img/screenshots/@file") no-repeat fixed 50% 50%;
@@ -68,6 +68,10 @@
     @RenderSection("head", false)
 </head>
 <body class="">
+@* One token per page, so anything posting from script - ZkPost - can always find one.
+   Before this it depended on whichever form the page happened to render, which is the kind of
+   thing that works until somebody edits an unrelated view. *@
+@Html.AntiForgeryToken()
     <div id='busy' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
     @if (ViewBag.Error != null)
     {

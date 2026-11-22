@@ -25,6 +25,7 @@
 }
 
 <form method="POST" action="@Url.Action("ReportToAdminSubmit")">
+@Html.AntiForgeryToken()
     @Html.HiddenFor(x=>x.AccountID)
     @Html.TextArea("text","",8,60,null)
     <input type="submit"/>

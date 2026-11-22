@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Drawing;
+using PlasmaShared.Imaging;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 
@@ -12,33 +13,33 @@ namespace ZkData.UnitSyncLib
 
         [NonSerialized]
         [JsonIgnore]
-        Image heightMap;
+        MapImage heightMap;
 
         [NonSerialized]
         [JsonIgnore]
-        Image metalmap;
+        MapImage metalmap;
 
         [NonSerialized]
         [JsonIgnore]
-        Bitmap minimap;
+        MapImage minimap;
 
         public int ExtractorRadius { get; set; }
         public int Gravity { get; set; }
 
         [XmlIgnore]
         [JsonIgnore]
-        public Image Heightmap { get { return heightMap; } set { heightMap = value; } }
+        public MapImage Heightmap { get { return heightMap; } set { heightMap = value; } }
 
         public float MaxMetal { get; set; }
         public int MaxWind { get; set; }
 
         [XmlIgnore]
         [JsonIgnore]
-        public Image Metalmap { get { return metalmap; } set { metalmap = value; } }
+        public MapImage Metalmap { get { return metalmap; } set { metalmap = value; } }
 
         [XmlIgnore]
         [JsonIgnore]
-        public Bitmap Minimap { get { return minimap; } set { minimap = value; } }
+        public MapImage Minimap { get { return minimap; } set { minimap = value; } }
 
         public int MinWind { get; set; }
 

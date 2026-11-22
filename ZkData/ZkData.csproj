@@ -71,6 +71,7 @@
     <Compile Include="Ef\AccountRating.cs" />
     <Compile Include="Ef\WHR\PlayerRating.cs" />
     <Compile Include="Ef\WHR\RatingSystems.cs" />
+    <Compile Include="Ef\WHR\RatingSystems.Dates.cs" />
     <Compile Include="Ef\WHR\WholeHistoryRating.cs" />
     <Compile Include="Enums\AdminLevel.cs" />
     <Compile Include="Enums\DevLevel.cs" />
@@ -523,6 +524,10 @@
     <Compile Include="Migrations\202604290948595_AddPwPhaseMinutes.Designer.cs">
       <DependentUpon>202604290948595_AddPwPhaseMinutes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202609181200000_FixCampaignEventsCampaignForeignKey.cs" />
+    <Compile Include="Migrations\202609181200000_FixCampaignEventsCampaignForeignKey.Designer.cs">
+      <DependentUpon>202609181200000_FixCampaignEventsCampaignForeignKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -530,6 +535,9 @@
     <Compile Include="Enums\TreatyState.cs" />
     <Compile Include="Enums\UnlockType.cs" />
     <Compile Include="DbExtensions.cs" />
+    <Compile Include="DbCompat.cs" />
+    <Compile Include="ZkHtmlFormat.cs" />
+    <Compile Include="PlanetwarsEventFormatter.cs" />
     <Compile Include="Ef\AbuseReport.cs" />
     <Compile Include="Ef\Account.cs" />
     <Compile Include="Ef\AccountBattleAward.cs" />
@@ -601,6 +609,8 @@
     <Compile Include="Ef\Unlock.cs" />
     <Compile Include="ZkDataContext.cs" />
     <Compile Include="MissionService\IMissionService.cs" />
+    <Compile Include="MissionService\MissionServiceApi.cs" />
+    <Compile Include="MissionService\MissionServiceJsonClient.cs" />
     <Compile Include="Migrations\201412312111372_Init.cs" />
     <Compile Include="Migrations\201412312111372_Init.Designer.cs">
       <DependentUpon>201412312111372_Init.cs</DependentUpon>
@@ -995,6 +1005,9 @@
     <EmbeddedResource Include="Migrations\202604290948595_AddPwPhaseMinutes.resx">
       <DependentUpon>202604290948595_AddPwPhaseMinutes.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609181200000_FixCampaignEventsCampaignForeignKey.resx">
+      <DependentUpon>202609181200000_FixCampaignEventsCampaignForeignKey.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZkDataResources.Designer.cs</LastGenOutput>
@@ -1020,7 +1033,6 @@
   <ItemGroup>
     <PackageReference Include="BCrypt-Official" Version="0.1.109" />
     <PackageReference Include="EntityFramework" Version="6.1.3" />
-    <PackageReference Include="Microsoft.Linq.Translations" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="Z.EntityFramework.Plus.EF6" Version="7.19.0" />
   </ItemGroup>

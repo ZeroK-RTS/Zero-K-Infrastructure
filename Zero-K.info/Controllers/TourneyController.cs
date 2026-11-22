@@ -14,7 +14,7 @@ namespace ZeroKWeb.Controllers
     {
         public class TourneyModel
         {
-            public List<TourneyBattle> Battles;
+            public List<TourneyBattleInfo> Battles;
             public List<int> Team1Ids { get; set; } = new List<int>();
             public List<int> Team2Ids { get; set; } = new List<int>();
             public string Title { get; set; }
@@ -27,31 +27,36 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index()
         {
             if (!Global.IsTourneyController) return DenyAccess();
-            var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
+            var tourneyBattles = Global.LobbyApi.GetTourneyBattles();
 
             return View("TourneyIndex", new TourneyModel() { Battles = tourneyBattles });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult JoinBattle(string battleHost)
         {
             if (!Global.IsTourneyController) return DenyAccess();
-            Global.Server.ForceJoinBattle(Global.Account?.Name, battleHost);
+            Global.LobbyApi.ForceJoinBattle(Global.Account?.Name, battleHost);
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult RemoveBattle(int battleid)
         {
             if (!Global.IsTourneyController) return DenyAccess();
-            var bat = Global.Server.Battles.Get(battleid);
-            if (bat != null) Global.Server.RemoveBattle(bat);
+            Global.LobbyApi.RemoveTourneyBattle(battleid);
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult RemoveMultipleBattles(double gameThreshold)
         {
             if (!Global.IsTourneyController) return DenyAccess();
             var db = new ZkDataContext();
-            var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
+            var tourneyBattles = Global.LobbyApi.GetTourneyBattles();
             foreach (var tBat in tourneyBattles)
             {
                 int batCount = 0;
@@ -63,31 +68,38 @@ namespace ZeroKWeb.Controllers
                 if (batCount >= gameThreshold)
                 {
                     // delete this room, all the required games have been played
-                    Global.Server.RemoveBattle(tBat);
+                    Global.LobbyApi.RemoveTourneyBattle(tBat.BattleID);
                 }
             }
             return RedirectToAction("Index");
         }
 
+        // Moves every player in a tournament battle into it. Gated on IsTourneyController,
+        // which is who the forgery would need to reach - the same shape as the moderator-only
+        // GETs closed in #281 and #282.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ForceJoinPlayers(int battleid)
         {
             if (!Global.IsTourneyController) return DenyAccess();
-            var bat = Global.Server.Battles.Get(battleid) as TourneyBattle;
+            var bat = Global.LobbyApi.GetTourneyBattle(battleid);
             if (bat != null)
             {
                 foreach (var p in bat.Prototype.TeamPlayers.SelectMany(x => x))
                 {
-                    Global.Server.ForceJoinBattle(p, bat);
+                    Global.LobbyApi.ForceJoinTourneyBattle(p, bat.BattleID);
                 }
             }
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ForceJoinMultiple()
         {
             if (!Global.IsTourneyController) return DenyAccess();
             var db = new ZkDataContext();
-            var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
+            var tourneyBattles = Global.LobbyApi.GetTourneyBattles();
             foreach (var tBat in tourneyBattles)
             {
                 int batCount = 0;
@@ -101,19 +113,21 @@ namespace ZeroKWeb.Controllers
                     // games unplayed here, force players into room
                     foreach (var p in tBat.Prototype.TeamPlayers.SelectMany(x => x))
                     {
-                        Global.Server.ForceJoinBattle(p, tBat);
+                        Global.LobbyApi.ForceJoinTourneyBattle(p, tBat.BattleID);
                     }
                 }
             }
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult AddBattle(TourneyModel model)
         {
             if (!Global.IsTourneyController) return DenyAccess();
             var db = new ZkDataContext();
             {
-                var tb = new TourneyBattle(Global.Server, new TourneyBattle.TourneyPrototype()
+                var tb = new TourneyPrototypeInfo()
                 {
                     Title = model.Title,
                     FounderName = Global.Account.Name,
@@ -122,7 +136,7 @@ namespace ZeroKWeb.Controllers
                         model.Team1Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList(),
                         model.Team2Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList()
                     }
-                });
+                };
 
                 string[] optionSplitters = { "," };
                 string[] modoptsStrings = model.ModoptString.Split(optionSplitters, System.StringSplitOptions.RemoveEmptyEntries);
@@ -135,11 +149,13 @@ namespace ZeroKWeb.Controllers
                         tb.ModOptions.Add(modComponent[0], modComponent[1]);
                     }
                 }
-                Global.Server.AddBattle(tb);
+                Global.LobbyApi.CreateTourneyBattle(tb);
             }
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult AddMultipleBattles(string battleList, string modoptStringMult)
         {
             if (!Global.IsTourneyController) return DenyAccess();
@@ -203,7 +219,7 @@ namespace ZeroKWeb.Controllers
 
                 if (validBattle)
                 {
-                    var tb = new TourneyBattle(Global.Server, new TourneyBattle.TourneyPrototype()
+                    var tb = new TourneyPrototypeInfo()
                     {
                         Title = bName,
                         FounderName = Global.Account.Name,
@@ -212,14 +228,14 @@ namespace ZeroKWeb.Controllers
                         team1Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList(),
                         team2Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList()
                     }
-                    });
+                    };
 
                     foreach (KeyValuePair<string, string> kvp in modopts)
                     {
                         tb.ModOptions.Add(kvp.Key, kvp.Value);
                     }
 
-                    Global.Server.AddBattle(tb);
+                    Global.LobbyApi.CreateTourneyBattle(tb);
                 }
             }
 
@@ -231,7 +247,7 @@ namespace ZeroKWeb.Controllers
             if (!Global.IsTourneyController) return DenyAccess();
             var db = new ZkDataContext();
             List<string> replayList = new List<string>();
-            var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
+            var tourneyBattles = Global.LobbyApi.GetTourneyBattles();
             foreach (var tBat in tourneyBattles)
             {
                 string line = string.Format("");

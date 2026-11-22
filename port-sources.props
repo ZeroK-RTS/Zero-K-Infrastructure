@@ -1,0 +1,159 @@
+﻿<Project>
+  <!--
+    The production sources the .NET 9 port compiles, LINKED rather than copied, so the same file
+    serves both stacks and cannot drift. Imported by ZeroKWeb.Core, ZeroKWeb.Host and
+    ZeroKWeb.Render.
+
+    It is one file because three copies of this list went out of step. ZeroKWeb.Core gained
+    TourneyController and then LobbyController, PlanetwarsController and
+    PlanetWarsTurnHandler.Portable.cs while the other two did not - and since the view inventory
+    is measured against ZeroKWeb.Core, it began promising that views compile which Host and
+    Render could not build. That surfaced as ChatNotification.cshtml and Ladder.cshtml failing
+    in render-view.sh the moment they started compiling in Core. The TourneyController case had
+    been latent for two merges, unnoticed only because its view was blocked on something else.
+
+    ZeroKWeb.Core owns Mvc5Compat natively, so that glob stays in the Host and Render projects
+    rather than here.
+  -->
+  <!--
+    Packages the LINKED sources need. They belong here for the same reason the sources do:
+    ZeroKWeb.Core, ZeroKWeb.Host and ZeroKWeb.Render compile the same files, so a package
+    listed in only one of them builds there and fails in the other two. That already happened
+    once with the source list itself, which is why this file exists.
+  -->
+  <ItemGroup>
+    <!-- EnginesController repacks an uploaded engine: ArchiveFactory.Create(ArchiveType.Zip),
+         once. The version is the one the MVC 5 build already restores in three projects, so
+         the linked source builds the same zip on both stacks. -->
+    <PackageReference Include="SharpCompress" Version="0.31.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Zero-K.info\AppCode\HtmlHelperExtensions.Portable.cs" Link="Linked\HtmlHelperExtensions.Portable.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\GalaxyMapGeometry.cs" Link="Linked\GalaxyMapGeometry.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\MemCache.cs" Link="Linked\MemCache.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\DosProtector.Portable.cs" Link="Linked\DosProtector.Portable.cs" />
+    <Compile Include="..\Zero-K.info\ApiControllers\WhrController.cs" Link="Linked\WhrController.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\WritesOnGet.cs" Link="Linked\WritesOnGet.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\PlanetwarsEventCreator.cs" Link="Linked\PlanetwarsEventCreator.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\ForumPostIndexer.cs" Link="Linked\ForumPostIndexer.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\ForumPostCache.cs" Link="Linked\ForumPostCache.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\AuthServiceClient.cs" Link="Linked\AuthServiceClient.cs" />
+    <Compile Include="..\Zero-K.info\ForumParser\**\*.cs" Link="Linked\ForumParser\%(RecursiveDir)%(Filename).cs" />
+    <Compile Include="..\Zero-K.info\Models\CommentList.cs" Link="Linked\Models\CommentList.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\UniGrid\*.cs" Link="Linked\UniGrid\%(Filename).cs" />
+
+    <Compile Include="..\Zero-K.info\Controllers\ModsController.cs" Link="Linked\Controllers\ModsController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\MyController.cs" Link="Linked\Controllers\MyController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\PlanetwarsAdminController.cs" Link="Linked\Controllers\PlanetwarsAdminController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\ForumController.cs" Link="Linked\Controllers\ForumController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\ChartsController.cs" Link="Linked\Controllers\ChartsController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\TourneyController.cs" Link="Linked\Controllers\TourneyController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\LobbyController.cs" Link="Linked\Controllers\LobbyController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\PlanetwarsController.cs" Link="Linked\Controllers\PlanetwarsController.cs" />
+    <!--
+      Not here, and why:
+        Engines - NOT SharpCompress, which was the recorded reason and was wrong: it is one call,
+                  and the package has supported netstandard for years. The real blocker is
+                  MakeDefault, which needs PlasmaShared.ContentService - a WCF [ServiceContract]
+                  whose server half does not exist on .NET 9 - and Global.SteamDepotGenerator,
+                  which lives in AutoRegistrator and drags in unitsync. Shimming either would
+                  give an admin action that reports success and changes nothing.
+        Home    - DotNetOpenAuth, for Steam OpenID sign-in. Four namespaces, really used.
+        Maps    - unitsync interop (ZkData.UnitSyncLib) and Global.AutoRegistrator. The
+                  System.Web.Script using turns out to be dead, and HttpPostedFileBase is no
+                  longer among its blockers, but the unitsync chain is real.
+      The rest have not been tried. Ladders and Missions moved out of this list, and in both
+      cases the recorded blocker was a using that nothing in the file used - the test is what a
+      file USES, never what it names.
+    -->
+    <Compile Include="..\Zero-K.info\Controllers\UsersController.cs" Link="Linked\Controllers\UsersController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\BattlesController.cs" Link="Linked\Controllers\BattlesController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\LaddersController.cs" Link="Linked\Controllers\LaddersController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\MissionsController.cs" Link="Linked\Controllers\MissionsController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\MapsController.cs" Link="Linked\Controllers\MapsController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\HomeController.cs" Link="Linked\Controllers\HomeController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\EnginesController.cs" Link="Linked\Controllers\EnginesController.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\SteamOpenIdResult.cs" Link="Linked\SteamOpenIdResult.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\SpotlightHandler.cs" Link="Linked\SpotlightHandler.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\MediaWikiRecentChanges.cs" Link="Linked\MediaWikiRecentChanges.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\PlasmaServer.Portable.cs" Link="Linked\PlasmaServer.Portable.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\ResourceLinkProvider.cs" Link="Linked\ResourceLinkProvider.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\LadderCalculator.cs" Link="Linked\LadderCalculator.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\ClansController.cs" Link="Linked\Controllers\ClansController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\FactionsController.cs" Link="Linked\Controllers\FactionsController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\NewsController.cs" Link="Linked\Controllers\NewsController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\LobbyNewsController.cs" Link="Linked\Controllers\LobbyNewsController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\AdminController.cs" Link="Linked\Controllers\AdminController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\PlanetwarsController.Imaging.cs" Link="Linked\Controllers\PlanetwarsController.Imaging.cs" />
+    <Compile Include="..\Shared\PlasmaDownloader\EngineDownload.Portable.cs" Link="Linked\EngineDownload.Portable.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\ContentServiceController.cs" Link="Linked\Controllers\ContentServiceController.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\ContentServiceImplementation.cs" Link="Linked\AppCode\ContentServiceImplementation.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\PlasmaServer.cs" Link="Linked\AppCode\PlasmaServer.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\MissionServiceController.cs" Link="Linked\Controllers\MissionServiceController.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\MissionServiceImplementation.cs" Link="Linked\AppCode\MissionServiceImplementation.cs" />
+    <Compile Include="..\Zero-K.info\MissionService.svc.cs" Link="Linked\MissionService.svc.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\ContributionsController.cs" Link="Linked\Controllers\ContributionsController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\PostHistoryController.cs" Link="Linked\Controllers\PostHistoryController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\MapBansController.cs" Link="Linked\Controllers\MapBansController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\AutocompleteController.cs" Link="Linked\Controllers\AutocompleteController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\DownloadController.cs" Link="Linked\Controllers\DownloadController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\GithubController.cs" Link="Linked\Controllers\GithubController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\ImagesController.cs" Link="Linked\Controllers\ImagesController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\PollController.cs" Link="Linked\Controllers\PollController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\ReplaysController.cs" Link="Linked\Controllers\ReplaysController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\StaticController.cs" Link="Linked\Controllers\StaticController.cs" />
+    <Compile Include="..\Zero-K.info\Controllers\WikiController.cs" Link="Linked\Controllers\WikiController.cs" />
+
+    <!--
+      Phase 1's seam, linked on purpose: these projects have no reference to ZkLobbyServer, so a
+      member naming a server-side type fails the build. That is what keeps ILobbyServerApi
+      crossable rather than merely intended to be.
+
+      PlanetWarsTurnHandler.Portable.cs is not part of that seam - it is the database half of a
+      static class the website calls directly, which the seam never modelled. See the file.
+    -->
+    <Compile Include="..\ZkLobbyServer\ILobbyServerApi.cs" Link="Linked\ILobbyServerApi.cs" />
+    <!-- The transport, so the website can TALK to a lobby server in another process. The host
+         half (LobbyApiHost) is deliberately not here: this is the caller, not the listener. -->
+    <Compile Include="..\ZkLobbyServer\Api\LobbyApiProtocol.cs" Link="Linked\Api\LobbyApiProtocol.cs" />
+    <Compile Include="..\ZkLobbyServer\Api\LobbyApiConfiguration.cs" Link="Linked\Api\LobbyApiConfiguration.cs" />
+    <Compile Include="..\ZkLobbyServer\Api\RemoteLobbyServerApi.cs" Link="Linked\Api\RemoteLobbyServerApi.cs" />
+    <Compile Include="..\ZkLobbyServer\TourneyApi.cs" Link="Linked\TourneyApi.cs" />
+    <Compile Include="..\ZkLobbyServer\RatingApi.cs" Link="Linked\RatingApi.cs" />
+    <Compile Include="..\ZkLobbyServer\PlanetWarsApi.cs" Link="Linked\PlanetWarsApi.cs" />
+    <Compile Include="..\ZkLobbyServer\SpringieInterface\PlanetWarsTurnHandler.Portable.cs" Link="Linked\PlanetWarsTurnHandler.Portable.cs" />
+    <!--
+      Replay storage. Like PlanetWarsTurnHandler before it, this lives in ZkLobbyServer and has
+      nothing to do with the running server: it is an Azure blob container plus a local directory,
+      reached through MiscVar and GlobalConst. BattlesController calls ReplayStorage.Instance
+      directly, which is the second website-to-lobby-server static call found outside
+      ILobbyServerApi - and, like the first, it turned out to be a misplaced file rather than
+      coupling. It is linked whole; there was nothing to split.
+    -->
+    <Compile Include="..\ZkLobbyServer\ReplayStorage.cs" Link="Linked\ReplayStorage.cs" />
+
+    <!--
+      DbCloner: 229 lines of plain ADO.NET over System.Data.SqlClient, which all three of these
+      projects already reference. It lives in ZkData and was simply never linked; AdminController
+      is its only caller in the website, and the Fixer tool is the other.
+    -->
+    <Compile Include="..\ZkData\DbCloner.cs" Link="Linked\DbCloner.cs" />
+  </ItemGroup>
+
+  <!--
+    Azure.Storage.Blobs, for ReplayStorage above, at the version ZkLobbyServer.csproj pins. Here
+    rather than in each project because all three import this file and all three link that source.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
+    <!--
+      DiffPlex, at the version Zero-K.info/asp.net.csproj pins. Three views name its types in
+      their @model or @using - PostHistory/PostHistoryIndex and the two Diff display templates -
+      so without it they carry a declaration error, and a declaration error in a batch suppresses
+      method-body binding for every view compiled alongside it. It was hiding the real state of
+      eleven others.
+    -->
+    <PackageReference Include="DiffPlex" Version="1.2.1" />
+  </ItemGroup>
+</Project>

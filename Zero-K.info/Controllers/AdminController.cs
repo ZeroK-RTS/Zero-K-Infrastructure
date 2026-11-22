@@ -62,6 +62,8 @@ namespace ZeroKWeb.Controllers
 
 
         [Auth(Role = AdminLevel.SuperAdmin)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SetZklsMaxPlayers(int maxPlayers)
         {
             MiscVar.ZklsMaxUsers = maxPlayers;
@@ -69,10 +71,17 @@ namespace ZeroKWeb.Controllers
         }
 
 
+        // Recomputes every rating in the database, on the lobby server. A link could fire it,
+        // which makes it forgeable: a moderator need only load a page that someone else wrote.
+        // Nothing is corrupted by it - that is why this is a token and not an incident - but it
+        // is a state change that a GET should not be able to ask for, and the work it starts is
+        // not small.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ForceRatingsUpdate()
         {
-            Ratings.RatingSystems.whr.ForEach(x => x.Value.ForceRatingsUpdate());
+            Global.LobbyApi?.ForceRatingsUpdate();
             return RedirectToAction("Index", "Home");
         }
 
@@ -83,11 +92,35 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role =  AdminLevel.SuperAdmin)]
         public ActionResult EditDynamicConfigSubmit(DynamicConfig config)
         {
             DynamicConfig.SaveConfig(config);
             return RedirectToAction("EditDynamicConfig");
         }
-    }
+    
+        /// <summary>
+        /// Registers one map again from its archive, regenerating the images stored for it.
+        ///
+        /// **This is the lossless half of the ToBytes backfill**, for maps registered before that
+        /// rule was fixed on 2026-09-25. `ZkData.Core -- minimaps` lists which maps are affected;
+        /// `-- backfill-minimaps` corrects their geometry in place but cannot recover the detail
+        /// the old rule resized away. This can, because unitsync renders the images again.
+        ///
+        /// **One map per call, and SuperAdmin.** It downloads an archive, runs unitsync on it and
+        /// overwrites stored files - and none of that can be exercised by a test in this
+        /// repository, so the unit of work is the one a person can look at the result of before
+        /// doing the next. Doing a whole library in a loop is a decision for whoever watches the
+        /// first few.
+        /// </summary>
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ReregisterResource(string internalName)
+        {
+            Trace.TraceInformation("Admin: {0} asked to re-register {1}", Global.Account.Name, internalName);
+            return Content(Global.AutoRegistrator.ReregisterResource(internalName));
+        }
+}
 }

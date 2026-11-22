@@ -46,6 +46,9 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// 
 
+        [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Update(List<Resource> resources)
         {
             if (resources == null) return Content("No input given");

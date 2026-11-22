@@ -1,0 +1,135 @@
+--- Zero-K.info/Views/Battles/BattleDetail.cshtml
++++ PortedViews/Battles/BattleDetail.cshtml
+@@ -231,5 +231,5 @@
+         PlanetWars events
+     </h3>
+-    @Html.Action("Events", "Planetwars", new { springBattleID = Model.SpringBattleID, partial = true })
++    @await Component.InvokeAsync("PlanetwarsEvents", new { springBattleID = Model.SpringBattleID, partial = true })
+ }
+ @{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { springBattleID = Model.SpringBattleID, threadID = Model.ForumThreadID } });}
+
+--- Zero-K.info/Views/Clans/Detail.cshtml
++++ PortedViews/Clans/Detail.cshtml
+@@ -111,5 +111,5 @@
+     </ul>
+     <div id="events">
+-        @Html.Action("Events", "Planetwars", new { clanID = c.ClanID, partial = true })
++        @await Component.InvokeAsync("PlanetwarsEvents", new { clanID = c.ClanID, partial = true })
+     </div>
+ </div>
+
+--- Zero-K.info/Views/Factions/Detail.cshtml
++++ PortedViews/Factions/Detail.cshtml
+@@ -94,5 +94,5 @@
+     </ul>
+     <div id="events">
+-        @Html.Action("Events", "Planetwars", new { factionID = f.FactionID, partial = true })
++        @await Component.InvokeAsync("PlanetwarsEvents", new { factionID = f.FactionID, partial = true })
+     </div>
+ 
+
+--- Zero-K.info/Views/Forum/NewPost.cshtml
++++ PortedViews/Forum/NewPost.cshtml
+@@ -57,5 +57,5 @@
+ @if (Model.LastPosts != null && Model.CurrentThread != null)
+ {
+-    @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, DisablePostComment = true })
++    @await Component.InvokeAsync("ForumPostList", new { threadID = Model.CurrentThread.ForumThreadID, disablePostComment = true })
+ }
+ 
+
+--- Zero-K.info/Views/Forum/Thread.cshtml
++++ PortedViews/Forum/Thread.cshtml
+@@ -31,3 +31,3 @@
+ 
+ <div style="float:right">@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
+-@Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, GoToPost = Model.GoToPost })
++@await Component.InvokeAsync("ForumPostList", new { threadID = Model.CurrentThread.ForumThreadID, goToPost = Model.GoToPost })
+
+--- Zero-K.info/Views/My/Commanders.cshtml
++++ PortedViews/My/Commanders.cshtml
+@@ -24,8 +24,10 @@
+ 		<div id='com@(i)' class="fleft border" style="min-height: 600px;">
+ 			@*
+-				CommanderProfileView, not CommanderProfile: the second one deletes commanders and
+-				saves modules, and rendering the page used to call it.
++				The COMPONENT renders; the ACTION this form posts to is a different thing that
++				deletes commanders and saves modules. Rendering the page used to call that action -
++				the MVC 5 copy of this file carries the same warning, and it is repeated here
++				because a reader of this copy never sees that one.
+ 			*@
+-			@{Html.RenderAction("CommanderProfileView", new { profileNumber = i });}
++			@await Component.InvokeAsync("MyCommanderProfile", new { profileNumber = i })
+ 		</div>
+ 		}
+
+--- Zero-K.info/Views/Planetwars/Galaxy.cshtml
++++ PortedViews/Planetwars/Galaxy.cshtml
+@@ -50,5 +50,5 @@
+             @Html.BBCode(Model.EndMessage)
+ 
+-            @Html.Action("Ladder","Planetwars")
++            @await Component.InvokeAsync("PlanetwarsLadder")
+         }
+         else
+@@ -74,5 +74,5 @@
+ @if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running && Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars())
+ {
+-    @Html.Action("MatchMaker")
++    @await Component.InvokeAsync("PlanetwarsMatchMaker")
+ }
+ 
+@@ -204,5 +204,5 @@
+ 	<h3>Last events</h3>
+ 	<span style='float:left'>
+-	@Html.Action("Events", new { partial = true, pageSize = 40 })</span>
++	@await Component.InvokeAsync("PlanetwarsEvents", new { partial = true, pageSize = 40 })</span>
+ 	<span><img	src='http://3.bp.blogspot.com/_YTJBDUN8iSE/TSjDkNEwJAI/AAAAAAAAD0o/N8w-cy_J_EM/s1600/Tracy_Caldwell_Dyson_in_Cupola_ISS.jpg' width='600' /><br /> Please forgive and report issues :-)</span>
+ </div>
+
+--- Zero-K.info/Views/Planetwars/Planet.cshtml
++++ PortedViews/Planetwars/Planet.cshtml
+@@ -333,5 +333,5 @@
+ 	</div>
+ 	<div id="events">
+-		@Html.Action("Events", new { planetID = Model.PlanetID, partial = true })
++		@await Component.InvokeAsync("PlanetwarsEvents", new { planetID = Model.PlanetID, partial = true })
+ 	</div>
+ 
+
+--- Zero-K.info/Views/Shared/CommentList.cshtml
++++ PortedViews/Shared/CommentList.cshtml
+@@ -8,5 +8,5 @@
+   @if (Model.Thread != null)
+   {
+-    @Html.Action("GetPostList","Forum", new { threadID = Model.Thread.ForumThreadID })
++    @await Component.InvokeAsync("ForumPostList", new { threadID = Model.Thread.ForumThreadID })
+   }
+ </div>
+
+--- Zero-K.info/Views/Shared/TopMenu.cshtml
++++ PortedViews/Shared/TopMenu.cshtml
+@@ -3,5 +3,5 @@
+ @if (Global.IsAccountAuthorized)
+ {
+-    Html.RenderAction("ChatNotification", "Lobby");
++    @await Component.InvokeAsync("LobbyChatNotification")
+ }
+ <table>
+
+--- Zero-K.info/Views/Shared/UserDetail.cshtml
++++ PortedViews/Shared/UserDetail.cshtml
+@@ -16,5 +16,5 @@
+     foreach (Poll p in Account.ValidPolls(Global.Account).Where(x => x.IsHeadline && (x.RoleTargetAccountID == Global.AccountID || !x.PollVotes.Any(y => y.AccountID == Global.AccountID))))
+     {
+-        Html.RenderAction("Index", "Poll", new { pollID = p.PollID });
++        @await Component.InvokeAsync("PollView", new { pollID = p.PollID })
+     }
+ }
+@@ -394,5 +394,5 @@
+ 
+                 <h3>PlanetWars events</h3>
+-                @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
++                @await Component.InvokeAsync("PlanetwarsEvents", new { accountID = Model.AccountID, partial = true })
+ 
+                 <span style="color: #222; font-size: 500%; opacity: .75; position: absolute; right: 5%; top: 5%; z-index: -20">PlanetWars</span>

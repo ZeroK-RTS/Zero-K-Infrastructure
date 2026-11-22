@@ -11,6 +11,8 @@ namespace Tests
     [TestClass]
     public class PaypalTests
     {
+        // No TestCategory("Basic"), on purpose: the Windows CI job runs
+        // /TestCaseFilter:TestCategory=Basic, and this test calls out to the network.
         [TestMethod]
         public void CheckConversion() {
             //var teststr=  JsonSerializer.SerializeToString(new ProtocolExtension.JugglerConfig() { Active = true });

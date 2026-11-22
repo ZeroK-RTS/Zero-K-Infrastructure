@@ -25,6 +25,7 @@ else
 }
 
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
+@Html.AntiForgeryToken()
     <table>
         @if (Model.CanSetTopic)
         {

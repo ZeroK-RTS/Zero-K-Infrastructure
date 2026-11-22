@@ -1,0 +1,27 @@
+@using ZeroKWeb
+@model GridColumnModel
+@if (Model.Col.IsSelector)
+{
+    <input type="checkbox" onclick="gridToggleRows('@Model.Grid.ID', $(this))"/>
+}
+@if (Model.Col.AllowsSort)
+{
+    <a href="#" onclick="gridSetSort('@Model.Grid.ID', '@Model.Col.ID');return false;">
+        @(new MvcHtmlString(Model.Col.Description))
+        @if (!string.IsNullOrEmpty(Model.Grid.OrderColumn) && Model.Col.ID == Model.Grid.OrderColumn)
+        {
+            if (Model.Grid.OrderIsDescending)
+            {
+                <img class="icon16" src="~/img/sort_up_green.png"/>
+            }
+            else
+            {
+                <img class="icon16" src="~/img/sort_down_green.png"/>
+            }
+        }
+    </a>
+}
+else
+{
+    <span>@(new MvcHtmlString(Model.Col.Description))</span>
+}

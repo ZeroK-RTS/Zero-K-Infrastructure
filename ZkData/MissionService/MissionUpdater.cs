@@ -1,4 +1,4 @@
-//because SharpCompress fails here for some reason
+﻿//because SharpCompress fails here for some reason
 
 using System.Configuration;
 using System.IO;
@@ -123,17 +123,35 @@ namespace ZkData
             });
 
 
-            var basePath = GlobalConst.SiteDiskPath + @"\resources\";
+            var basePath = Path.Combine(GlobalConst.SiteDiskPath, GlobalConst.ResourceFolder);
             if (!Directory.Exists(basePath)) Directory.CreateDirectory(basePath);
-            File.WriteAllBytes(string.Format(@"{2}\{0}_{1}.torrent", resource.InternalName.EscapePath(), md5, basePath), torrentStream.ToArray());
+            File.WriteAllBytes(Path.Combine(basePath, $"{resource.InternalName.EscapePath()}_{md5}.torrent"), torrentStream.ToArray());
             
-            File.WriteAllBytes(string.Format(@"{1}\{0}.metadata.xml.gz", resource.InternalName.EscapePath(), basePath),
+            File.WriteAllBytes(Path.Combine(basePath, $"{resource.InternalName.EscapePath()}.metadata.xml.gz"),
                                    MetaDataCache.SerializeAndCompressMetaData(modInfo));
             
-            var imgPath = GlobalConst.SiteDiskPath + @"\img\missions\";
+            var imgPath = Path.GetDirectoryName(GetMissionImagePath(mission.MissionID));
             if (!Directory.Exists(imgPath)) Directory.CreateDirectory(imgPath);
             
-            File.WriteAllBytes(string.Format(imgPath + "{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
+            File.WriteAllBytes(GetMissionImagePath(mission.MissionID), mission.Image.ToArray());
+        }
+
+        /// <summary>
+        /// Where a mission's image goes, and the only place that path is built.
+        ///
+        /// It is served back as {BaseSiteUrl}/img/missions/{id}.png - by
+        /// ContentServiceImplementation to the game client, and by Missions/Detail.cshtml and
+        /// TileList.cshtml as ~/img/missions/{id}.png - so the directory here and the URL there
+        /// have to agree, and SiteDiskPathTests asks whether they still do.
+        ///
+        /// This used to be `imgPath + "{0}.png"` over a variable that ended in a separator. When
+        /// that variable became a Path.Combine it stopped ending in one, and the image was written
+        /// to img/missions123.png - beside the directory rather than in it, with the directory
+        /// still created and nothing failing. Hence one definition and no concatenation.
+        /// </summary>
+        public static string GetMissionImagePath(int missionID)
+        {
+            return Path.Combine(GlobalConst.SiteDiskPath, "img", "missions", missionID + ".png");
         }
 
         static string FixScript(Mission mission, ZipArchive archive, string scriptName)

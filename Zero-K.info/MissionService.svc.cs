@@ -12,7 +12,83 @@ using ZkData;
 
 namespace ZeroKWeb
 {
+	/// <summary>
+	/// The WCF endpoint, which MissionService.svc points at. **Deprecated**: server-side WCF
+	/// has no successor on .NET 9, and /MissionService carries the same six operations in JSON.
+	///
+	/// It still serves, because mission editors installed before that endpoint existed use it
+	/// and only pick up the new one when ClickOnce updates them - which happens on launch, not
+	/// on deploy. Removing it before then breaks publishing for anyone who has not opened the
+	/// editor since.
+	///
+	/// **So it says who is still calling it.** Every operation logs, and SendMission logs the
+	/// caller's editor version, which is the number that decides when this can go. That plus
+	/// the MissionEditorVersion column - written on every publish, through either endpoint -
+	/// answers "has everyone updated?" from the site's own data.
+	///
+	/// ContentService.svc reports itself too now, but differently and for a reason: publishing
+	/// a mission is rare, so this one can afford a line per call, and that line carries the
+	/// editor version the retirement turns on. That endpoint's traffic is unknown and every
+	/// trace is a database insert, so it counts rather than logs. See LegacyCallReporter.
+	///
+	/// The logic is in MissionServiceLogic below and is shared with the JSON endpoint, so this
+	/// class can be deleted along with the .svc file in one commit when the time comes.
+	/// </summary>
 	public class MissionService: IMissionService
+	{
+		private readonly MissionServiceLogic logic = new MissionServiceLogic();
+
+		public void DeleteMission(int missionID, string author, string password)
+		{
+			LogLegacyCall("DeleteMission", author, null);
+			logic.DeleteMission(missionID, author, password);
+		}
+
+		public void UndeleteMission(int missionID, string author, string password)
+		{
+			LogLegacyCall("UndeleteMission", author, null);
+			logic.UndeleteMission(missionID, author, password);
+		}
+
+		public Mission GetMission(string missionName)
+		{
+			LogLegacyCall("GetMission", null, null);
+			return logic.GetMission(missionName);
+		}
+
+		public Mission GetMissionByID(int missionID)
+		{
+			LogLegacyCall("GetMissionByID", null, null);
+			return logic.GetMissionByID(missionID);
+		}
+
+		public IEnumerable<Mission> ListMissionInfos()
+		{
+			LogLegacyCall("ListMissionInfos", null, null);
+			return logic.ListMissionInfos();
+		}
+
+		public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password, Mod modInfo)
+		{
+			// The one call that knows which editor is asking.
+			LogLegacyCall("SendMission", author, mission?.MissionEditorVersion);
+			logic.SendMission(mission, slots, author, password, modInfo);
+		}
+
+		/// <summary>
+		/// Goes to LogEntries, which Admin/TraceLogs shows and which keeps 14 days - long enough
+		/// to answer whether anyone is still on the WCF path, short enough not to accumulate.
+		/// </summary>
+		static void LogLegacyCall(string operation, string author, string editorVersion)
+		{
+			Trace.TraceInformation(
+				"MissionService.svc (deprecated WCF endpoint): {0} by {1}, mission editor {2}",
+				operation, author ?? "anonymous", editorVersion ?? "version not reported");
+		}
+	}
+
+	/// <summary>The operations themselves, shared by the WCF endpoint above and /MissionService.</summary>
+	public class MissionServiceLogic: IMissionService
 	{
 		public void DeleteMission(int missionID, string author, string password)
 		{

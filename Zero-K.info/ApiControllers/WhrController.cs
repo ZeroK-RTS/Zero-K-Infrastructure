@@ -43,12 +43,19 @@ namespace ZeroKWeb.Controllers
 
             public BattleModel(SpringBattle bat)
             {
-                WholeHistoryRating whr = RatingSystems.GetRatingSystem(bat.GetRatingCategory()) as WholeHistoryRating;
-                players = bat.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(player => new PlayerModel()
+                // The WHR internals, which live only in the process running the pass. Asked for
+                // once per player rather than twice: the original called GetInternalRating twice
+                // for each, which was free in-process and is two round trips out of it.
+                var category = bat.GetRatingCategory();
+                players = bat.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(player =>
                 {
-                    rating = whr.GetInternalRating(player.AccountID, bat.StartTime)?.GetElo() + WholeHistoryRating.RatingOffset,
-                    stdev = whr.GetInternalRating(player.AccountID, bat.StartTime)?.GetEloStdev(),
-                    accountId = player.AccountID,
+                    var internalRating = Global.LobbyApi?.GetInternalRating(category, player.AccountID, bat.StartTime);
+                    return new PlayerModel()
+                    {
+                        rating = internalRating?.Elo + WholeHistoryRating.RatingOffset,
+                        stdev = internalRating?.EloStdev,
+                        accountId = player.AccountID,
+                    };
                 }).ToList();
                 id = bat.SpringBattleID;
             }

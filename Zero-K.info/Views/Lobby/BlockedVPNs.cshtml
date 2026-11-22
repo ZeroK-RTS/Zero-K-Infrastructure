@@ -44,7 +44,7 @@
             <tr>
                 <td>@entry.CompanyName</td>
                 <td>@entry.Comment</td>
-                <td><a href="@Url.Action("RemoveBlockedCompany", new { companyID = entry.CompanyID })">remove</a></td>
+                <td>@Html.PostLink("remove", "RemoveBlockedCompany", null, new { companyID = entry.CompanyID }, "js_confirm")</td>
             </tr>
         }
         </tbody>
@@ -70,7 +70,7 @@
             <tr>
                 <td>@entry.HostName</td>
                 <td>@entry.Comment</td>
-                <td><a href="@Url.Action("RemoveBlockedHost", new { hostID = entry.HostID })">remove</a></td>
+                <td>@Html.PostLink("remove", "RemoveBlockedHost", null, new { hostID = entry.HostID }, "js_confirm")</td>
             </tr>
         }
         </tbody>

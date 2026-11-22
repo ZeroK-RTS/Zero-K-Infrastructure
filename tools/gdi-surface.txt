@@ -1,0 +1,16 @@
+# Files ZkLobbyServer.Core compiles that use System.Drawing.Common, which is Windows-only on
+# .NET 9. Checked by tools/check-gdi-surface.py, which fails if this set changes either way.
+#
+#   <path>  <why it is still here>
+#
+# THE LIST IS EMPTY, and that is the point. The surface went 7 files -> 3 -> none: everything the
+# server compiled but could not reach was removed, and the last three - the native-buffer-to-Bitmap
+# interop - were answered by the MapImage compat twin, whose .NET 9 half keeps unitsync's RGB24
+# pixels and reaches for ImageSharp only to resize or encode.
+#
+# ZkLobbyServer.Core no longer references System.Drawing.Common at all, so the primary guard is the
+# build: a Bitmap added to anything it compiles does not resolve. This file is the second line, and
+# it is what would notice the package being put back alongside a new user.
+#
+# Adding an entry here is a decision, not a formality: the call would compile everywhere and throw
+# TypeInitializationException when it finally ran on Linux.

@@ -1,0 +1,1365 @@
+# Schema produced by the EF6 migrations. GENERATED - run db/dump-schema.py.
+#
+# The contract the EF Core port has to reproduce, and the thing that makes schema
+# drift show up as a diff. See ZkData/EFCORE-MIGRATION.md.
+
+migrations applied: 118, through 202609181200000_FixCampaignEventsCampaignForeignKey
+tables: 91, columns: 746, indexes: 267, foreign keys: 163
+
+TABLE AbuseReports
+  AbuseReportID                      int NOT NULL IDENTITY
+  AccountID                          int NOT NULL
+  ReporterAccountID                  int NOT NULL
+  Text                               nvarchar(max) NOT NULL
+  Time                               datetime NOT NULL
+  PRIMARY KEY (AbuseReportID)  [clustered]
+  INDEX (AccountID)
+  INDEX (ReporterAccountID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ReporterAccountID) -> Accounts
+
+TABLE AccountBattleAwards
+  AccountID                          int NOT NULL
+  AwardDescription                   nvarchar(500) NULL
+  AwardKey                           varchar(50) NOT NULL
+  SpringBattleID                     int NOT NULL
+  Value                              float NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, SpringBattleID, AwardKey)  [clustered]
+  INDEX (SpringBattleID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (SpringBattleID) -> SpringBattles ON DELETE CASCADE
+
+TABLE AccountCampaignJournalProgresses
+  AccountID                          int NOT NULL
+  CampaignID                         int NOT NULL
+  IsUnlocked                         bit NOT NULL
+  JournalID                          int NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, CampaignID, JournalID)  [clustered]
+  INDEX (CampaignID, JournalID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (CampaignID, JournalID) -> CampaignJournals ON DELETE CASCADE
+  FOREIGN KEY (CampaignID) -> Campaigns
+
+TABLE AccountCampaignProgresses
+  AccountID                          int NOT NULL
+  CampaignID                         int NOT NULL
+  IsCompleted                        bit NOT NULL
+  IsUnlocked                         bit NOT NULL
+  PlanetID                           int NOT NULL
+  INDEX (AccountID)
+  INDEX (CampaignID)
+  INDEX (CampaignID, PlanetID)
+  PRIMARY KEY (CampaignID, PlanetID, AccountID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts ON DELETE CASCADE
+  FOREIGN KEY (CampaignID, PlanetID) -> CampaignPlanets
+  FOREIGN KEY (CampaignID) -> Campaigns
+
+TABLE AccountCampaignVars
+  AccountID                          int NOT NULL
+  CampaignID                         int NOT NULL
+  Value                              nvarchar(max) NOT NULL
+  VarID                              int NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, CampaignID, VarID)  [clustered]
+  INDEX (CampaignID, VarID)
+  FOREIGN KEY (AccountID) -> Accounts ON DELETE CASCADE
+  FOREIGN KEY (CampaignID, VarID) -> CampaignVars
+  FOREIGN KEY (CampaignID) -> Campaigns
+
+TABLE AccountForumVotes
+  AccountID                          int NOT NULL
+  ForumPostID                        int NOT NULL
+  Vote                               int NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, ForumPostID)  [clustered]
+  INDEX (ForumPostID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ForumPostID) -> ForumPosts ON DELETE CASCADE
+
+TABLE AccountIPs
+  AccountID                          int NOT NULL
+  FirstLogin                         datetime NOT NULL
+  IP                                 nvarchar(50) NOT NULL
+  LastLogin                          datetime NOT NULL
+  LoginCount                         int NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, IP)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts ON DELETE CASCADE
+
+TABLE AccountMapBans
+  AccountID                          int NOT NULL
+  BannedMapResourceID                int NOT NULL
+  Rank                               int NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, BannedMapResourceID, Rank)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (BannedMapResourceID) -> Resources
+
+TABLE AccountPlanets
+  AccountID                          int NOT NULL
+  AttackPoints                       float NOT NULL
+  PlanetID                           int NOT NULL
+  INDEX (AccountID)
+  INDEX (PlanetID)
+  PRIMARY KEY (PlanetID, AccountID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (PlanetID) -> Planets
+
+TABLE AccountRatings
+  AccountID                          int NOT NULL
+  Elo                                float NOT NULL
+  EloStdev                           float NOT NULL
+  IsRanked                           bit NOT NULL DEFAULT ((0))
+  LadderElo                          float NULL
+  Percentile                         float NOT NULL
+  RatingCategory                     int NOT NULL
+  RealElo                            float NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, RatingCategory)  [clustered]
+  INDEX (Elo)
+  INDEX (IsRanked)
+  INDEX (LadderElo)
+  INDEX (RealElo)
+  FOREIGN KEY (AccountID) -> Accounts ON DELETE CASCADE
+
+TABLE AccountRelations
+  OwnerAccountID                     int NOT NULL
+  Relation                           int NOT NULL
+  TargetAccountID                    int NOT NULL
+  INDEX (OwnerAccountID)
+  PRIMARY KEY (OwnerAccountID, TargetAccountID)  [clustered]
+  INDEX (TargetAccountID)
+  FOREIGN KEY (OwnerAccountID) -> Accounts ON DELETE CASCADE
+  FOREIGN KEY (TargetAccountID) -> Accounts
+
+TABLE AccountRoles
+  AccountID                          int NOT NULL
+  ClanID                             int NULL
+  FactionID                          int NULL
+  Inauguration                       datetime NOT NULL
+  RoleTypeID                         int NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, RoleTypeID)  [clustered]
+  INDEX (ClanID)
+  INDEX (FactionID)
+  INDEX (RoleTypeID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ClanID) -> Clans ON DELETE CASCADE
+  FOREIGN KEY (FactionID) -> Factions
+  FOREIGN KEY (RoleTypeID) -> RoleTypes ON DELETE CASCADE
+
+TABLE AccountUnlocks
+  AccountID                          int NOT NULL
+  Count                              int NOT NULL
+  UnlockID                           int NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, UnlockID)  [clustered]
+  INDEX (UnlockID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (UnlockID) -> Unlocks ON DELETE CASCADE
+
+TABLE AccountUserIDs
+  AccountID                          int NOT NULL
+  FirstLogin                         datetime NOT NULL
+  InstallID                          nvarchar(50) NOT NULL
+  LastLogin                          datetime NOT NULL
+  LoginCount                         int NOT NULL
+  UserID                             bigint NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, UserID, InstallID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts ON DELETE CASCADE
+
+TABLE Accounts
+  AccountID                          int NOT NULL IDENTITY
+  AdminLevel                         int NOT NULL DEFAULT ((0))
+  Aliases                            varchar(8000) NULL
+  Avatar                             nvarchar(50) NULL
+  CanPlayMultiplayer                 bit NOT NULL DEFAULT ((1))
+  ClanID                             int NULL
+  Country                            varchar(5) NULL
+  Cpu                                int NOT NULL DEFAULT ((0))
+  DevLevel                           int NOT NULL DEFAULT ((0))
+  Email                              nvarchar(200) NULL
+  FactionID                          int NULL
+  FirstLogin                         datetime NOT NULL
+  ForumTotalDownvotes                int NOT NULL
+  ForumTotalUpvotes                  int NOT NULL
+  HasKudos                           bit NOT NULL DEFAULT ((0))
+  HasVpnException                    bit NOT NULL
+  HideCountry                        bit NOT NULL DEFAULT ((0))
+  IsBot                              bit NOT NULL
+  IsDeleted                          bit NOT NULL
+  IsTourneyController                bit NOT NULL DEFAULT ((0))
+  LastChatRead                       datetime NOT NULL DEFAULT ('1900-01-01T00:00:00.000')
+  LastLogin                          datetime NOT NULL
+  LastLogout                         datetime NOT NULL DEFAULT ('1900-01-01T00:00:00.000')
+  LastPubKey                         nvarchar(max) NULL
+  Level                              int NOT NULL
+  LobbyID                            int NULL
+  LobbyVersion                       nvarchar(200) NULL
+  MissionRunCount                    int NOT NULL
+  Name                               varchar(2000) NOT NULL
+  PasswordBcrypt                     nvarchar(150) NULL
+  PurchasedDlc                       nvarchar(max) NULL
+  PwAttackCharges                    int NOT NULL DEFAULT ((2))
+  PwAttackPoints                     float NOT NULL
+  PwBombersProduced                  float NOT NULL
+  PwBombersUsed                      float NOT NULL
+  PwDropshipsProduced                float NOT NULL
+  PwDropshipsUsed                    float NOT NULL
+  PwLastChargeChange                 datetime NULL
+  PwMetalProduced                    float NOT NULL
+  PwMetalUsed                        float NOT NULL
+  PwWarpProduced                     float NOT NULL
+  PwWarpUsed                         float NOT NULL
+  Rank                               int NOT NULL DEFAULT ((0))
+  SpecialNote                        nvarchar(200) NULL
+  SteamID                            decimal(38,0) NULL
+  SteamName                          nvarchar(200) NULL
+  VotesAvailable                     int NULL
+  Xp                                 int NOT NULL
+  PRIMARY KEY (AccountID)  [clustered]
+  INDEX (ClanID)
+  INDEX (FactionID)
+  UNIQUE INDEX (Name)
+  UNIQUE INDEX (SteamID) WHERE ([SteamID] IS NOT NULL)
+  FOREIGN KEY (ClanID) -> Clans
+  FOREIGN KEY (FactionID) -> Factions
+
+TABLE Autohosts
+  ApplicableRating                   int NOT NULL DEFAULT ((1))
+  AutohostID                         int NOT NULL IDENTITY
+  AutohostMode                       int NOT NULL
+  CbalEnabled                        bit NOT NULL DEFAULT ((1))
+  InviteMMPlayers                    int NOT NULL
+  MapName                            nvarchar(255) NULL
+  MaxElo                             int NOT NULL
+  MaxEvenPlayers                     int NOT NULL DEFAULT ((0))
+  MaxLevel                           int NOT NULL
+  MaxPlayers                         int NOT NULL
+  MaxRank                            int NOT NULL
+  MinElo                             int NOT NULL
+  MinimumMapSupportLevel             int NOT NULL
+  MinLevel                           int NOT NULL
+  MinRank                            int NOT NULL
+  ModName                            nvarchar(255) NULL
+  Title                              nvarchar(200) NULL
+  PRIMARY KEY (AutohostID)  [clustered]
+
+TABLE Avatars
+  AvatarName                         nvarchar(50) NOT NULL
+  PRIMARY KEY (AvatarName)  [clustered]
+
+TABLE BlockedCompanies
+  Comment                            nvarchar(500) NULL
+  CompanyID                          int NOT NULL IDENTITY
+  CompanyName                        nvarchar(500) NOT NULL
+  PRIMARY KEY (CompanyID)  [clustered]
+
+TABLE BlockedHosts
+  Comment                            nvarchar(500) NULL
+  HostID                             int NOT NULL IDENTITY
+  HostName                           nvarchar(500) NOT NULL
+  PRIMARY KEY (HostID)  [clustered]
+
+TABLE CampaignEvents
+  AccountID                          int NOT NULL
+  CampaignID                         int NOT NULL
+  EventID                            int NOT NULL IDENTITY
+  PlainText                          nvarchar(4000) NULL
+  PlanetID                           int NULL
+  Text                               nvarchar(4000) NOT NULL
+  Time                               datetime NOT NULL
+  INDEX (AccountID)
+  INDEX (CampaignID)
+  INDEX (CampaignID, PlanetID)
+  PRIMARY KEY (EventID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (CampaignID, PlanetID) -> CampaignPlanets ON DELETE CASCADE
+  FOREIGN KEY (CampaignID) -> Campaigns
+
+TABLE CampaignJournalVars
+  CampaignID                         int NOT NULL
+  JournalID                          int NOT NULL
+  RequiredValue                      nvarchar(500) NOT NULL
+  RequiredVarID                      int NOT NULL
+  INDEX (CampaignID, JournalID)
+  PRIMARY KEY (CampaignID, JournalID, RequiredVarID)  [clustered]
+  INDEX (CampaignID, RequiredVarID)
+  FOREIGN KEY (CampaignID, JournalID) -> CampaignJournals ON DELETE CASCADE
+  FOREIGN KEY (CampaignID, RequiredVarID) -> CampaignVars
+  FOREIGN KEY (CampaignID) -> Campaigns
+
+TABLE CampaignJournals
+  CampaignID                         int NOT NULL
+  Category                           nvarchar(1000) NULL
+  JournalID                          int NOT NULL
+  PlanetID                           int NULL
+  StartsUnlocked                     bit NOT NULL
+  Text                               nvarchar(max) NOT NULL
+  Title                              nvarchar(50) NOT NULL
+  UnlockOnPlanetCompletion           bit NOT NULL
+  UnlockOnPlanetUnlock               bit NOT NULL
+  INDEX (CampaignID)
+  PRIMARY KEY (CampaignID, JournalID)  [clustered]
+  INDEX (CampaignID, PlanetID)
+  FOREIGN KEY (CampaignID, PlanetID) -> CampaignPlanets
+  FOREIGN KEY (CampaignID) -> Campaigns ON DELETE CASCADE
+
+TABLE CampaignLinks
+  CampaignID                         int NOT NULL
+  PlanetToUnlockID                   int NOT NULL
+  UnlockingPlanetID                  int NOT NULL
+  INDEX (CampaignID)
+  INDEX (CampaignID, PlanetToUnlockID)
+  PRIMARY KEY (CampaignID, PlanetToUnlockID, UnlockingPlanetID)  [clustered]
+  INDEX (CampaignID, UnlockingPlanetID)
+  FOREIGN KEY (CampaignID, PlanetToUnlockID) -> CampaignPlanets
+  FOREIGN KEY (CampaignID, UnlockingPlanetID) -> CampaignPlanets
+  FOREIGN KEY (CampaignID) -> Campaigns
+
+TABLE CampaignPlanetVars
+  CampaignID                         int NOT NULL
+  PlanetID                           int NOT NULL
+  RequiredValue                      nvarchar(500) NOT NULL
+  RequiredVarID                      int NOT NULL
+  INDEX (CampaignID, PlanetID)
+  PRIMARY KEY (CampaignID, PlanetID, RequiredVarID)  [clustered]
+  INDEX (CampaignID, RequiredVarID)
+  FOREIGN KEY (CampaignID, PlanetID) -> CampaignPlanets
+  FOREIGN KEY (CampaignID, RequiredVarID) -> CampaignVars
+  FOREIGN KEY (CampaignID) -> Campaigns
+
+TABLE CampaignPlanets
+  CampaignID                         int NOT NULL
+  Description                        nvarchar(4000) NULL
+  DescriptionStory                   nvarchar(4000) NULL
+  DisplayedMap                       nvarchar(100) NULL
+  HideIfLocked                       bit NOT NULL
+  IsSkirmish                         bit NOT NULL
+  MissionID                          int NOT NULL
+  Name                               varchar(50) NOT NULL
+  PlanetID                           int NOT NULL
+  StartsUnlocked                     bit NOT NULL
+  X                                  float NOT NULL
+  Y                                  float NOT NULL
+  INDEX (CampaignID)
+  PRIMARY KEY (CampaignID, PlanetID)  [clustered]
+  INDEX (MissionID)
+  FOREIGN KEY (CampaignID) -> Campaigns ON DELETE CASCADE
+  FOREIGN KEY (MissionID) -> Missions
+
+TABLE CampaignVars
+  CampaignID                         int NOT NULL
+  Description                        nvarchar(4000) NULL
+  KeyString                          nvarchar(50) NOT NULL
+  VarID                              int NOT NULL
+  INDEX (CampaignID)
+  PRIMARY KEY (CampaignID, VarID)  [clustered]
+  FOREIGN KEY (CampaignID) -> Campaigns
+
+TABLE Campaigns
+  CampaignID                         int NOT NULL
+  Description                        nvarchar(2000) NULL
+  IsDirty                            bit NOT NULL
+  IsHidden                           bit NULL
+  MapHeight                          int NOT NULL
+  MapImageName                       nvarchar(100) NULL
+  MapWidth                           int NOT NULL
+  Name                               nvarchar(50) NOT NULL
+  PRIMARY KEY (CampaignID)  [clustered]
+
+TABLE Clans
+  ClanID                             int NOT NULL IDENTITY
+  ClanName                           varchar(50) NOT NULL
+  Description                        varchar(500) NULL
+  FactionID                          int NULL
+  ForumThreadID                      int NULL
+  IsDeleted                          bit NOT NULL
+  Password                           varchar(20) NULL
+  SecretTopic                        nvarchar(500) NULL
+  Shortcut                           varchar(6) NOT NULL
+  PRIMARY KEY (ClanID)  [clustered]
+  INDEX (FactionID)
+  INDEX (ForumThreadID)
+  FOREIGN KEY (FactionID) -> Factions
+  FOREIGN KEY (ForumThreadID) -> ForumThreads
+
+TABLE CommanderDecorationIcons
+  DecorationUnlockID                 int NOT NULL
+  IconPosition                       int NOT NULL
+  IconType                           int NOT NULL
+  INDEX (DecorationUnlockID)
+  PRIMARY KEY (DecorationUnlockID)  [clustered]
+  FOREIGN KEY (DecorationUnlockID) -> Unlocks
+
+TABLE CommanderDecorationSlots
+  CommanderDecorationSlotID          int NOT NULL
+  PRIMARY KEY (CommanderDecorationSlotID)  [clustered]
+
+TABLE CommanderDecorations
+  CommanderID                        int NOT NULL
+  DecorationUnlockID                 int NOT NULL
+  SlotID                             int NOT NULL
+  INDEX (CommanderID)
+  PRIMARY KEY (CommanderID, SlotID)  [clustered]
+  INDEX (DecorationUnlockID)
+  INDEX (SlotID)
+  FOREIGN KEY (SlotID) -> CommanderDecorationSlots ON DELETE CASCADE
+  FOREIGN KEY (CommanderID) -> Commanders ON DELETE CASCADE
+  FOREIGN KEY (DecorationUnlockID) -> Unlocks
+
+TABLE CommanderModules
+  CommanderID                        int NOT NULL
+  ModuleUnlockID                     int NOT NULL
+  SlotID                             int NOT NULL
+  INDEX (CommanderID)
+  PRIMARY KEY (CommanderID, SlotID)  [clustered]
+  INDEX (ModuleUnlockID)
+  INDEX (SlotID)
+  FOREIGN KEY (SlotID) -> CommanderSlots ON DELETE CASCADE
+  FOREIGN KEY (CommanderID) -> Commanders ON DELETE CASCADE
+  FOREIGN KEY (ModuleUnlockID) -> Unlocks
+
+TABLE CommanderSlots
+  ChassisID                          int NULL
+  CommanderSlotID                    int NOT NULL IDENTITY
+  MorphLevel                         int NOT NULL
+  UnlockType                         int NOT NULL
+  PRIMARY KEY (CommanderSlotID)  [clustered]
+  FOREIGN KEY (ChassisID) -> Unlocks
+
+TABLE Commanders
+  AccountID                          int NOT NULL
+  ChassisUnlockID                    int NOT NULL
+  CommanderID                        int NOT NULL IDENTITY
+  Name                               nvarchar(200) NULL
+  ProfileNumber                      int NOT NULL
+  INDEX (AccountID)
+  INDEX (ChassisUnlockID)
+  PRIMARY KEY (CommanderID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ChassisUnlockID) -> Unlocks ON DELETE CASCADE
+
+TABLE ContributionJars
+  ContributionJarID                  int NOT NULL IDENTITY
+  Description                        nvarchar(500) NULL
+  GuarantorAccountID                 int NOT NULL
+  IsDefault                          bit NOT NULL
+  Name                               nvarchar(100) NOT NULL
+  TargetGrossEuros                   float NOT NULL
+  PRIMARY KEY (ContributionJarID)  [clustered]
+  INDEX (GuarantorAccountID)
+  FOREIGN KEY (GuarantorAccountID) -> Accounts
+
+TABLE Contributions
+  AccountID                          int NULL
+  Comment                            nvarchar(200) NULL
+  ContributionID                     int NOT NULL IDENTITY
+  ContributionJarID                  int NULL
+  Email                              nvarchar(50) NULL
+  Euros                              float NULL
+  EurosNet                           float NULL
+  IsSpringContribution               bit NOT NULL
+  ItemCode                           nvarchar(50) NULL
+  ItemName                           nvarchar(50) NULL
+  KudosValue                         int NOT NULL
+  ManuallyAddedAccountID             int NULL
+  Name                               nvarchar(100) NULL
+  OriginalAmount                     float NULL
+  OriginalCurrency                   nvarchar(5) NULL
+  PackID                             int NULL
+  PayPalTransactionID                nvarchar(50) NULL
+  RedeemCode                         nvarchar(100) NULL
+  Time                               datetime NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (ContributionID)  [clustered]
+  INDEX (ContributionJarID)
+  INDEX (ManuallyAddedAccountID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ManuallyAddedAccountID) -> Accounts
+  FOREIGN KEY (ContributionJarID) -> ContributionJars
+
+TABLE DynamicConfigs
+  Key                                int NOT NULL
+  MapVoteFractionOfPopularMaps       float NOT NULL DEFAULT ((0.5))
+  MaximumBattlePlayers               int NOT NULL DEFAULT ((0))
+  MaximumStatLimitedBattlePlayers    int NOT NULL DEFAULT ((0))
+  MinimumPlayersForStdevBalance      int NOT NULL DEFAULT ((0))
+  Mm1v1MinimumWinChance              float NOT NULL DEFAULT ((0))
+  MmBanReset                         int NOT NULL
+  MmBanSecondsIncrease               int NOT NULL
+  MmBanSecondsMax                    int NOT NULL
+  MmEloBonusMultiplier               float NOT NULL DEFAULT ((0))
+  MmMinimumMinutesBetweenGames       float NOT NULL DEFAULT ((0))
+  MmMinimumMinutesBetweenSuggestions float NOT NULL DEFAULT ((0))
+  MmSizeGrowthTime                   float NOT NULL DEFAULT ((0))
+  MmStartingWidth                    float NOT NULL
+  MmTeamsMinimumWinChance            float NOT NULL DEFAULT ((0))
+  MmWidthGrowth                      float NOT NULL
+  MmWidthGrowthTime                  float NOT NULL
+  MmWidthReductionForParties         float NOT NULL DEFAULT ((0))
+  PwAttackChargesCooldownMinutes     int NOT NULL DEFAULT ((60))
+  PwAttackChargesMax                 int NOT NULL DEFAULT ((2))
+  PwAttackChargesPassiveLimit        int NOT NULL DEFAULT ((1))
+  PwAttackOptionCount                int NOT NULL DEFAULT ((6))
+  PwAttackPhaseMinutes               int NOT NULL DEFAULT ((2))
+  PwBomberMinimumIpFloor             float NOT NULL DEFAULT ((5))
+  PwBomberSelfIpRate                 float NOT NULL DEFAULT ((0.5))
+  PwDefendPhaseMinutes               int NOT NULL DEFAULT ((2))
+  StdevBalanceWeight                 float NOT NULL DEFAULT ((0))
+  TimeQueueEnabled                   bit NOT NULL DEFAULT ((0))
+  PRIMARY KEY (Key)  [clustered]
+
+TABLE EventAccount
+  AccountID                          int NOT NULL
+  EventID                            int NOT NULL
+  INDEX (AccountID)
+  INDEX (EventID)
+  PRIMARY KEY (EventID, AccountID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts ON DELETE CASCADE
+  FOREIGN KEY (EventID) -> Events ON DELETE CASCADE
+
+TABLE EventClan
+  ClanID                             int NOT NULL
+  EventID                            int NOT NULL
+  INDEX (ClanID)
+  PRIMARY KEY (ClanID, EventID)  [clustered]
+  INDEX (EventID)
+  FOREIGN KEY (ClanID) -> Clans ON DELETE CASCADE
+  FOREIGN KEY (EventID) -> Events ON DELETE CASCADE
+
+TABLE EventFaction
+  EventID                            int NOT NULL
+  FactionID                          int NOT NULL
+  INDEX (EventID)
+  PRIMARY KEY (EventID, FactionID)  [clustered]
+  INDEX (FactionID)
+  FOREIGN KEY (EventID) -> Events ON DELETE CASCADE
+  FOREIGN KEY (FactionID) -> Factions ON DELETE CASCADE
+
+TABLE EventPlanet
+  EventID                            int NOT NULL
+  PlanetID                           int NOT NULL
+  INDEX (EventID)
+  PRIMARY KEY (EventID, PlanetID)  [clustered]
+  INDEX (PlanetID)
+  FOREIGN KEY (EventID) -> Events ON DELETE CASCADE
+  FOREIGN KEY (PlanetID) -> Planets ON DELETE CASCADE
+
+TABLE EventSpringBattle
+  EventID                            int NOT NULL
+  SpringBattleID                     int NOT NULL
+  INDEX (EventID)
+  PRIMARY KEY (EventID, SpringBattleID)  [clustered]
+  INDEX (SpringBattleID)
+  FOREIGN KEY (EventID) -> Events ON DELETE CASCADE
+  FOREIGN KEY (SpringBattleID) -> SpringBattles ON DELETE CASCADE
+
+TABLE Events
+  EventID                            int NOT NULL IDENTITY
+  PlainText                          nvarchar(4000) NULL
+  Text                               nvarchar(4000) NOT NULL
+  Time                               datetime NOT NULL
+  Turn                               int NOT NULL
+  PRIMARY KEY (EventID)  [clustered]
+
+TABLE FactionTreaties
+  AcceptedAccountID                  int NULL
+  AcceptingFactionGuarantee          int NULL
+  AcceptingFactionID                 int NOT NULL
+  FactionTreatyID                    int NOT NULL IDENTITY
+  ProposingAccountID                 int NOT NULL
+  ProposingFactionGuarantee          int NULL
+  ProposingFactionID                 int NOT NULL
+  TreatyNote                         nvarchar(1000) NULL
+  TreatyState                        int NOT NULL
+  TreatyUnableToTradeMode            int NOT NULL DEFAULT ((0))
+  TurnsRemaining                     int NULL
+  TurnsTotal                         int NULL
+  INDEX (AcceptedAccountID)
+  INDEX (AcceptingFactionID)
+  PRIMARY KEY (FactionTreatyID)  [clustered]
+  INDEX (ProposingAccountID)
+  INDEX (ProposingFactionID)
+  FOREIGN KEY (AcceptedAccountID) -> Accounts
+  FOREIGN KEY (ProposingAccountID) -> Accounts
+  FOREIGN KEY (AcceptingFactionID) -> Factions
+  FOREIGN KEY (ProposingFactionID) -> Factions
+
+TABLE Factions
+  Bombers                            float NOT NULL
+  Color                              varchar(20) NOT NULL
+  Dropships                          float NOT NULL
+  EnergyDemandLastTurn               float NOT NULL
+  EnergyProducedLastTurn             float NOT NULL
+  FactionID                          int NOT NULL IDENTITY
+  IsDeleted                          bit NOT NULL
+  Metal                              float NOT NULL
+  Name                               nvarchar(200) NOT NULL
+  SecretTopic                        nvarchar(500) NULL
+  Shortcut                           nvarchar(50) NOT NULL
+  VictoryPoints                      float NOT NULL DEFAULT ((0))
+  Warps                              float NOT NULL
+  PRIMARY KEY (FactionID)  [clustered]
+
+TABLE ForumCategories
+  ForumCategoryID                    int NOT NULL IDENTITY
+  ForumMode                          int NOT NULL DEFAULT ((0))
+  IsLocked                           bit NOT NULL
+  ParentForumCategoryID              int NULL
+  SortOrder                          int NOT NULL
+  Title                              nvarchar(500) NOT NULL
+  PRIMARY KEY (ForumCategoryID)  [clustered]
+  INDEX (ParentForumCategoryID)
+  FOREIGN KEY (ParentForumCategoryID) -> ForumCategories
+
+TABLE ForumLastReads
+  AccountID                          int NOT NULL
+  ForumCategoryID                    int NOT NULL
+  LastRead                           datetime NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, ForumCategoryID)  [clustered]
+  INDEX (ForumCategoryID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ForumCategoryID) -> ForumCategories
+
+TABLE ForumPostEdits
+  EditorAccountID                    int NOT NULL
+  EditTime                           datetime NOT NULL
+  ForumPostEditID                    int NOT NULL IDENTITY
+  ForumPostID                        int NOT NULL
+  NewText                            nvarchar(max) NULL
+  OriginalText                       nvarchar(max) NULL
+  INDEX (EditorAccountID)
+  PRIMARY KEY (ForumPostEditID)  [clustered]
+  INDEX (ForumPostID)
+  FOREIGN KEY (EditorAccountID) -> Accounts
+  FOREIGN KEY (ForumPostID) -> ForumPosts ON DELETE CASCADE
+
+TABLE ForumPostWords
+  Count                              int NOT NULL
+  ForumPostID                        int NOT NULL
+  WordID                             int NOT NULL
+  INDEX (ForumPostID)
+  INDEX (WordID)
+  PRIMARY KEY (WordID, ForumPostID)  [clustered]
+  FOREIGN KEY (ForumPostID) -> ForumPosts ON DELETE CASCADE
+  FOREIGN KEY (WordID) -> Words ON DELETE CASCADE
+
+TABLE ForumPosts
+  AuthorAccountID                    int NOT NULL
+  Created                            datetime NOT NULL
+  Downvotes                          int NOT NULL
+  ForumPostID                        int NOT NULL IDENTITY
+  ForumThreadID                      int NOT NULL
+  Text                               nvarchar(max) NOT NULL
+  Upvotes                            int NOT NULL
+  INDEX (AuthorAccountID)
+  PRIMARY KEY (ForumPostID)  [clustered]
+  INDEX (ForumThreadID)
+  FOREIGN KEY (AuthorAccountID) -> Accounts
+  FOREIGN KEY (ForumThreadID) -> ForumThreads ON DELETE CASCADE
+
+TABLE ForumThreadLastReads
+  AccountID                          int NOT NULL
+  ForumThreadID                      int NOT NULL
+  LastPosted                         datetime NULL
+  LastRead                           datetime NULL
+  INDEX (AccountID)
+  INDEX (ForumThreadID)
+  PRIMARY KEY (ForumThreadID, AccountID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ForumThreadID) -> ForumThreads ON DELETE CASCADE
+
+TABLE ForumThreads
+  Created                            datetime NOT NULL
+  CreatedAccountID                   int NULL
+  ForumCategoryID                    int NULL
+  ForumThreadID                      int NOT NULL IDENTITY
+  IsLocked                           bit NOT NULL
+  IsPinned                           bit NOT NULL
+  LastPost                           datetime NULL
+  LastPostAccountID                  int NULL
+  PostCount                          int NOT NULL
+  RestrictedClanID                   int NULL
+  Title                              nvarchar(300) NOT NULL
+  ViewCount                          int NOT NULL
+  WikiKey                            nvarchar(100) NULL
+  INDEX (CreatedAccountID)
+  INDEX (ForumCategoryID)
+  PRIMARY KEY (ForumThreadID)  [clustered]
+  INDEX (LastPostAccountID)
+  INDEX (RestrictedClanID)
+  INDEX (Title)
+  INDEX (WikiKey)
+  FOREIGN KEY (CreatedAccountID) -> Accounts
+  FOREIGN KEY (LastPostAccountID) -> Accounts
+  FOREIGN KEY (RestrictedClanID) -> Clans ON DELETE CASCADE
+  FOREIGN KEY (ForumCategoryID) -> ForumCategories ON DELETE CASCADE
+
+TABLE Galaxies
+  AttackerSideChangeTime             datetime NULL
+  AttackerSideCounter                int NOT NULL
+  Ended                              datetime NULL
+  EndMessage                         nvarchar(max) NULL
+  GalaxyID                           int NOT NULL IDENTITY
+  Height                             int NOT NULL
+  ImageName                          nvarchar(100) NULL
+  IsDefault                          bit NOT NULL
+  IsDirty                            bit NOT NULL
+  MatchMakerState                    varchar(max) NULL
+  Started                            datetime NULL
+  Turn                               int NOT NULL
+  Width                              int NOT NULL
+  WinnerFactionID                    int NULL
+  PRIMARY KEY (GalaxyID)  [clustered]
+  INDEX (WinnerFactionID)
+  FOREIGN KEY (WinnerFactionID) -> Factions
+
+TABLE GameModes
+  Created                            datetime NOT NULL
+  DisplayName                        nvarchar(max) NULL
+  ForumThreadID                      int NULL
+  GameModeID                         int NOT NULL IDENTITY
+  GameModeJson                       nvarchar(max) NULL
+  IsFeatured                         bit NOT NULL
+  LastModified                       datetime NOT NULL
+  MaintainerAccountID                int NOT NULL
+  ShortName                          nvarchar(64) NULL
+  INDEX (ForumThreadID)
+  PRIMARY KEY (GameModeID)  [clustered]
+  INDEX (MaintainerAccountID)
+  UNIQUE INDEX (ShortName)
+  FOREIGN KEY (MaintainerAccountID) -> Accounts ON DELETE CASCADE
+  FOREIGN KEY (ForumThreadID) -> ForumThreads
+
+TABLE KudosPurchases
+  AccountID                          int NOT NULL
+  KudosPurchaseID                    int NOT NULL IDENTITY
+  KudosValue                         int NOT NULL
+  Time                               datetime NOT NULL
+  UnlockID                           int NULL
+  INDEX (AccountID)
+  PRIMARY KEY (KudosPurchaseID)  [clustered]
+  INDEX (UnlockID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (UnlockID) -> Unlocks ON DELETE CASCADE
+
+TABLE Links
+  GalaxyID                           int NOT NULL
+  PlanetID1                          int NOT NULL
+  PlanetID2                          int NOT NULL
+  INDEX (GalaxyID)
+  INDEX (PlanetID1)
+  PRIMARY KEY (PlanetID1, PlanetID2)  [clustered]
+  INDEX (PlanetID2)
+  FOREIGN KEY (GalaxyID) -> Galaxies ON DELETE CASCADE
+  FOREIGN KEY (PlanetID1) -> Planets
+  FOREIGN KEY (PlanetID2) -> Planets
+
+TABLE LobbyChannelTopics
+  Author                             nvarchar(max) NULL
+  ChannelName                        nvarchar(200) NOT NULL
+  SetDate                            datetime NOT NULL
+  Topic                              nvarchar(max) NULL
+  PRIMARY KEY (ChannelName)  [clustered]
+
+TABLE LobbyChatHistories
+  IsEmote                            bit NOT NULL
+  LobbyChatHistoryID                 int NOT NULL IDENTITY
+  Ring                               bit NOT NULL
+  SayPlace                           int NOT NULL
+  Source                             int NULL
+  Target                             nvarchar(255) NULL
+  Text                               nvarchar(max) NULL
+  Time                               datetime NOT NULL
+  User                               nvarchar(255) NULL
+  PRIMARY KEY (LobbyChatHistoryID)
+  INDEX (Target)
+  INDEX (Time)  [clustered]
+  INDEX (User)
+
+TABLE LobbyNews
+  AuthorAccountID                    int NOT NULL
+  Created                            datetime NOT NULL
+  EventTime                          datetime NULL
+  ImageExtension                     nvarchar(50) NULL
+  LobbyNewsID                        int NOT NULL IDENTITY
+  PinnedOrder                        int NULL
+  Text                               nvarchar(max) NULL
+  Title                              nvarchar(max) NULL
+  Url                                nvarchar(max) NULL
+  INDEX (AuthorAccountID)
+  PRIMARY KEY (LobbyNewsID)  [clustered]
+  FOREIGN KEY (AuthorAccountID) -> Accounts ON DELETE CASCADE
+
+TABLE LogEntries
+  LogEntryID                         int NOT NULL IDENTITY
+  Message                            nvarchar(max) NULL
+  Time                               datetime NOT NULL
+  TraceEventType                     int NOT NULL
+  PRIMARY KEY (LogEntryID)  [clustered]
+
+TABLE MapPollOptions
+  MapPollID                          int NOT NULL
+  MapPollOptionID                    int NOT NULL IDENTITY
+  ResourceID                         int NOT NULL
+  Votes                              int NOT NULL
+  INDEX (MapPollID)
+  PRIMARY KEY (MapPollOptionID)  [clustered]
+  INDEX (ResourceID)
+  FOREIGN KEY (MapPollID) -> MapPollOutcomes ON DELETE CASCADE
+  FOREIGN KEY (ResourceID) -> Resources ON DELETE CASCADE
+
+TABLE MapPollOutcomes
+  Category                           int NOT NULL DEFAULT ((0))
+  MapPollID                          int NOT NULL IDENTITY
+  PRIMARY KEY (MapPollID)  [clustered]
+
+TABLE MapRatings
+  AccountID                          int NOT NULL
+  Rating                             int NOT NULL
+  ResourceID                         int NOT NULL
+  INDEX (AccountID)
+  INDEX (ResourceID)
+  PRIMARY KEY (ResourceID, AccountID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ResourceID) -> Resources ON DELETE CASCADE
+
+TABLE MiscVars
+  VarName                            nvarchar(200) NOT NULL
+  VarValue                           nvarchar(max) NULL
+  PRIMARY KEY (VarName)  [clustered]
+
+TABLE MissionScores
+  AccountID                          int NOT NULL
+  GameSeconds                        int NOT NULL
+  MissionID                          int NOT NULL
+  MissionRevision                    int NOT NULL
+  Score                              int NOT NULL
+  Time                               datetime NOT NULL
+  INDEX (AccountID)
+  INDEX (MissionID)
+  PRIMARY KEY (MissionID, AccountID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (MissionID) -> Missions ON DELETE CASCADE
+
+TABLE Missions
+  AccountID                          int NOT NULL
+  CampaignID                         int NULL
+  CreatedTime                        datetime NOT NULL
+  Description                        text NULL
+  DescriptionStory                   text NULL
+  Difficulty                         real NULL
+  DifficultyRatingPollID             int NULL
+  FeaturedOrder                      real NULL
+  ForumThreadID                      int NOT NULL
+  Image                              varbinary(max) NOT NULL
+  IsCoop                             bit NOT NULL
+  IsDeleted                          bit NOT NULL
+  IsScriptMission                    bit NOT NULL
+  ManualDependencies                 nvarchar(1000) NULL
+  Map                                nvarchar(100) NULL
+  MaxHumans                          int NOT NULL
+  MinHumans                          int NOT NULL
+  MissionEditorVersion               nvarchar(20) NULL
+  MissionID                          int NOT NULL IDENTITY
+  MissionRunCount                    int NOT NULL
+  Mod                                nvarchar(100) NULL
+  ModifiedTime                       datetime NOT NULL
+  ModOptions                         nvarchar(4000) NULL
+  ModRapidTag                        nvarchar(100) NULL
+  Mutator                            varbinary(max) NULL
+  Name                               nvarchar(200) NOT NULL
+  Rating                             real NULL
+  RatingPollID                       int NULL
+  RequiredForMultiplayer             bit NOT NULL DEFAULT ((0))
+  Revision                           int NOT NULL
+  ScoringMethod                      nvarchar(500) NULL
+  Script                             nvarchar(max) NOT NULL
+  SpringVersion                      nvarchar(100) NULL
+  TokenCondition                     varchar(500) NULL
+  TopScoreLine                       nvarchar(100) NULL
+  INDEX (AccountID)
+  INDEX (ForumThreadID)
+  PRIMARY KEY (MissionID)  [clustered]
+  UNIQUE INDEX (Name)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (ForumThreadID) -> ForumThreads
+
+TABLE News
+  AuthorAccountID                    int NOT NULL
+  Created                            datetime NOT NULL
+  ForumThreadID                      int NOT NULL
+  HeadlineUntil                      datetime NOT NULL
+  ImageContentType                   nvarchar(50) NULL
+  ImageExtension                     nvarchar(50) NULL
+  ImageLength                        int NULL
+  NewsID                             int NOT NULL IDENTITY
+  SpringForumPostID                  int NULL
+  Text                               text NOT NULL
+  Title                              nvarchar(200) NOT NULL
+  INDEX (AuthorAccountID)
+  INDEX (ForumThreadID)
+  PRIMARY KEY (NewsID)  [clustered]
+  FOREIGN KEY (AuthorAccountID) -> Accounts
+  FOREIGN KEY (ForumThreadID) -> ForumThreads
+
+TABLE PlanetFactions
+  Dropships                          int NOT NULL
+  DropshipsLastAdded                 datetime NULL
+  FactionID                          int NOT NULL
+  Influence                          float NOT NULL
+  PlanetID                           int NOT NULL
+  INDEX (FactionID)
+  INDEX (PlanetID)
+  PRIMARY KEY (PlanetID, FactionID)  [clustered]
+  FOREIGN KEY (FactionID) -> Factions
+  FOREIGN KEY (PlanetID) -> Planets
+
+TABLE PlanetOwnerHistories
+  OwnerAccountID                     int NULL
+  OwnerClanID                        int NULL
+  OwnerFactionID                     int NULL
+  PlanetID                           int NOT NULL
+  Turn                               int NOT NULL
+  INDEX (OwnerAccountID)
+  INDEX (OwnerClanID)
+  INDEX (OwnerFactionID)
+  INDEX (PlanetID)
+  PRIMARY KEY (PlanetID, Turn)  [clustered]
+  FOREIGN KEY (OwnerAccountID) -> Accounts
+  FOREIGN KEY (OwnerClanID) -> Clans
+  FOREIGN KEY (OwnerFactionID) -> Factions
+  FOREIGN KEY (PlanetID) -> Planets ON DELETE CASCADE
+
+TABLE PlanetStructures
+  ActivationTurnCounter              int NULL
+  EnergyPriority                     int NOT NULL
+  IsActive                           bit NOT NULL
+  OwnerAccountID                     int NULL
+  PlanetID                           int NOT NULL
+  StructureTypeID                    int NOT NULL
+  TargetPlanetID                     int NULL
+  TurnsToActivateOverride            int NULL
+  INDEX (OwnerAccountID)
+  INDEX (PlanetID)
+  PRIMARY KEY (PlanetID, StructureTypeID)  [clustered]
+  INDEX (StructureTypeID)
+  INDEX (TargetPlanetID)
+  FOREIGN KEY (OwnerAccountID) -> Accounts
+  FOREIGN KEY (PlanetID) -> Planets ON DELETE CASCADE
+  FOREIGN KEY (TargetPlanetID) -> Planets
+  FOREIGN KEY (StructureTypeID) -> StructureTypes
+
+TABLE Planets
+  ForumThreadID                      int NULL
+  GalaxyID                           int NOT NULL
+  MapResourceID                      int NULL
+  Name                               varchar(50) NOT NULL
+  OwnerAccountID                     int NULL
+  OwnerFactionID                     int NULL
+  PlanetID                           int NOT NULL IDENTITY
+  TeamSize                           int NOT NULL
+  X                                  float NOT NULL
+  Y                                  float NOT NULL
+  INDEX (ForumThreadID)
+  INDEX (GalaxyID)
+  INDEX (MapResourceID)
+  INDEX (OwnerAccountID)
+  INDEX (OwnerFactionID)
+  PRIMARY KEY (PlanetID)  [clustered]
+  FOREIGN KEY (OwnerAccountID) -> Accounts
+  FOREIGN KEY (OwnerFactionID) -> Factions
+  FOREIGN KEY (ForumThreadID) -> ForumThreads
+  FOREIGN KEY (GalaxyID) -> Galaxies ON DELETE CASCADE
+  FOREIGN KEY (MapResourceID) -> Resources
+
+TABLE PollOptions
+  OptionID                           int NOT NULL IDENTITY
+  OptionText                         nvarchar(200) NOT NULL
+  PollID                             int NOT NULL
+  Votes                              int NOT NULL
+  PRIMARY KEY (OptionID)  [clustered]
+  INDEX (PollID)
+  FOREIGN KEY (PollID) -> Polls ON DELETE CASCADE
+
+TABLE PollVotes
+  AccountID                          int NOT NULL
+  OptionID                           int NOT NULL
+  PollID                             int NOT NULL
+  INDEX (AccountID)
+  PRIMARY KEY (AccountID, PollID)  [clustered]
+  INDEX (OptionID)
+  INDEX (PollID)
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (OptionID) -> PollOptions
+  FOREIGN KEY (PollID) -> Polls ON DELETE CASCADE
+
+TABLE Polls
+  CreatedAccountID                   int NULL
+  ExpireBy                           datetime NULL
+  IsAnonymous                        bit NOT NULL
+  IsHeadline                         bit NOT NULL
+  IsVisible                          bit NOT NULL DEFAULT ((1))
+  PollID                             int NOT NULL IDENTITY
+  QuestionText                       nvarchar(500) NOT NULL
+  RestrictClanID                     int NULL
+  RestrictFactionID                  int NULL
+  RoleIsRemoval                      bit NOT NULL
+  RoleTargetAccountID                int NULL
+  RoleTypeID                         int NULL
+  INDEX (CreatedAccountID)
+  PRIMARY KEY (PollID)  [clustered]
+  INDEX (RestrictClanID)
+  INDEX (RestrictFactionID)
+  INDEX (RoleTargetAccountID)
+  INDEX (RoleTypeID)
+  FOREIGN KEY (CreatedAccountID) -> Accounts
+  FOREIGN KEY (RoleTargetAccountID) -> Accounts
+  FOREIGN KEY (RestrictClanID) -> Clans
+  FOREIGN KEY (RestrictFactionID) -> Factions
+  FOREIGN KEY (RoleTypeID) -> RoleTypes ON DELETE CASCADE
+
+TABLE Punishments
+  AccountID                          int NOT NULL
+  BanCommanders                      bit NOT NULL
+  BanExpires                         datetime NULL
+  BanForum                           bit NOT NULL
+  BanIP                              nvarchar(1000) NULL
+  BanLobby                           bit NOT NULL
+  BanMute                            bit NOT NULL
+  BanSite                            bit NOT NULL
+  BanSpecChat                        bit NOT NULL DEFAULT ((0))
+  BanUnlocks                         bit NOT NULL
+  BanVotes                           bit NOT NULL DEFAULT ((0))
+  CreatedAccountID                   int NULL
+  DeleteInfluence                    bit NOT NULL
+  DeleteXP                           bit NOT NULL
+  InstallID                          nvarchar(max) NULL
+  MessageOnly                        bit NOT NULL DEFAULT ((0))
+  PunishmentID                       int NOT NULL IDENTITY
+  Reason                             nvarchar(1000) NOT NULL
+  SegregateHost                      bit NOT NULL
+  Time                               datetime NOT NULL
+  UserID                             bigint NULL
+  INDEX (AccountID)
+  INDEX (CreatedAccountID)
+  PRIMARY KEY (PunishmentID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts ON DELETE CASCADE
+  FOREIGN KEY (CreatedAccountID) -> Accounts
+
+TABLE Ratings
+  AccountID                          int NOT NULL
+  Difficulty                         int NULL
+  MissionID                          int NULL
+  Rating                             int NULL
+  RatingID                           int NOT NULL IDENTITY
+  INDEX (AccountID)
+  INDEX (MissionID)
+  PRIMARY KEY (RatingID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (MissionID) -> Missions ON DELETE CASCADE
+
+TABLE ResourceContentFiles
+  FileName                           nvarchar(255) NOT NULL
+  Length                             int NOT NULL
+  LinkCount                          int NOT NULL
+  Links                              text NULL
+  Md5                                char(32) NOT NULL
+  ResourceID                         int NOT NULL
+  INDEX (ResourceID)
+  PRIMARY KEY (ResourceID, Md5)  [clustered]
+  FOREIGN KEY (ResourceID) -> Resources ON DELETE CASCADE
+
+TABLE ResourceDependencies
+  NeedsInternalName                  varchar(250) NOT NULL
+  ResourceID                         int NOT NULL
+  INDEX (ResourceID)
+  PRIMARY KEY (ResourceID, NeedsInternalName)  [clustered]
+  FOREIGN KEY (ResourceID) -> Resources ON DELETE CASCADE
+
+TABLE Resources
+  AuthorName                         nvarchar(200) NULL
+  DownloadCount                      int NOT NULL
+  ForumThreadID                      int NULL
+  InternalName                       nvarchar(255) NOT NULL
+  LastChange                         datetime NULL
+  LastLinkCheck                      datetime NULL
+  MapFFAMaxTeams                     int NULL
+  MapHeight                          int NULL
+  MapHills                           int NULL
+  MapIs1v1                           bit NULL
+  MapIsAssymetrical                  bit NULL
+  MapIsChickens                      bit NULL
+  MapIsFfa                           bit NULL
+  MapIsSpecial                       bit NULL
+  MapIsTeams                         bit NULL
+  MapPlanetWarsIcon                  nvarchar(50) NULL
+  MapRatingCount                     int NULL
+  MapRatingSum                       int NULL
+  MapSizeRatio                       real NULL
+  MapSizeSquared                     int NULL
+  MapSpringieCommands                nvarchar(2000) NULL
+  MapSupportLevel                    int NOT NULL DEFAULT ((0))
+  MapTags                            nvarchar(max) NULL
+  MapWaterLevel                      int NULL
+  MapWidth                           int NULL
+  MissionID                          int NULL
+  NoLinkDownloadCount                int NOT NULL
+  RapidTag                           nvarchar(100) NULL
+  RatingPollID                       int NULL
+  ResourceID                         int NOT NULL IDENTITY
+  TaggedByAccountID                  int NULL
+  TypeID                             int NOT NULL
+  INDEX (ForumThreadID)
+  UNIQUE INDEX (InternalName)
+  INDEX (MissionID)
+  INDEX (RapidTag)
+  PRIMARY KEY (ResourceID)  [clustered]
+  INDEX (TaggedByAccountID)
+  FOREIGN KEY (TaggedByAccountID) -> Accounts
+  FOREIGN KEY (ForumThreadID) -> ForumThreads
+  FOREIGN KEY (MissionID) -> Missions ON DELETE CASCADE
+
+TABLE RoleTypeHierarchies
+  CanAppoint                         bit NOT NULL
+  CanRecall                          bit NOT NULL
+  MasterRoleTypeID                   int NOT NULL
+  SlaveRoleTypeID                    int NOT NULL
+  INDEX (MasterRoleTypeID)
+  PRIMARY KEY (MasterRoleTypeID, SlaveRoleTypeID)  [clustered]
+  INDEX (SlaveRoleTypeID)
+  FOREIGN KEY (MasterRoleTypeID) -> RoleTypes ON DELETE CASCADE
+  FOREIGN KEY (SlaveRoleTypeID) -> RoleTypes
+
+TABLE RoleTypes
+  Description                        nvarchar(500) NOT NULL
+  DisplayOrder                       int NOT NULL
+  IsClanOnly                         bit NOT NULL
+  IsOnePersonOnly                    bit NOT NULL
+  IsVoteable                         bit NOT NULL
+  Name                               nvarchar(50) NOT NULL
+  PollDurationDays                   int NOT NULL
+  RestrictFactionID                  int NULL
+  RightBomberQuota                   float NOT NULL
+  RightDiplomacy                     bit NOT NULL
+  RightDropshipQuota                 float NOT NULL
+  RightEditTexts                     bit NOT NULL
+  RightKickPeople                    bit NOT NULL
+  RightMetalQuota                    float NOT NULL
+  RightSetEnergyPriority             bit NOT NULL
+  RightWarpQuota                     float NOT NULL
+  RoleTypeID                         int NOT NULL IDENTITY
+  INDEX (RestrictFactionID)
+  PRIMARY KEY (RoleTypeID)  [clustered]
+  FOREIGN KEY (RestrictFactionID) -> Factions
+
+TABLE SpringBattleBots
+  AllyNumber                         int NOT NULL
+  BotAI                              nvarchar(max) NULL
+  BotName                            nvarchar(max) NULL
+  IsInVictoryTeam                    bit NOT NULL
+  SpringBattleBotID                  int NOT NULL IDENTITY
+  SpringBattleID                     int NOT NULL
+  PRIMARY KEY (SpringBattleBotID)  [clustered]
+  INDEX (SpringBattleID)
+  FOREIGN KEY (SpringBattleID) -> SpringBattles ON DELETE CASCADE
+
+TABLE SpringBattlePlayers
+  AccountID                          int NOT NULL
+  AllyNumber                         int NOT NULL
+  EloChange                          real NULL
+  Influence                          int NULL
+  IsInVictoryTeam                    bit NOT NULL
+  IsSpectator                        bit NOT NULL
+  LoseTime                           int NULL
+  SpringBattleID                     int NOT NULL
+  XpChange                           int NULL
+  INDEX (AccountID)
+  INDEX (SpringBattleID)
+  PRIMARY KEY (SpringBattleID, AccountID)  [clustered]
+  FOREIGN KEY (AccountID) -> Accounts
+  FOREIGN KEY (SpringBattleID) -> SpringBattles ON DELETE CASCADE
+
+TABLE SpringBattles
+  ApplicableRatings                  int NOT NULL DEFAULT ((0))
+  Duration                           int NOT NULL
+  EngineGameID                       varchar(64) NULL
+  EngineVersion                      nvarchar(100) NULL
+  ForumThreadID                      int NULL
+  HasBots                            bit NOT NULL
+  HostAccountID                      int NULL
+  IsEloProcessed                     bit NOT NULL
+  IsMatchMaker                       bit NOT NULL DEFAULT ((0))
+  IsMission                          bit NOT NULL
+  LoserTeamXpChange                  int NULL
+  MapResourceID                      int NOT NULL
+  Mode                               int NOT NULL DEFAULT ((0))
+  ModResourceID                      int NOT NULL
+  PlayerCount                        int NOT NULL
+  Rank                               int NULL
+  ReplayFileName                     nvarchar(500) NULL
+  SpringBattleID                     int NOT NULL IDENTITY
+  StartTime                          datetime NOT NULL
+  Title                              nvarchar(200) NULL
+  WinnerTeamXpChange                 int NULL
+  INDEX (EngineGameID)
+  INDEX (ForumThreadID)
+  INDEX (HostAccountID)
+  INDEX (MapResourceID)
+  INDEX (ModResourceID)
+  INDEX (ReplayFileName)
+  PRIMARY KEY (SpringBattleID)  [clustered]
+  INDEX (StartTime)
+  FOREIGN KEY (HostAccountID) -> Accounts
+  FOREIGN KEY (ForumThreadID) -> ForumThreads
+  FOREIGN KEY (MapResourceID) -> Resources
+  FOREIGN KEY (ModResourceID) -> Resources
+
+TABLE SpringFilesUnitsyncAttempts
+  FileName                           nvarchar(max) NULL
+  SpringFilesUnitsyncAttemptID       int NOT NULL IDENTITY
+  Time                               datetime NOT NULL
+  PRIMARY KEY (SpringFilesUnitsyncAttemptID)  [clustered]
+
+TABLE StructureTypes
+  BattleDeletesThis                  bit NOT NULL
+  Cost                               float NOT NULL
+  Description                        nvarchar(250) NULL
+  DisabledMapIcon                    nvarchar(50) NULL
+  EffectAllowShipTraversal           bit NULL
+  EffectBlocksBombers                bit NULL
+  EffectBlocksInfluenceSpread        bit NULL
+  EffectBlocksInvasion               bit NULL
+  EffectBlocksJumpgate               bit NULL
+  EffectBomberCapacity               int NULL
+  EffectBomberDefense                float NULL
+  EffectBomberProduction             float NULL
+  EffectBots                         nvarchar(100) NULL
+  EffectChangePlanetMap              bit NULL
+  EffectCreateLink                   bit NULL
+  EffectDisconnectedMetalMalus       float NULL
+  EffectDistanceMetalBonusMax        float NULL
+  EffectDistanceMetalBonusMin        float NULL
+  EffectDistanceMetalBonusMultiplier float NULL
+  EffectDropshipCapacity             int NULL
+  EffectDropshipDefense              float NULL
+  EffectDropshipProduction           float NULL
+  EffectEnergyPerTurn                float NULL
+  EffectInfluenceSpread              float NULL
+  EffectIsVictoryPlanet              bit NULL
+  EffectPlanetBuster                 bit NULL
+  EffectPreventInfluenceDecayBelow   float NULL
+  EffectReduceBattleInfluenceGain    float NULL
+  EffectRemoteInfluenceSpread        float NULL
+  EffectUnlockID                     int NULL
+  EffectVictoryPointProduction       float NULL
+  EffectWarpProduction               float NULL
+  IngameUnitName                     nvarchar(50) NULL
+  IsBomberDestructible               bit NOT NULL
+  IsBuildable                        bit NOT NULL
+  IsIngameDestructible               bit NOT NULL
+  IsIngameEvacuable                  bit NOT NULL DEFAULT ((0))
+  IsSingleUse                        bit NOT NULL
+  MapIcon                            nvarchar(50) NULL
+  MetalToRushActivation              int NULL
+  Name                               nvarchar(50) NOT NULL
+  OwnerChangeDeletesThis             bit NOT NULL
+  OwnerChangeDisablesThis            bit NOT NULL
+  OwnerChangeWinsGame                bit NOT NULL DEFAULT ((0))
+  RequiresPlanetTarget               bit NOT NULL
+  RushActivationTime                 int NULL
+  StructureTypeID                    int NOT NULL IDENTITY
+  TurnsToActivate                    int NULL
+  TurnsToReactivate                  int NULL
+  UpkeepEnergy                       float NULL
+  INDEX (EffectUnlockID)
+  PRIMARY KEY (StructureTypeID)  [clustered]
+  FOREIGN KEY (EffectUnlockID) -> Unlocks ON DELETE CASCADE
+
+TABLE TreatyEffectTypes
+  Description                        nvarchar(200) NOT NULL
+  EffectAllowBomberPass              bit NULL
+  EffectAllowDropshipPass            bit NULL
+  EffectBalanceSameSide              bit NULL
+  EffectGiveBombers                  bit NULL
+  EffectGiveDropships                bit NULL
+  EffectGiveEnergy                   bit NULL
+  EffectGiveInfluence                bit NULL
+  EffectGiveMetal                    bit NULL
+  EffectGiveVictoryPoints            bit NULL
+  EffectGiveWarps                    bit NULL
+  EffectPreventBomberAttack          bit NULL
+  EffectPreventDropshipAttack        bit NULL
+  EffectPreventInfluenceSpread       bit NULL
+  EffectPreventIngamePwStructureDestruction bit NULL
+  EffectShareTechs                   bit NULL
+  EffectTypeID                       int NOT NULL IDENTITY
+  HasValue                           bit NOT NULL
+  IsOneTimeOnly                      bit NOT NULL
+  IsPlanetBased                      bit NOT NULL
+  MaxValue                           float NULL
+  MinValue                           float NULL
+  Name                               nvarchar(50) NOT NULL
+  PRIMARY KEY (EffectTypeID)  [clustered]
+
+TABLE TreatyEffects
+  EffectTypeID                       int NOT NULL
+  FactionTreatyID                    int NOT NULL
+  GivingFactionID                    int NOT NULL
+  PlanetID                           int NULL
+  ReceivingFactionID                 int NOT NULL
+  TreatyEffectID                     int NOT NULL IDENTITY
+  Value                              float NULL
+  INDEX (EffectTypeID)
+  INDEX (FactionTreatyID)
+  INDEX (GivingFactionID)
+  INDEX (PlanetID)
+  INDEX (ReceivingFactionID)
+  PRIMARY KEY (TreatyEffectID)  [clustered]
+  FOREIGN KEY (FactionTreatyID) -> FactionTreaties ON DELETE CASCADE
+  FOREIGN KEY (GivingFactionID) -> Factions
+  FOREIGN KEY (ReceivingFactionID) -> Factions
+  FOREIGN KEY (PlanetID) -> Planets
+  FOREIGN KEY (EffectTypeID) -> TreatyEffectTypes
+
+TABLE Unlocks
+  Code                               nvarchar(100) NOT NULL
+  Description                        nvarchar(1000) NULL
+  IsKudosOnly                        bit NULL
+  KudosCost                          int NULL
+  LimitForChassis                    nvarchar(500) NULL
+  MaxModuleCount                     int NOT NULL
+  MetalCost                          int NULL
+  MetalCostMorph2                    int NULL
+  MetalCostMorph3                    int NULL
+  MetalCostMorph4                    int NULL
+  MetalCostMorph5                    int NULL
+  MorphLevel                         int NOT NULL
+  Name                               nvarchar(200) NULL
+  NeededLevel                        int NOT NULL
+  RequiredInstalledUnlockIDs         nvarchar(max) NULL
+  RequiredUnlockID                   int NULL
+  UnlockID                           int NOT NULL IDENTITY
+  UnlockType                         int NOT NULL
+  XpCost                             int NOT NULL
+  INDEX (RequiredUnlockID)
+  PRIMARY KEY (UnlockID)  [clustered]
+  FOREIGN KEY (RequiredUnlockID) -> Unlocks
+
+TABLE Words
+  Text                               nvarchar(100) NULL
+  WordID                             int NOT NULL IDENTITY
+  UNIQUE INDEX (Text)
+  PRIMARY KEY (WordID)  [clustered]
+
+TABLE __MigrationHistory
+  ContextKey                         nvarchar(300) NOT NULL
+  MigrationId                        nvarchar(150) NOT NULL
+  Model                              varbinary(max) NOT NULL
+  ProductVersion                     nvarchar(32) NOT NULL
+  PRIMARY KEY (MigrationId, ContextKey)  [clustered]

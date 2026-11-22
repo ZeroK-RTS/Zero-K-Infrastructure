@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Applies the EF6 migrations to a database, from the command line, on any platform.
+
+  The normal way to create the schema is to run the website once and let
+  ZkDataContext's MigrateDatabaseToLatestVersion initializer do it - which needs Windows
+  and IIS. This does the same job with mono, so a Linux or CI machine can build the
+  schema without any of that. See db/README.md.
+
+  Deliberately not in Zero-K.sln: it is a tool, not part of the product.
+-->
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DbSetup</RootNamespace>
+    <AssemblyName>DbSetup</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <OutputPath>bin\</OutputPath>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <!--
+    Referenced from ZkData's build output rather than as a PackageReference: this is an
+    old-style project file and mono's msbuild does not resolve PackageReference in one.
+    ZkData builds first and copies EntityFramework next to itself.
+  -->
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\ZkData\bin\Debug\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\ZkData\bin\Debug\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ZkData\ZkData.csproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

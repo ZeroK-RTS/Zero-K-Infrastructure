@@ -3,11 +3,22 @@
 @{
     var db = new ZkDataContext();
     string mapName = Model.DisplayedMap ?? Model.Mission.Map;
+    @* FirstOrDefault says the map may be missing, and it was then dereferenced three times.
+       A campaign planet whose map is not a registered Resource - a map not yet uploaded, or
+       renamed - made the whole tooltip throw. There is no icon to draw without one, so the span
+       is simply not drawn. *@
     Resource map = db.Resources.FirstOrDefault(m => m.InternalName == mapName);
+}
+@if (map != null)
+{
+    @* The mission's own icon is centred inside the planet icon. Resources.First() threw on a
+       mission with none; with none there is nothing to centre, and nothing to offset by. *@
+    var missionIcon = Model.Mission.Resources.FirstOrDefault();
+    var missionIconSize = missionIcon != null ? missionIcon.PlanetWarsIconSize : 0;
     var planetIconUrl = "/img/planets/" + map.MapPlanetWarsIcon;
     var size = map.PlanetWarsIconSize * CampaignPlanet.OverlayRatio;
-    var offset = (map.PlanetWarsIconSize * CampaignPlanet.OverlayRatio - Model.Mission.Resources.First().PlanetWarsIconSize) / 2;
+    var offset = (size - missionIconSize) / 2;
+    <span style='width: @(size)px; height:@(size)px; display: inline-block;'>
+      <img src='@planetIconUrl' width='@(map.PlanetWarsIconSize)' style='position:absolute; padding-left: @(offset)px; padding-top: @(offset)px' />
+    </span>
 }
-<span style='width: @(size)px; height:@(size)px; display: inline-block;'>
-  <img src='@planetIconUrl' width='@(map.PlanetWarsIconSize)' style='position:absolute; padding-left: @(offset)px; padding-top: @(offset)px' />
-</span>

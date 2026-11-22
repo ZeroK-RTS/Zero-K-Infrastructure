@@ -1,0 +1,21 @@
+@using ZeroKWeb
+@model IUniGrid
+<div class="@(Model.ID)_pager grid_pager">
+    @if (Model.PageCount > 1)
+    {
+        <a href="#" class="js-grid-first @(Model.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@Model.ID', 1);return false;" style="height: 20px"></a>
+        <a href="#" class="js-grid-prev @(Model.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@Model.ID', @(Model.PageNumber - 1));return false;" style="height: 20px"></a>
+        <span>
+            Page
+            <input type="text" onblur="return gridSetPage('@Model.ID', $(this).val())" style="width: 40px" value="@Model.PageNumber" />
+            of @Model.PageCount (@Model.RecordCount records)
+        </span>
+        <a href="#" class="js-grid-next @(Model.PageNumber >= Model.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@Model.ID', @(Model.PageNumber + 1));return false;" style="height: 20px"></a>
+        <a href="#" class="js-grid-end @(Model.PageNumber >= Model.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@Model.ID', @Model.PageCount);return false;" style="height: 20px"></a>
+
+        if (Model.AllowCsvExport)
+        {
+            <span>&nbsp;&nbsp;&nbsp;<a href="#" onclick="gridGetCsv('@Model.ID');return false;" nicetitle="Download as excel - CSV"><img src="~/Img/excel.png" style="border: 0; height: 25px;" /></a></span>
+        }
+    }
+</div>

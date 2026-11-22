@@ -197,7 +197,13 @@ namespace ZeroKWeb.SpringieInterface
             server.PlanetWarsMatchMaker.RemoveFromRunningBattles(result.LobbyStartContext.BattleID);
         }
 
-        private static SpringBattle SaveSpringBattle(SpringBattleContext result, ZkDataContext db)
+        /// <summary>
+        ///     internal rather than private so tools/battle-result-probe can call exactly this,
+        ///     rather than a copy of it. Everything around it in SubmitSpringBattleResult needs a live
+        ///     ZkLobbyServer - replay upload, chat, rating publishing - but the write itself needs only
+        ///     a context and a database, and that is the part the port had never executed.
+        /// </summary>
+        internal static SpringBattle SaveSpringBattle(SpringBattleContext result, ZkDataContext db)
         {
             var sb = new SpringBattle
             {

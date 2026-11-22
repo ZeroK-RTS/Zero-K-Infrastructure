@@ -46,6 +46,6 @@
     </table>
         <input type="submit" value="Show" />
 
-        @GridHelpers.RenderTable(grid)
+        @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid)
     }
 </div>

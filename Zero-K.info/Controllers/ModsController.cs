@@ -54,6 +54,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult EditSubmit(GameMode newGameMode)
         {
             if (!Global.IsModerator && newGameMode.MaintainerAccountID != Global.AccountID)
@@ -128,6 +130,7 @@ namespace ZeroKWeb.Controllers
             }
         }
 
+        [WritesOnGetByDesign("the game mode's forum thread is marked read by looking at the page")]
         public ActionResult Detail(int id)
         {
             var db = new ZkDataContext();

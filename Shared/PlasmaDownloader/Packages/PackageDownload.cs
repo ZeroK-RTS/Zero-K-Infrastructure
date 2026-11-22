@@ -122,13 +122,13 @@ namespace PlasmaDownloader.Packages
 
 			            var numberBuffer = new byte[4];
 			            var cnt = 0;
-			            while (responseStream.ReadExactly(numberBuffer, 0, 4))
+			            while (responseStream.TryReadExactly(numberBuffer, 0, 4))
 			            {
 			                if (IsAborted) break;
 			                var sizeLength = (int)SdpArchive.ParseUint32(numberBuffer);
 			                var buf = new byte[sizeLength];
 
-			                if (!responseStream.ReadExactly(buf, 0, sizeLength, ref doneAll))
+			                if (!responseStream.TryReadExactly(buf, 0, sizeLength, ref doneAll))
 			                {
 			                    Trace.TraceError("{0} download failed - unexpected end of stream", Name);
 			                    return false;

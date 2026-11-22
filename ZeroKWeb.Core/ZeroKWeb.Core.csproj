@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    Measures how far the 117 Razor views are from ASP.NET Core. It does not host anything.
+
+    The views have never been compiled by anything, here or in CI: mono ships no
+    aspnet_compiler.exe, so tools/build-website.sh covers C# only, and the Windows runner
+    builds them but nothing in this repository records the result. Phase 0 edited 11 views
+    and Phase 5 rewrote the galaxy map, both unverified.
+
+    So this does for the views what Tests.Portable did for the code: LINK the real files
+    rather than copy them, try to compile them on .NET 9, and turn the failures into an
+    inventory. The number it produces is the size of the MVC 5 -> ASP.NET Core view port.
+
+        ./tools/view-port-report.sh
+
+    Nothing references this project and it is not in Zero-K.sln.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13.0</LangVersion>
+    <RootNamespace>ZeroKWeb</RootNamespace>
+    <!-- the point is to collect errors, so do not stop at the first handful -->
+    <ErrorReportMaxErrors>9999</ErrorReportMaxErrors>
+    <NoWarn>$(NoWarn);CS0618;CS0649;CS0168;CS1998;CS0108;CS0114;CS0169;CS0067</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      DbCloner and ForumPostIndexer use System.Data.SqlClient directly. On .NET 9 that
+      namespace lives in a compatibility package rather than the framework, and the package is
+      deprecated in favour of Microsoft.Data.SqlClient.
+      
+      Referenced anyway, and deliberately: changing those files to Microsoft.Data.SqlClient is
+      a production edit that would break the Framework build, which has no such package. The
+      package is how the linked sources compile unedited today; migrating them is a separate
+      change for when the Framework build no longer has to work.
+    -->
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <ProjectReference Include="..\ZkData.Core\ZkData.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    The views, linked in place so their folder structure - and therefore every
+    ~/Views/Shared/... reference between them - is the one the site really has.
+  -->
+  <ItemGroup>
+    <Content Include="..\Zero-K.info\Views\**\*.cshtml" Link="Views\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!--
+    tools/view-port-report.sh writes view-batch.props here to compile a subset, and deletes
+    it afterwards. It has to compile subsets: the C# compiler stops binding method bodies
+    once a compilation has produced about a hundred errors, so in a single build of all 116
+    views the ones bound after that report nothing at all - which a report reads as
+    "compiles". The list arrives as a file rather than a -p: property because an MSBuild
+    property on the command line cannot carry semicolons, and a list of paths is nothing but
+    semicolons.
+
+    The import sits after the ItemGroup above because it removes from it.
+  -->
+  <Import Project="view-batch.props" Condition="Exists('view-batch.props')" />
+
+  <Import Project="..\port-views.props" />
+
+  <Import Project="..\port-sources.props" />
+
+</Project>

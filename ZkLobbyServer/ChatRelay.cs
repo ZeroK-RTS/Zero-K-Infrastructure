@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Rest;
-using Discord.Rpc;
 using Discord.WebSocket;
 using LobbyClient;
 using PlasmaShared;

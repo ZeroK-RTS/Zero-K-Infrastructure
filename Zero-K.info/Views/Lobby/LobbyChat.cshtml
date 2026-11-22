@@ -14,6 +14,10 @@
 }
 @using (Ajax.BeginForm("ChatMessages", "Lobby", null, ajaxOptions, new { id = "form" }))
 {
+    @* Ajax.BeginForm emits a plain <form> and puts nothing in it - see tools/check-antiforgery.py,
+       which says so and does not inspect these. The ajax submit serialises the whole form, so the
+       token travels with the other fields. *@
+    @Html.AntiForgeryToken()
     <table>
         <tr>
             <td>Channel</td>

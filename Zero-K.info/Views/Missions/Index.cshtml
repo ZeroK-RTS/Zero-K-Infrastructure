@@ -5,6 +5,7 @@
 }
 
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
+@* csrf-exempt: filtering and paging, Index only reads *@
     <label>
         <span title="List only featured missions">
             @Html.CheckBox("featured", true) official&nbsp;&nbsp;

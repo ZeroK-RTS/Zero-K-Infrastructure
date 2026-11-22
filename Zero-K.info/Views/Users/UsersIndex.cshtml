@@ -69,6 +69,6 @@
         </table>
         <input type="submit" value="Search"/>
 
-        @GridHelpers.RenderTable(grid)
+        @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid)
     }
 </div>

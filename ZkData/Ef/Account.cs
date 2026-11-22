@@ -9,7 +9,6 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using LobbyClient;
-using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData;
 using Ratings;
@@ -250,14 +249,28 @@ namespace ZkData
         [NotMapped]
         public int KudosSpent { get { return KudosPurchases.Sum(x => (int?)x.KudosValue) ?? 0; } }
         
+        /// <summary>
+        ///     The case-insensitive fallback used string.Equals(..., StringComparison
+        ///     .CurrentCultureIgnoreCase), which EF Core cannot translate. Because it sits behind a
+        ///     ??, it only ran when the exact-match query found nothing - so this threw
+        ///     InvalidOperationException for precisely the "no such account" case every caller
+        ///     detects by testing the result for null. Every test that came before used a name that
+        ///     existed, and so never reached it.
+        ///
+        ///     ToLower() translates on both stacks, which is what this file needs.
+        /// </summary>
         public static Account AccountByName(ZkDataContext db, string name)
         {
-            return db.Accounts.FirstOrDefault(x => x.Name == name) ?? db.Accounts.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+            var lowered = name?.ToLower();
+            return db.Accounts.FirstOrDefault(x => x.Name == name) ?? db.Accounts.FirstOrDefault(x => x.Name.ToLower() == lowered);
         }
 
         public static Account AccountVerify(ZkDataContext db, string login, string passwordHash)
         {
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.Equals(login, StringComparison.CurrentCultureIgnoreCase) && !x.IsDeleted);
+            // Same untranslatable fallback as AccountByName above, and the same consequence: an
+            // unknown login threw instead of failing the sign-in.
+            var lowered = login?.ToLower();
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.ToLower() == lowered && !x.IsDeleted);
             if (acc != null && acc.VerifyPassword(passwordHash)) return acc;
             return null;
         }
@@ -292,10 +305,17 @@ namespace ZkData
         }
 
 
+        /// <summary>
+        /// BCrypt cost for newly written hashes. Existing hashes keep the cost they were written
+        /// with - it is stored in the hash itself - so raising this only affects passwords set from
+        /// now on, and Verify keeps working for the old ones.
+        /// </summary>
+        public const int BcryptWorkFactor = 10;
+
         public void SetPasswordHashed(string passwordHash)
         {
             if (string.IsNullOrEmpty(passwordHash)) PasswordBcrypt = null;
-            else PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, 4);
+            else PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, BcryptWorkFactor);
         }
 
         public void SetPasswordPlain(string passwordPlain)
@@ -602,8 +622,33 @@ namespace ZkData
         }
 
 
+        /// <summary>
+        /// The one door a name comes in by, and it is locked.
+        ///
+        /// Several places render a player name into HTML without encoding it, and say in a
+        /// comment that they need not - ZkHtmlFormat.PrintAccount is the one everything else
+        /// reaches, and HtmlHelperExtensions says it outright: "PrintAccount ... does not encode
+        /// and does not need to: Account.IsValidLobbyName is enforced server-side at both
+        /// registration and rename, so a player name cannot carry markup."
+        ///
+        /// That was true and nothing made it stay true. The charset was checked by each caller
+        /// remembering to, and a third caller that forgot would have turned a stored name into
+        /// stored script on every page that prints it. The check belongs here, where the name is
+        /// written, rather than in each place that writes one - and tools/check-name-invariant.py
+        /// asserts that this validation is still in this method, because a check that only
+        /// counted callers would pass happily once the premise underneath it was gone.
+        ///
+        /// Throwing is deliberate. Every caller today validates first, so nothing reaches this
+        /// with a bad name; if one ever does, failing loudly is better than a name nobody can
+        /// render safely.
+        /// </summary>
         public void SetName(string value)
         {
+            if (!IsValidLobbyName(value))
+                throw new ArgumentException(
+                    "a lobby name may only contain letters, digits, underscore and brackets, and"
+                    + " must be at most " + GlobalConst.MaxUsernameLength + " characters", nameof(value));
+
             if (!String.IsNullOrEmpty(Name) && !String.IsNullOrEmpty(value) && Name!=value)
             {
                 List<string> aliases = null;

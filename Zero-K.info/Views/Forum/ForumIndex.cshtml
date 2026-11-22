@@ -1,6 +1,27 @@
 ﻿@using ZeroKWeb
 @using ZkData
 @model ZeroKWeb.Controllers.ForumController.IndexResult
+
+@{
+    // A templated Razor delegate, in place of an @helper block. @helper does not exist in
+    // ASP.NET Core; this form parses in BOTH Razor v3 and the .NET 9 generator, which
+    // tools/razor-v3-check/check.sh establishes rather than assumes. The parameter of a
+    // templated delegate is always called `item`.
+    Func<ForumThread, object> StickyMark =
+        @<text>@if (item.IsLocked && item.IsPinned)
+        {
+            <img src="~/img/stickylock.png" class="icon16"/>
+        }
+        else if (item.IsLocked)
+        {
+            <img src="~/img/lock.png" class="icon16"/>
+        }
+        else if (item.IsPinned)
+        {
+            <img src="~/img/sticky.png" class="icon16"/>
+        }</text>;
+}
+
 @{
     Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
 
@@ -11,20 +32,6 @@
     grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("70px");
     grid.AddCol("Last", x => Html.PrintDate(x.LastPost)).SetWidth("150px").SetSort(x => x.LastPost);
 }
-
-@helper StickyMark(ForumThread t) {
-    if (t.IsLocked && t.IsPinned)
-    {
-        <img src="~/img/stickylock.png" class="icon16"/>
-    } else if (t.IsLocked)
-    {
-        <img src="~/img/lock.png" class="icon16"/>
-    } else if (t.IsPinned)
-    {
-        <img src="~/img/sticky.png" class="icon16"/>
-    }
-}
-
 <div id="page">
     @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
     {
@@ -71,12 +78,12 @@
 
                 @if (Global.Account != null)
                 {
-                    <span class="textbutton" style="float: right;" id="@grid.PagerSuffixID">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
+                    <span class="textbutton" style="float: right;" id="@grid.PagerSuffixID">@Html.PostLink("Mark all as read", "MarkAllAsRead", "Forum", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
                 }
             </div>
 
             <div>
-                @GridHelpers.RenderTable(grid)
+                @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid)
             </div>
         } else
         {

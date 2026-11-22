@@ -1,0 +1,145 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The .NET 9 port of the lobby server, built the way ZkData.Core was: it LINKS the
+    production sources rather than copying them, so the same files feed the .NET Framework
+    server that runs today and the .NET 9 one being built, and the two cannot drift.
+
+    It exists because the standalone lobby server still runs under MONO in its container.
+    Mono is the last runtime in this stack that nobody ships new versions of; this is the
+    route off it.
+
+    **One assembly, and that is not an accident.** ZkLobbyServer/PORTABILITY.md records two
+    wrong turns that both came from splitting the chain: PlasmaShared's GlobalConst and Utils
+    are partial classes whose portable halves ZkData.Core links, so a project that compiles the
+    other halves while referencing ZkData.Core gets two of each type and a hundred and fifty
+    errors that say nothing. The exclusions below are exactly that boundary - everything
+    ZkData.Core already contains, plus the two partial partners.
+
+    Nothing references this project. It is not in Zero-K.sln, for the same reason ZkData.Core
+    is not: the Framework build must keep working untouched while this is proven.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13.0</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AssemblyName>ZkLobbyServer.Core</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- Warnings the linked Framework sources carry; they are not this port's to fix. -->
+    <NoWarn>$(NoWarn);CS0618;CS0168;CS0219;CS0414;CS1998;CS4014;CS0067;CS0169;CS8632;NU1701;NU1902;NU1903</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Everything ZkData.Core links out of ZkData, carried verbatim. -->
+    <Compile Include="..\ZkData\Ef\*.cs" Link="Linked\Ef\%(Filename).cs" />
+    <Compile Include="..\ZkData\Enums\*.cs" Link="Linked\Enums\%(Filename).cs" />
+    <Compile Include="..\Zero-K.info\AppCode\LegacyCallAudit.cs" Link="Linked\LegacyCallAudit.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\PlayerRating.cs" Link="Linked\WHR\PlayerRating.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\MapRatings.cs" Link="Linked\WHR\MapRatings.cs" />
+    <Compile Include="..\ZkData\PayPal\PayPalInterface.cs" Link="Linked\PayPalInterface.cs" />
+    <Compile Include="..\ZkData\MissionService\IMissionService.cs" Link="Linked\MissionService\IMissionService.cs" />
+    <Compile Include="..\ZkData\MissionService\MissionServiceApi.cs" Link="Linked\MissionService\MissionServiceApi.cs" />
+    <Compile Include="..\ZkLobbyServer\PlanetWarsApi.cs" Link="Linked\PlanetWarsApi.cs" />
+    <Compile Include="..\ZkLobbyServer\TourneyApi.cs" Link="Linked\TourneyApi.cs" />
+    <Compile Include="..\ZkLobbyServer\RatingApi.cs" Link="Linked\RatingApi.cs" />
+    <Compile Include="..\ZkLobbyServer\ILobbyServerApi.cs" Link="Linked\ILobbyServerApi.cs" />
+    <Compile Include="..\ZkData\SpringFilesUnitsyncAttempt.cs" Link="Linked\SpringFilesUnitsyncAttempt.cs" />
+    <Compile Include="..\ZkData\SteamWebApi.cs" Link="Linked\SteamWebApi.cs" />
+    <Compile Include="..\ZkData\Secrets.cs" Link="Linked\Secrets.cs" />
+    <Compile Include="..\ZkData\ZkHtmlFormat.cs" Link="Linked\ZkHtmlFormat.cs" />
+    <Compile Include="..\ZkData\PlanetwarsEventFormatter.cs" Link="Linked\PlanetwarsEventFormatter.cs" />
+    <Compile Include="..\Shared\LobbyClient\Protocol\Messages.cs" Link="Linked\Protocol\Messages.cs" />
+    <Compile Include="..\Shared\LobbyClient\Protocol\MatchMakerMessages.cs" Link="Linked\Protocol\MatchMakerMessages.cs" />
+    <Compile Include="..\Shared\LobbyClient\Protocol\PartyMessages.cs" Link="Linked\Protocol\PartyMessages.cs" />
+    <Compile Include="..\Shared\LobbyClient\UserBattleStatus.cs" Link="Linked\UserBattleStatus.cs" />
+    <Compile Include="..\Shared\LobbyClient\Spring.SpringBattleContext.cs" Link="Linked\SpringBattleContext.cs" />
+    <Compile Include="..\ZkData\LogEntry.cs" Link="Linked\LogEntry.cs" />
+    <Compile Include="..\ZkData\IPlanetwarsEventCreator.cs" Link="Linked\IPlanetwarsEventCreator.cs" />
+    <Compile Include="..\ZkData\IEntityAfterChange.cs" Link="Linked\IEntityAfterChange.cs" />
+    <Compile Include="..\ZkData\IEntityBeforeChange.cs" Link="Linked\IEntityBeforeChange.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\Player.cs" Link="Linked\WHR\Player.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\PlayerDay.cs" Link="Linked\WHR\PlayerDay.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\Game.cs" Link="Linked\WHR\Game.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\RatingSystems.Dates.cs" Link="Linked\WHR\RatingSystems.Dates.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\IRatingSystem.cs" Link="Linked\WHR\IRatingSystem.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\ITopPlayersUpdateListener.cs" Link="Linked\WHR\ITopPlayersUpdateListener.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\Ranks.cs" Link="Linked\WHR\Ranks.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\RatingSystems.cs" Link="Linked\WHR\RatingSystems.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\WholeHistoryRating.cs" Link="Linked\WHR\WholeHistoryRating.cs" />
+    <!-- ZkData.Core's own sources - the EF Core context, the Ef6Compat twins. -->
+    <!--
+         Two of ZkData.Core's own files are stand-ins for PlasmaShared code that its tooling
+         does not need the real version of, and they are excluded here because the server does:
+           GlobalConstMode.cs      hard-codes Mode and BaseSiteUrl to a local dev value;
+                                   the real GlobalConst also carries MakePath, Glue and the
+                                   TCP settings the server reads.
+           Ef6Compat/ImagesDefault.cs  a minimal Images with the ImageSharp processor; the real
+                                   one is what PlasmaShared's callers expect.
+         Both compile on .NET 9 in their real form - PlasmaShared builds clean on net9.0 - so
+         the stand-ins are what goes, not the sources.
+    -->
+    <Compile Include="..\ZkData.Core\**\*.cs" Exclude="..\ZkData.Core\obj\**;..\ZkData.Core\bin\**;..\ZkData.Core\GlobalConstMode.cs;..\ZkData.Core\Ef6Compat\ImagesDefault.cs" />
+    <!-- The four trees the server needs, whole. -->
+    <!-- Utils.Polyfills.cs is excluded on purpose: it back-fills DistinctBy for .NET Framework,
+         and on .NET 9 System.Linq has its own. Compiling both makes every call ambiguous. -->
+    <Compile Include="..\Shared\PlasmaShared\**\*.cs" Exclude="..\Shared\PlasmaShared\obj\**;..\Shared\PlasmaShared\bin\**;..\Shared\PlasmaShared\Properties\**;..\Shared\PlasmaShared\Utils.Polyfills.cs" />
+    <Compile Include="..\Shared\LobbyClient\**\*.cs" Exclude="..\Shared\LobbyClient\obj\**;..\Shared\LobbyClient\bin\**;..\Shared\LobbyClient\Properties\**" />
+    <Compile Include="..\Shared\MonoTorrent\**\*.cs" Exclude="..\Shared\MonoTorrent\obj\**;..\Shared\MonoTorrent\bin\**;..\Shared\MonoTorrent\Properties\**" />
+    <Compile Include="..\Shared\PlasmaDownloader\**\*.cs" Exclude="..\Shared\PlasmaDownloader\obj\**;..\Shared\PlasmaDownloader\bin\**;..\Shared\PlasmaDownloader\Properties\**" />
+    <!-- The .NET Framework half of the UnixPermissions twin: it calls Mono.Posix, which throws
+         on .NET 9. UnixPermissionsCore.cs is the half this project wants. -->
+    <Compile Remove="..\Shared\PlasmaDownloader\UnixPermissions.cs" />
+
+    <!-- Diagram rendering for the galaxy map. GalaxyDesigner - a Windows-only WPF app - is its
+         only consumer anywhere in the repository; nothing in the lobby server names either type,
+         and port-sources.props already links Vector.cs alone for the same reason. Both files are
+         pure GDI+ (Graphics, Pen, Brush), so compiling them here buys nothing and costs 16 of the
+         errors that stand between this project and dropping System.Drawing.Common. Vector.cs
+         stays: it is System.Drawing.Primitives only, and Tests.Portable runs its tests on net9. -->
+    <Compile Remove="..\Shared\PlasmaShared\Diagrams\Node.cs" />
+    <Compile Remove="..\Shared\PlasmaShared\Diagrams\Diagram.cs" />
+
+    <!-- The rest of the System.Drawing.Common surface that this project cannot reach.
+         Utils.Imaging.cs holds GetResized/SaveJpeg/ToBytes: every caller is ZeroKLobby,
+         ChobbyLauncher or AutoRegistrator, all Framework and all Windows. ResizedImageCache is
+         reached only through those. SystemDrawingImageProcessor has no consumer anywhere -
+         Images.Processor names the ImageSharp one - and is kept in PlasmaShared so that the
+         choice stays one line to revert. -->
+    <Compile Remove="..\Shared\PlasmaShared\Utils.Imaging.cs" />
+    <Compile Remove="..\Shared\PlasmaShared\ResizedImageCache.cs" />
+    <Compile Remove="..\Shared\PlasmaShared\Imaging\SystemDrawingImageProcessor.cs" />
+
+    <!-- The Framework half of the MapImage twin, and the GDI+ bridge it is now the only caller of.
+         MapImageCore.cs is the half this project wants: it keeps unitsync's RGB24 pixels and goes
+         through ImageSharp for a resize or an encode, so nothing here constructs a Bitmap. -->
+    <Compile Remove="..\Shared\PlasmaShared\Imaging\MapImage.cs" />
+    <Compile Remove="..\Shared\PlasmaShared\Imaging\GdiPixelBridge.cs" />
+    <Compile Include="..\ZkLobbyServer\**\*.cs" Exclude="..\ZkLobbyServer\obj\**;..\ZkLobbyServer\bin\**;..\ZkLobbyServer\Properties\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.13" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="SharpCompress" Version="0.31.0" />
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+    <PackageReference Include="NeoLua" Version="1.3.14" />
+    <PackageReference Include="NetJSON" Version="1.2.1.10" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="MaxMind.GeoIP2" Version="5.1.0" />
+    <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
+    <PackageReference Include="RestSharp" Version="107.3.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+    <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
+    <PackageReference Include="Discord.Net" Version="3.13.0" />
+  </ItemGroup>
+
+</Project>

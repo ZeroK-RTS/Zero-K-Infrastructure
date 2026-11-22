@@ -3,6 +3,23 @@
 @using PlasmaShared
 @model ZeroKWeb.Controllers.ClansController.ClansModel
 @{
+    // Templated Razor delegates, in place of @helper blocks. @helper does not exist in ASP.NET
+    // Core; this form parses in BOTH Razor v3 and the .NET 9 generator, which
+    // tools/razor-v3-check/check.sh establishes rather than assumes. A templated delegate's
+    // parameter is always called `item`.
+    Func<Clan, object> ClanNameCol =
+        @<a href='@Url.Action("Detail", new { id = item.ClanID })' nicetitle="$clan$@item.ClanID">
+            <img src="@item.GetImageUrl()"/>@item.ClanName</a>;
+
+    Func<Clan, object> JoinClanCol =
+        @<text>@if (item.CanJoin(Global.Account))
+        {
+            <span class="textbutton">@Html.PostLink("Join now!", "JoinClan", "Clans", new { id = item.ClanID })</span>
+            @(string.IsNullOrEmpty(item.Password) ? "" : "password")
+        }</text>;
+}
+
+@{
     Page.Title = "List of PlanetWars clans";
 
     var grid = new UniGrid<Clan>(Model.Data, "Zero-K clans");
@@ -28,19 +45,6 @@
     }
 }
 
-@helper ClanNameCol(Clan c) {
-    <a href='@Url.Action("Detail", new { id = c.ClanID })' nicetitle="$clan$@c.ClanID">
-        <img src="@c.GetImageUrl()"/>@c.ClanName</a>
-}
-
-@helper JoinClanCol(Clan c) {
-    if (c.CanJoin(Global.Account))
-    {
-        <span class="textbutton">@Html.ActionLink("Join now!", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })</span>
-        @(string.IsNullOrEmpty(c.Password) ? "" : "password")
-    }
-}
-
 <div id="clans">
     @Html.Partial("FactionList")
 
@@ -63,6 +67,6 @@
             Filter: @Html.TextBoxFor(x => x.Search, new { data_autocomplete = Url.Action("Clans", "Autocomplete"), data_autocomplete_action = "goto" })
             &nbsp;<input type="submit" value="Search"/>
         </span>
-        @GridHelpers.RenderTable(grid)
+        @Html.Partial("~/Views/Shared/Grid/RenderTable.cshtml", grid)
     }
 </div>

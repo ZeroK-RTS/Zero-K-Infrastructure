@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    Renders a Zero-K Razor view on .NET 9, with a model read out of the database through
+    EF Core, and checks the HTML that comes out.
+
+    ZeroKWeb.Core answers "does it compile". This answers the question that one cannot: a
+    view that compiles can still throw on its first request, and until now nothing in this
+    repository had rendered one - not this harness's ancestor, not CI, not the Windows
+    build, which compiles views but records nothing.
+
+        ./tools/render-view.sh
+
+    It can only include the views that compile, because a project that does not build
+    produces no assembly to run. The set comes from Zero-K.info/view-port-inventory.txt,
+    generated into view-set.props by the script, so it grows by itself as views are fixed
+    rather than needing a list kept by hand.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13.0</LangVersion>
+    <RootNamespace>ZeroKWeb.Render</RootNamespace>
+    <NoWarn>$(NoWarn);CS0618;CS0649;CS0168;CS1998;CS0108;CS0114;CS0169;CS0067</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      DbCloner and ForumPostIndexer use System.Data.SqlClient directly. On .NET 9 that
+      namespace lives in a compatibility package rather than the framework, and the package is
+      deprecated in favour of Microsoft.Data.SqlClient.
+      
+      Referenced anyway, and deliberately: changing those files to Microsoft.Data.SqlClient is
+      a production edit that would break the Framework build, which has no such package. The
+      package is how the linked sources compile unedited today; migrating them is a separate
+      change for when the Framework build no longer has to work.
+    -->
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <ProjectReference Include="..\ZkData.Core\ZkData.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\Zero-K.info\Views\**\*.cshtml" Link="Views\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!--
+    The MVC-free half of the web project's view helpers, linked rather than copied. Its
+    namespace really is System.Web.Mvc - see the note in the file.
+  -->
+  <ItemGroup>
+    <!-- already pure and standalone: linked as it stands, no split needed -->
+    <!-- Phase 1's seam. Linked here on purpose: this project has no reference to
+         ZkLobbyServer, so a member that names a server-side type fails this build. That is
+         what keeps ILobbyServerApi crossable rather than merely intended to be. -->
+    <Compile Include="..\ZeroKWeb.Core\Mvc5Compat\*.cs" Link="Linked\%(Filename).cs" />
+    <!-- The view components that replace MVC 5 child actions. Same reason as Mvc5Compat:
+         ZeroKWeb.Core owns these files, these two projects link them. -->
+    <Compile Include="..\ZeroKWeb.Core\ViewComponents\*.cs" Link="Linked\ViewComponents\%(Filename).cs" />
+  </ItemGroup>
+
+  <!-- Removes every view the inventory says does not compile; written by tools/render-view.sh. -->
+  <Import Project="view-set.props" Condition="Exists('view-set.props')" />
+
+  <Import Project="..\port-views.props" />
+
+  <Import Project="..\port-sources.props" />
+
+</Project>

@@ -1,4 +1,4 @@
-@using ZeroKWeb
+﻿@using ZeroKWeb
 @using ZkData
 @using PlasmaShared
 @model ZkData.Account
@@ -69,7 +69,7 @@
             <table>
                 <tr>
                     <td>
-                        @if (Model.AccountID != Global.AccountID && Global.Server.IsLobbyConnected(Global.Account.Name))
+                        @if (Model.AccountID != Global.AccountID && Global.LobbyApi.IsLobbyConnected(Global.Account.Name))
                         {
                             <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)" nicetitle="Chat with @Model.Name in the lobby"><img src="/img/chat.png" height="32" /></a><br />
                         }
@@ -406,6 +406,7 @@
         <div id="accountMaint" class="collapse width-90">
             <h4>Change password</h4>
             <form method="post" action="@Url.Action("ChangePassword", "Users")">
+            @Html.AntiForgeryToken()
                 Old password: @Html.Password("oldPassword")<br />
                 New password: @Html.Password("newPassword")<br />
                 Reenter new password: @Html.Password("newPassword2")<br />
@@ -426,6 +427,7 @@
         <div class="admin">
             <h3>Admin extras</h3>
             <form action="@Url.Action("SetZklsMaxPlayers", "Admin")" method="post">
+            @Html.AntiForgeryToken()
                 Max lobby server players: @Html.TextBox("maxPlayers", MiscVar.ZklsMaxUsers)
                 <input type="submit" value="set" />
             </form>
@@ -435,7 +437,7 @@
             <a href="@Url.Action("Index", "Charts")">Charts</a><br />
             <a href="@Url.Action("Index", "PlanetwarsAdmin")">PlanetWars admin</a><br />
             <a href="@Url.Action("EditDynamicConfig", "Admin")">Dynamic config</a><br />
-            <a href="@Url.Action("ForceRatingsUpdate", "Admin")">Force Ratings Update</a><br />
+            @Html.PostLink("Force Ratings Update", "ForceRatingsUpdate", "Admin")<br />
             @if (GlobalConst.Mode == ModeType.Test)
             {
                 <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br />

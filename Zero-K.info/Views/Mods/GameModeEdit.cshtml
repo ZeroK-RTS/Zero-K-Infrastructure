@@ -8,6 +8,7 @@
 <h2>@ViewBag.Title</h2>
 
 <form action="@Url.Action("EditSubmit")" method="post">
+@Html.AntiForgeryToken()
     @Html.HiddenFor(x => x.GameModeID)
     <table>
         <tr>

@@ -43,7 +43,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
@@ -65,23 +64,21 @@
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
     <Compile Include="AppCode\ContentServiceImplementation.cs" />
+    <Compile Include="AppCode\MissionServiceImplementation.cs" />
     <Compile Include="AppCode\DosProtector.cs" />
+    <Compile Include="AppCode\DosProtector.Portable.cs" />
     <Compile Include="AppCode\ForumPostCache.cs" />
     <Compile Include="AppCode\ForumPostIndexer.cs" />
-    <Compile Include="AppCode\HelperPage.cs" />
     <Compile Include="AppCode\LadderCalculator.cs" />
     <Compile Include="AppCode\MemCache.cs" />
+    <Compile Include="AppCode\WritesOnGet.cs" />
     <Compile Include="AppCode\NullTempDataProvider.cs" />
     <Compile Include="AppCode\PlanetwarsEventCreator.cs" />
     <Compile Include="AppCode\MediaWikiRecentChanges.cs" />
     <Compile Include="AppCode\UniGrid\Col.cs" />
     <Compile Include="AppCode\UniGrid\HCol.cs" />
-    <Compile Include="AppCode\ModStatsDb.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ModStatsDb.dbml</DependentUpon>
-    </Compile>
     <Compile Include="AppCode\UniGrid\IUniGrid.cs" />
+    <Compile Include="AppCode\UniGrid\GridColumnModel.cs" />
     <Compile Include="AppCode\UniGrid\IUniGridCol.cs" />
     <Compile Include="AppCode\UniGrid\UniGrid.cs" />
     <Compile Include="AppCode\UniGrid\UniGridCol.cs" />
@@ -93,6 +90,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AutocompleteController.cs" />
     <Compile Include="Controllers\ContentServiceController.cs" />
+    <Compile Include="Controllers\MissionServiceController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\ChartsController.cs" />
     <Compile Include="Controllers\ClansController.cs" />
@@ -107,7 +105,6 @@
     <Compile Include="Controllers\PlanetwarsAdminController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\TourneyController.cs" />
-    <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="ApiControllers\WhrController.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
     <Compile Include="ForumParser\LinkedListNodeBackEnumerator.cs" />
@@ -150,9 +147,22 @@
     <Compile Include="ForumParser\TocEntry.cs" />
     <Compile Include="ForumParser\TranslateContext.cs" />
     <Compile Include="AppCode\Global.cs" />
+    <Compile Include="AppCode\GalaxyMapGeometry.cs" />
+    <Compile Include="AppCode\LegacyCallReporter.cs" />
+    <Compile Include="AppCode\LegacyCallAudit.cs" />
+    <Compile Include="AppCode\LegacyMinimapUpdater.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
+    <Compile Include="AppCode\HttpCompat.cs" />
+    <Compile Include="AppCode\HtmlCompat.cs" />
+    <Compile Include="AppCode\ControllerCompat.cs" />
+    <Compile Include="AppCode\ViewContextCompat.cs" />
+    <Compile Include="AppCode\SteamOpenId.cs" />
+    <Compile Include="AppCode\AuthCookieCompat.cs" />
+    <Compile Include="AppCode\SteamOpenIdResult.cs" />
+    <Compile Include="AppCode\HtmlHelperExtensions.Portable.cs" />
     <Compile Include="AppCode\JsonRequest.cs" />
     <Compile Include="AppCode\NoCache.cs" />
+    <Compile Include="AppCode\PostLinkExtensions.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
     <Compile Include="Controllers\BattlesController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
@@ -164,43 +174,23 @@
     <Compile Include="Controllers\MyController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\PlanetwarsController.cs" />
+    <Compile Include="Controllers\PlanetwarsController.Imaging.cs" />
     <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\StaticController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\WikiController.cs" />
     <Compile Include="Models\CommentList.cs" />
-    <Compile Include="ResourceList.aspx.cs">
-      <DependentUpon>ResourceList.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ResourceList.aspx.designer.cs">
-      <DependentUpon>ResourceList.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="ErrorReports.aspx.cs">
-      <DependentUpon>ErrorReports.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ErrorReports.aspx.designer.cs">
-      <DependentUpon>ErrorReports.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="AppCode\ResourceLinkProvider.cs" />
-    <Compile Include="AppCode\MessageBox.cs" />
     <Compile Include="MissionService.svc.cs">
       <DependentUpon>MissionService.svc</DependentUpon>
     </Compile>
     <Compile Include="AppCode\PlasmaServer.cs" />
+    <Compile Include="AppCode\PlasmaServer.Portable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResourceDetail.aspx.cs">
-      <DependentUpon>ResourceDetail.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ResourceDetail.aspx.designer.cs">
-      <DependentUpon>ResourceDetail.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\PostHistoryController.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -211,15 +201,12 @@
     <Content Include="favicon.png" />
     <Content Include="Img\**" />
     <Content Include="lobby\index.html" />
-    <Content Include="ResourceList.aspx" />
-    <Content Include="ErrorReports.aspx" />
     <Content Include="Global.asax">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Img\cup.png" />
     <Content Include="Img\Loader.gif" />
     <Content Include="MissionService.svc" />
-    <Content Include="ResourceDetail.aspx" />
     <Content Include="Scripts\browser-css.js" />
     <Content Include="OpenSans-Semibold.ttf" />
     <Content Include="OpenSans-Semibold.eot" />
@@ -231,15 +218,12 @@
     <Content Include="Scripts\countDown.js" />
     <Content Include="Scripts\grid.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
-    <Content Include="Scripts\jquery.ba-bbq.js" />
     <Content Include="Scripts\jquery.datetimepicker.full.min.js" />
     <Content Include="Scripts\jquery.expand.js" />
-    <Content Include="Scripts\jquery.history.js" />
     <Content Include="Scripts\jquery.qtip.min.js" />
     <Content Include="Scripts\jquery.ui.stars.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\nicetitle.js" />
-    <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
     <Content Include="Styles\countDown.css" />
     <Content Include="Styles\jquery.datetimepicker.min.css" />
@@ -274,18 +258,6 @@
     <Content Include="Views\Mods\GameModeEdit.cshtml" />
     <Content Include="Views\Mods\GameModesIndex.cshtml" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
-    <Content Include="App_Code\GridHelpers.cshtml" />
-    <None Include="AppCode\ModStatsDb.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>ModStatsDb.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="AppCode\DataClasses1.dbml.views">
-      <DependentUpon>ModStatsDb.dbml</DependentUpon>
-    </None>
-    <None Include="AppCode\ModStatsDb.dbml.views">
-      <DependentUpon>ModStatsDb.dbml</DependentUpon>
-    </None>
     <Content Include="Img\fanart\zk_logo_alt.xcf" />
     <Content Include="Img\structures\defgrid.xcf" />
     <Content Include="Img\structures\superweapon.xcf" />
@@ -303,7 +275,6 @@
     <None Include="SM.eot" />
     <None Include="SM.ttf" />
     <Content Include="Views\Maps\UploadResourceResult.cshtml" />
-    <Content Include="Views\Planetwars\Index.cshtml" />
     <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -327,7 +298,6 @@
     <Content Include="Views\Poll\PollUserVotes.cshtml" />
     <Content Include="Views\Users\UserRoleList.cshtml" />
     <Content Include="Views\Forum\PostList.cshtml" />
-    <Content Include="Views\UnitStats\UnitStatsDetail.cshtml" />
     <Content Include="Views\Home\UserTooltip.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Punishment.cshtml" />
     <Content Include="Views\Users\AdminUserDetail.cshtml" />
@@ -356,8 +326,6 @@
     <Content Include="Views\Forum\SearchResults.cshtml" />
     <Content Include="Views\Forum\Search.cshtml" />
     <Content Include="Views\Planetwars\PwMatchMaker.cshtml" />
-    <Content Include="Views\Planetwars\GalaxyOffline.cshtml" />
-    <Content Include="Views\Planetwars\GalaxyOfflinePW12.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ForumPost.cshtml" />
     <Content Include="Views\PostHistory\PostHistoryIndex.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DiffPiece.cshtml" />
@@ -421,7 +389,7 @@
     <Content Include="Views\Home\UnlockTooltip.cshtml" />
     <Content Include="Views\Poll\PollView.cshtml" />
     <Content Include="Views\Poll\PollVoteList.cshtml" />
-    <Content Include="Views\Ladders\ladders.cshtml" />
+    <Content Include="Views\Ladders\Ladders.cshtml" />
     <Content Include="Views\Home\NotLoggedIn.cshtml" />
     <Content Include="Views\Shared\LoginBar.cshtml" />
     <Content Include="Views\Clans\Detail.cshtml" />
@@ -443,9 +411,9 @@
     <Content Include="Views\Battles\BattleIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Autoregistrator\Autoregistrator.csproj">
+    <ProjectReference Include="..\AutoRegistrator\AutoRegistrator.csproj">
       <Project>{01FAEBBC-02E0-42FE-972C-F17045BA3807}</Project>
-      <Name>Autoregistrator</Name>
+      <Name>AutoRegistrator</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
@@ -482,9 +450,6 @@
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AppCode\ModStatsDb.dbml.layout">
-      <DependentUpon>ModStatsDb.dbml</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr" Version="3.5.0.2" />
@@ -509,7 +474,6 @@
     <PackageReference Include="Microsoft.Bcl.Build" Version="1.0.14" />
     <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="3.6.0" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.3" />
-    <PackageReference Include="Microsoft.Linq.Translations" Version="1.0.1" />
     <PackageReference Include="Microsoft.Net.Compilers" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

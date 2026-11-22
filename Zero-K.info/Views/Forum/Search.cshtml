@@ -6,6 +6,7 @@
 <h2>Find posts</h2>
 Note: wildcards are not supported yet, sorry!
     <form action="@Url.Action("SubmitSearch", "Forum", new {})" method="post">
+    @* csrf-exempt: SubmitSearch runs a query and writes nothing *@
         Keywords: @Html.TextBox("keywords")<br />
         Author: @Html.TextBox("userName")<br />
         Only search first post in topic: @Html.CheckBox("firstPostOnly")<br />

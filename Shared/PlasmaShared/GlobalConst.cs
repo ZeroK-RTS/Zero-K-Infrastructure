@@ -1,18 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using PlasmaShared;
 
 namespace ZkData
 {
-    public enum ModeType
-    {
-        Local = 0, // localhost debugging
-        Test = 1, // test.zero-k.info
-        Live = 2, // LIVE 
-    }
-
-    public static class GlobalConst
+    public static partial class GlobalConst
     {
         static ModeType mode;
 
@@ -24,7 +17,6 @@ namespace ZkData
             get { return mode; }
             set { SetMode(value);}
         }
-        public static string SpringieDataDir { get; set; } = @"c:\projekty\springie_spring"; // todo hack solve
 
         static GlobalConst()
         {
@@ -79,7 +71,25 @@ namespace ZkData
                     break;
             }
 
-            ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
+            // A local or CI database is not at any of the addresses above - see
+            // db/docker-compose.yml. This is the only way to point the application at one
+            // without editing source, and it is read after the mode has been applied so it
+            // overrides whichever mode is in force.
+            var connectionOverride = Environment.GetEnvironmentVariable("ZK_CONNECTION_STRING");
+            if (!string.IsNullOrEmpty(connectionOverride)) ZkDataContextConnectionString = connectionOverride;
+
+            // Which site, for a process that is not it. The mode above picks a BaseSiteUrl per
+            // deployment, and that is right for the website itself and for tools run beside it.
+            // It is not right for a lobby server in another container, which reads map and game
+            // metadata from ResourceBaseUrl and would otherwise ask localhost:44301 - the Local
+            // mode's address for a site that is not there.
+            //
+            // Read after the mode has been applied, so it overrides whichever one is in force -
+            // the same shape and the same placement as ZK_CONNECTION_STRING above.
+            var siteUrlOverride = Environment.GetEnvironmentVariable("ZK_BASE_SITE_URL");
+            if (!string.IsNullOrEmpty(siteUrlOverride)) BaseSiteUrl = siteUrlOverride.TrimEnd('/');
+
+            ResourceBaseUrl = string.Format("{0}/{1}", BaseSiteUrl, ResourceFolder);
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
 
@@ -91,134 +101,98 @@ namespace ZkData
         
 
 
-        public static string ZkDataContextConnectionString;
 
         public static string BaseImageUrl;
         public static string BaseSiteUrl;
 
-        public const string SpringfilesBaseUrl = "https://springfiles.springrts.com/";
 
         public static string DefaultZkTag => Mode == ModeType.Live ? "zk:stable" : "zk:test";
         public static string DefaultChobbyTag => Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test";
 
 
-        public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";
+        /// <summary>
+        /// The site's own directory on disk - the one holding resources/ and img/. Read by
+        /// MetaDataCache (map and game metadata), MissionUpdater, AutoRegistrator and Fixer.
+        ///
+        /// **The website overwrites this at startup**, in Global.asax's Application_Start:
+        /// <c>GlobalConst.SiteDiskPath = MapPath("~")</c>. So inside the web application the
+        /// default below never applies, and it never had to be right.
+        ///
+        /// It applies to every OTHER process, and that set is growing. The lobby server reads it
+        /// through MetaDataCache.ServerGetMod/ServerGetMap when a battle opens - which worked
+        /// only because the lobby server ran INSIDE the website's IIS worker and inherited that
+        /// assignment. A standalone one does not, on any platform, and off Windows this string is
+        /// not a path at all: no c: drive, and a backslash is an ordinary filename character.
+        ///
+        /// ZK_SITE_DISK_PATH sets it, in the same shape and for the same reason as
+        /// ZK_CONNECTION_STRING below: the only way to point a deployment at the right directory
+        /// without editing source. Off Windows there is no sensible guess - the site's directory
+        /// is wherever it was deployed - so the default is empty rather than invented, and
+        /// MetaDataCache says so instead of quietly finding nothing.
+        /// </summary>
+        public static string SiteDiskPath = DefaultSiteDiskPath();
+
+        static string DefaultSiteDiskPath()
+        {
+            var configured = Environment.GetEnvironmentVariable("ZK_SITE_DISK_PATH");
+            if (!string.IsNullOrEmpty(configured)) return configured;
+
+            // Kept exactly on Windows: AutoRegistrator and Fixer are run by hand from a checkout
+            // there, and this is the path they have always meant.
+            if (Environment.OSVersion.Platform != PlatformID.Unix) return @"c:\projekty\zero-k.info\www";
+
+            return "";
+        }
 
 
-        public const int SteamAppID = 334920;
         public const int ZkLobbyUserCpu = 6667;
         public const int ZkLobbyUserCpuLinux = 6668;
-        public const int MaxUsernameLength = 25;
-        public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
-        public const int MaxCommanderNameLength = 20;
 
-        public const string DefaultEngineOverride = "104.0.1-287-gf7b0fcc"; // hack for ZKL using tasclient's engine - override here for missions etc
 
-        public const int MinDurationForXP = 240;    // seconds
-        public const int MinDurationForElo = 60;
         public const int MinDurationForPlanetwars = 0;
         public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
-        public static int LadderAverageDays = 3;
-        public static int LadderActivityDays => mode == ModeType.Live ? 30 : 90;
-        public const int LadderSize = 50; // Amount of players shown on ladders
-        public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
-        public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
-        public static float NaturalRatingVariancePerDay(float games) => EloToNaturalRatingMultiplierSquared * 200000 / (games + 400); //whr expected player rating change over time
-        public const float NaturalRatingVariancePerGame = EloToNaturalRatingMultiplierSquared * 500; //whr expected player rating change per game played
-        public const float LadderEloMaxChange = 50;
-        public const float LadderEloMinChange = 1;
-        public const float LadderEloClassicEloK = 32f; //K value of classic elo
-        public const float LadderEloSmoothingFactor = 0.8f; //1 for change as fast as whr, 0 for no change
-        public const int MaxLevelForMalus = 5;
-        public const float MaxMalus = 400;
 
-        public const int MapBansPerPlayer = 6; // Allow users to enter this many bans in UI
         public const float MaximumPercentageOfBannedMaps = 0.75f; // Do not ban more than 75% of all maps regardless of player or ban count
 
-        public const int XpForMissionOrBots = 25;
-        public const int XpForMissionOrBotsVictory = 50;
 
         public const double EloWeightMax = 6;
         public const double EloWeightLearnFactor = 10;
         public const double EloWeightMalusFactor = -80;
 
-        public const string SessionTokenVariable = "asmallcake";
 
         public const string MissionScriptFileName = "_missionScript.txt";
         public const string MissionSlotsFileName = "_missionSlots.xml";
 
-        public const string NightwatchName = "Nightwatch";
 
-        public const string ModeratorChannel = "zkadmin";
-        public const string Top20Channel = "zktop20";
-        public const string UserLogChannel = "zklog";
-        public const string CoreChannel = "zkcore";
+        // The four channel names moved to GlobalConst.Portable.cs, which the .NET 9 port links.
         
-        public const string LobbyAccessCookieName = "zk_lobby";
 
-        public const double PlanetMetalPerTurn = 1;
-        public const double PlanetWarsEnergyToMetalRatio = 0.0;
-        public const double PlanetWarsMaximumIP = 100.0; //maximum IP on each planet
-        public const int PlanetWarsVictoryPointsToWin = 50;
         public const int VictoryPointDecay = 1;
         public const int BaseInfluencePerBattle = 32;
         public const int InfluencePerAttacker = 1;
         public const double PlanetWarsAttackerMetal = 100;
         public const double PlanetWarsDefenderMetal = 100;
-        public const int InfluencePerShip = 1;
         public const double InfluencePerTech = 1;
-        public const double InfluenceDecay = 1;
-        public const double InfluenceToCapturePlanet = PlanetWarsMaximumIP / 2 + 0.1;
-        public const double InfluenceToLosePlanet = 10;
-        public const double DropshipsForFullWarpIPGain = 10;
-        public const double SelfDestructRefund = 0.5;
-        public const double BomberKillStructureChance = 0.1;
-        public const double BomberKillIpChance = 1.2;
-        public const double BomberKillIpAmount = 1;
         public const double StructureIngameDisableTimeMult = 2;
-        public const int DefaultDropshipCapacity = 50;
-        public const int DefaultBomberCapacity = 50;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
-        public static readonly int? MaxClanSkilledSize = null;
         public const int FactionChannelMinLevel = 2;
         public const bool RotatePWMaps = false;
-        public const bool RequireWormholeToTravel = true;
-        public const bool CanChangeClanFaction = true;
         public const double MaxPwEloDifference = 120;
 
 
-        public const string MetalIcon = "/img/luaui/ibeam.png";
-        public const string EnergyIcon = "/img/luaui/energy.png";
-        public const string BomberIcon = "/img/fleets/neutral.png";
-        public const string WarpIcon = "/img/warpcore.png";
 
         public const bool VpnCheckEnabled = true; 
 
-        public const double EurosToKudos = 10.0;
-        public const string TeamEmail = "Zero-K team <team@zero-k.info>";
 
-        public const int KudosForBronze = 100;
-        public const int KudosForSilver = 250;
-        public const int KudosForGold = 500;
-        public const int KudosForDiamond = 1000;
 
-        public const int ForumPostsPerPage = 20;
-        public const int MinLevelForForumVote = 2;
-        public const int MinNetKarmaToVote = -30;
-        public const int PostVoteHideThreshold = -6;
-        public const bool OnlyAdminsSeePostVoters = false;
         public const int PlanetWarsMinutesToAttackIfNoOption = 2;
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
-        public const int PlanetWarsMaxTeamsize = 4;
         public const double PlanetWarsDefenderWinKillCcMultiplier = 0.2;
         public const double PlanetWarsAttackerWinLoseCcMultiplier = 0.5;
-        public const int MinPlanetWarsLevel = 5;
-        public const int MinPlanetWarsElo = -1000;
 
-        public const int WikiEditLevel = 20;
 
         public const int TcpLingerStateSeconds = 5;
         public const bool TcpLingerStateEnabled = true;
@@ -265,22 +239,8 @@ namespace ZkData
 
         public static string UnitSyncEngine = "unitsync";
 
-        public static int SteamContributionJarID = 2;
-        public static Dictionary<ulong, int> DlcToKudos = new Dictionary<ulong, int>() { { 842950, 100 }, { 842951, 250 }, { 842952, 500 } };
 
-        public static DateTime SteamRelease = new DateTime(2018, 4, 27, 8, 0, 0, DateTimeKind.Utc);
-        public static bool IsLongAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalDays > 14;
-        public static bool IsAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalMilliseconds > 0;
 
     }
 
-    public enum PlanetWarsModes
-    {
-        [Description("offline")]
-        AllOffline = 0,
-        [Description("pre-game")]
-        PreGame = 1,
-        [Description("running")]
-        Running = 2
-    }
 }

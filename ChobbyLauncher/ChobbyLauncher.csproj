@@ -42,6 +42,21 @@
   <PropertyGroup>
     <ApplicationIcon>ZK_logo_128.ico</ApplicationIcon>
   </PropertyGroup>
+  <!--
+    The source guards these files with #if !(__MonoCS__), which is exactly right: ChatToSpeech
+    needs System.Speech and ScrollMessageFilter needs mshtml, and neither exists off Windows.
+
+    But __MonoCS__ is defined by MONO'S OWN compiler, mcs. This repository builds under mono with
+    msbuild, which uses Roslyn, and Roslyn has never defined it - so every one of those guards has
+    been inert, and the files they protect failed to compile with CS0246 rather than being skipped.
+
+    Defined on the condition that actually matters, which is the platform rather than the compiler.
+    On Windows nothing changes: the symbol stays undefined and the Windows-only code builds.
+  -->
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+    <DefineConstants>$(DefineConstants);__MonoCS__</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="Steamworks.NET">
@@ -178,7 +193,10 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <PropertyGroup>
+  <!-- ILMerge.exe and cmd syntax - "if /i", "copy /Y". Both are Windows, and this runs
+       only for Release anyway. Off Windows the shell is sh, which fails on the first
+       line, so the project compiled and then reported MSB3073 three times. -->
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
 "$(ProjectDir)\..\libs\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4.5,c:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8" /wildcards /t:winexe /allowdup
 copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"

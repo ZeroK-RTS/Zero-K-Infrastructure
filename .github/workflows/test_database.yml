@@ -1,0 +1,401 @@
+﻿# The WHR pipeline tests (Tests.Database), against a real SQL Server and the committed
+# fixture.
+#
+# Slower and heavier than test_portable.yml - it pulls SQL Server and mono, builds the
+# ZkData chain twice and runs an actual rating computation - about two minutes. It runs on
+# every pull request all the same, because it is a required check: a required check that
+# is skipped never reports, and the pull request waits for it forever.
+#
+# It uses exactly the scripts a developer uses locally (db/README.md). If this job breaks,
+# the same commands reproduce it on a laptop.
+#
+# Timing, measured locally: 37s from empty build directories with the images and the NuGet
+# cache already warm. On a cold runner add the SQL Server and mono image pulls and, on a
+# cache miss, the NuGet restore - a few minutes either way.
+
+name: Database tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    # The name is the required status check on master, so it is not free to change:
+    # renaming the job renames the context, branch protection keeps waiting for the old
+    # one, and every pull request blocks on a check that will never report again. It now
+    # covers the EF Core port as well, which the name does not say.
+    name: WHR pipeline (net48 under mono, SQL Server 2022)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      DB_NAME: zk_test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Both db/dbsetup.sh and db/run-db-tests.sh restore into this directory. Restoring
+      # the ZkData chain from scratch is most of the job's runtime.
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/zk-mono-nuget
+            ~/.cache/zk-website-build
+          key: zk-mono-nuget-${{ hashFiles('**/*.csproj', '**/packages.config') }}
+          restore-keys: zk-mono-nuget-
+
+      # The .NET 9 SDK runs from a container (tools/dotnet.sh) and restores into the
+      # runner's own NuGet directory, which the mono cache above does not cover.
+      - name: Cache NuGet packages for the .NET 9 SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: zk-net9-nuget-${{ hashFiles('ZkData.Core/ZkData.Core.csproj') }}
+          restore-keys: zk-net9-nuget-
+
+      - name: Start SQL Server
+        run: |
+          docker compose -f db/docker-compose.yml up -d
+          ./db/wait-for-db.sh
+
+      - name: Create the schema
+        run: ./db/dbsetup.sh latest
+
+      # The migrations are the only thing that should change this schema. If a pull
+      # request changes it without updating the snapshot, that is either an accident or a
+      # deliberate change someone forgot to record - both worth stopping for.
+      - name: Check the schema against the committed snapshot
+        run: ./db/dump-schema.py --check
+
+      - name: Load the test fixture
+        run: ./db/load-fixture.sh
+
+      # The Framework build. It is what catches a change that compiles on .NET 9 and not on
+      # .NET Framework, or the reverse; the port edits production C# in both directions, so
+      # both sides need a build.
+      #
+      # It builds the sixteen projects of the twenty in Zero-K.sln that mono can build, listed
+      # in tools/mono-buildable.proj along with the four it cannot and why. Naming asp.net
+      # here instead - which is what this step did until now - built seven of them, because a
+      # project is built only if something references it. ZeroKLobby was referenced by nothing,
+      # was therefore compiled by nobody, and had accumulated 67 dead .resx paths and two
+      # guards written for a compiler nobody uses by the time anyone tried (#219, #220).
+      #
+      # It does NOT compile Razor views: mono ships no aspnet_compiler.exe. That gap is
+      # covered as far as it can be by tools/view-port-report.sh in the other workflow.
+      #
+      # Placed here rather than in test_portable.yml because this job already pulls the
+      # mono:6.12 image for the steps above, so the image is warm. Sixteen projects cost no
+      # measurable time over seven - about 17 seconds either way, against a cold NuGet restore.
+      - name: Build the .NET Framework projects under mono
+        run: ./tools/build-website.sh tools/mono-buildable.proj
+
+      - name: Run the WHR pipeline tests
+        run: ./db/run-db-tests.sh
+
+      # The .NET 9 port. Two different questions, and the second one is not implied by the
+      # first: whether the EF Core model would BUILD this schema, and whether it can READ
+      # this data. A relationship with an invented shadow foreign key answers yes to
+      # neither, but only the second one fails loudly - which is how it was found.
+      # Placed before the .NET 9 work because it is about the OTHER build: a view edited for the
+      # port can be compiled there and only assumed to be valid on MVC 5, which is the stack
+      # still serving the site. This asks MVC 5's own Razor parser. It restores nothing itself -
+      # build-website.sh above has already pulled Razor 3 into the NuGet cache.
+      - name: Check every view still parses as Razor v3 (MVC 5)
+        run: ./tools/razor-v3-check/check.sh --all
+
+      - name: Check the EF Core model against the EF6 schema
+        run: ./db/efcore-schema.sh --check
+
+      - name: Read the fixture through the EF Core model
+        env:
+          ZK_CONNECTION_STRING: "Data Source=127.0.0.1,14330;Initial Catalog=zk_test;User ID=sa;Password=ZkLocal!Dev2026;MultipleActiveResultSets=true;TrustServerCertificate=true"
+        run: ./tools/dotnet.sh run --project ZkData.Core -- read
+
+      # Writing is a third question again: EF6's SaveChanges ran entity hooks and validated
+      # the annotations, and EF Core's does neither by itself. Everything here happens in a
+      # transaction that is rolled back, and the last check confirms the fixture is
+      # untouched - so this step runs before nothing and after anything.
+      - name: Write to the fixture through the EF Core model
+        env:
+          ZK_CONNECTION_STRING: "Data Source=127.0.0.1,14330;Initial Catalog=zk_test;User ID=sa;Password=ZkLocal!Dev2026;MultipleActiveResultSets=true;TrustServerCertificate=true"
+        run: ./tools/dotnet.sh run --project ZkData.Core -- write
+
+      # The check §7 of the modernization plan asks for by name: EF6 -> EF Core behaviour
+      # drift, measured on the heaviest query in the system rather than argued about. Both
+      # runs use the same pipeline source and the same fixture; only the data layer differs.
+      # Runs last because each run clears and recomputes AccountRatings.
+      - name: Compare the ratings the two stacks compute
+        run: ./db/compare-ratings.sh
+
+      # Compilation is not rendering. ZeroKWeb.Core proves the views compile; this renders
+      # one on .NET 9 with a row read through EF Core and checks the HTML against the row.
+      # Needs the database, which is why it lives in this workflow rather than the portable one.
+      - name: Render a view on .NET 9
+        env:
+          ZK_CONNECTION_STRING: "Data Source=127.0.0.1,14330;Initial Catalog=zk_test;User ID=sa;Password=ZkLocal!Dev2026;MultipleActiveResultSets=true;TrustServerCertificate=true"
+        run: ./tools/render-view.sh
+
+      # Routing, a controller and a request - none of which the other two harnesses have,
+      # and all of which the views need: they are full of Html.ActionLink.
+      - name: Serve a view over HTTP on .NET 9
+        env:
+          ZK_CONNECTION_STRING: "Data Source=127.0.0.1,14330;Initial Catalog=zk_test;User ID=sa;Password=ZkLocal!Dev2026;MultipleActiveResultSets=true;TrustServerCertificate=true"
+        run: ./tools/run-host.sh
+
+      - name: SQL Server log
+        if: failure()
+        run: docker logs zk-db --tail 80
+
+      # The mono container runs as root, so everything it wrote into the cache is
+      # root-owned. actions/cache saves as the runner user in a post-step and would fail
+      # on those files, so hand them back first.
+      - name: Make the NuGet cache readable by the runner
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" ~/.cache/zk-mono-nuget || true
+
+      - name: Stop SQL Server
+        if: always()
+        run: docker compose -f db/docker-compose.yml down -v
+
+  # Phase 4. The port's end-to-end evidence, which until now only ever ran on a laptop.
+  #
+  # ZeroKWeb.Host serves the REAL views and controllers on .NET 9 and requests them over HTTP -
+  # signing in with a real password through BCrypt, uploading a file and reading the bytes back,
+  # asking for a byte range, posting a PayPal IPN body, posting to /MissionService. Compiling
+  # proves things about types; this is the only check anywhere that proves a page comes back.
+  #
+  # A separate job rather than a step in the one above, deliberately: a step added to an existing
+  # job blocks every pull request the first time it is flaky in an environment it has never run
+  # in. The cost of the separation is a second SQL Server - about a minute.
+  #
+  # **Its name is a required status check on master since 2026-09-29**, which makes the name
+  # load-bearing: protection matches the context as an exact string, so renaming this job leaves
+  # protection waiting for something nothing reports any more, and every pull request blocks
+  # forever on a check that will never appear. Change it only together with the protection
+  # setting, and prefer not to. Two of the three jobs here are in that position now, and this
+  # workflow has made the mistake once already, on 2026-09-18.
+  host:
+    name: Host harness (.NET 9 over HTTP, SQL Server 2022)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      DB_NAME: zk_test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache NuGet packages for the .NET 9 SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: zk-net9-nuget-${{ hashFiles('**/*.csproj', 'port-sources.props', 'port-views.props') }}
+          restore-keys: zk-net9-nuget-
+
+      - name: Start SQL Server
+        run: |
+          docker compose -f db/docker-compose.yml up -d
+          ./db/wait-for-db.sh
+
+      - name: Create the schema
+        run: ./db/dbsetup.sh latest
+
+      - name: Load the test fixture
+        run: ./db/load-fixture.sh
+
+      # Builds ZeroKWeb.Host - which compiles every linked controller and all 123 views through
+      # the Razor SDK - then starts it, requests the pages and asserts what comes back. Exits
+      # non-zero on the first failing assertion, and prints each one either way.
+      - name: Serve the ported site and check it answers
+        run: ./tools/run-host.sh
+
+      # The container, in the same job because the database and the NuGet cache are already
+      # warm here - a second job would pay for both again to check one image.
+      #
+      # It is a different question from the step above, not a slower version of it: that one
+      # runs the site from the build tree on the runner, this one builds an IMAGE and runs the
+      # site inside it, which is what says the Dockerfile still works. It also checks the two
+      # things only the image can get wrong - that static content is served, and that the
+      # source tree is not in it.
+      - name: Build the site container and check it serves
+        run: ./tools/site-container.sh
+
+      # The Spring engine, cached. ~42MB from the projects' own distribution plus a 333KB map, and
+      # the runners are ephemeral - so without this every run would fetch it again. The version is
+      # in the key, so a bump fetches once and then stays cached.
+      - name: Cache the Spring engine
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/zk-engine
+            ~/.cache/zk-spring
+          key: zk-engine-105.1.1-2457-g8095d30
+          restore-keys: zk-engine-
+
+      # Everything the port does with a real engine, which until now ran only on a developer
+      # machine: resolve libunitsync, call it, read a real minimap out of it, and make a downloaded
+      # binary executable.
+      #
+      # These tests go Inconclusive without an engine, which is right on a laptop and wrong here,
+      # and the fetch failing used to print "skipped" and leave the step green. Both were silent:
+      # the step reported "Passed!" having called no engine at all. ZK_REQUIRE_FULL_RUN=1 makes a
+      # skip a failure, and a fetch that fails is a failure in its own right.
+      #
+      # The cost is that this step now depends on an external 42MB download. The cache above makes
+      # that a cold-cache-only risk, and a cold cache that cannot reach the engine is worth being
+      # told about. Drop the env line to get the tolerant behaviour back.
+      - name: Call a real Spring engine from .NET 9
+        env:
+          ZK_REQUIRE_FULL_RUN: "1"
+        run: |
+          set -euo pipefail
+          ENGINE="$(./tools/fetch-engine.sh)" || {
+            echo "no engine could be fetched, so nothing below was exercised" >&2; exit 1; }
+          ZK_DOTNET_MOUNT="$ENGINE" ./tools/dotnet.sh test Tests.Portable/Tests.Portable.csproj -v q --nologo
+
+      # The whole game chain: DedicatedServer starts spring-dedicated, a headless client joins it,
+      # the autohost stream reaches Talker, and the finished context is stored through
+      # BattleResultHandler. This is the only check that covers any of it.
+      - name: Host a game, join it, and store the result
+        env:
+          # tools/dedicated-server-check.sh skips itself without curl, without an engine or
+          # without a database, and exits 0 doing it. Here all three are present, so a skip means
+          # the only check covering the game chain stopped running and said nothing.
+          ZK_REQUIRE_FULL_RUN: "1"
+          ZK_CONNECTION_STRING: "Data Source=127.0.0.1,14330;Initial Catalog=zk_test;User ID=sa;Password=ZkLocal!Dev2026;MultipleActiveResultSets=true;TrustServerCertificate=true"
+        run: ./tools/dedicated-server-check.sh
+
+      # The other end of a game. tools/dedicated-server-check.sh drives an engine to the point of
+      # producing a SpringBattleContext and needs an engine to do it; this takes such a context and
+      # stores it through BattleResultHandler.SaveSpringBattle, which needs a database and no
+      # engine. Everything happens in a transaction that is rolled back, so the fixture is untouched.
+      - name: Store a finished battle through the real handler
+        env:
+          ZK_CONNECTION_STRING: "Data Source=127.0.0.1,14330;Initial Catalog=zk_test;User ID=sa;Password=ZkLocal!Dev2026;MultipleActiveResultSets=true;TrustServerCertificate=true"
+        run: ./tools/dotnet.sh run --project tools/battle-result-probe
+
+      # The lobby server, actually running on .NET 9. ZkLobbyServer.Core building is checked in
+      # test_portable.yml; that says the chain compiles, which is a different claim. This starts
+      # the process against the database and checks it opens the port players connect to.
+      #
+      # It exists because of a defect only running found: Bind P/Invoked kernel32, which throws
+      # off Windows, so the server came up with its API listening and no player port at all.
+      # A process-is-alive check and an API-answers check would both have passed.
+      - name: Start the lobby server on .NET 9 and connect to it
+        env:
+          ZK_CONNECTION_STRING: "Data Source=127.0.0.1,14330;Initial Catalog=zk_test;User ID=sa;Password=ZkLocal!Dev2026;MultipleActiveResultSets=true;TrustServerCertificate=true"
+        run: ./tools/lobby-core-start.sh
+
+  # Phase 4's other half: the website and the lobby server as two processes, against one
+  # database, actually talking. Everything above runs the site with its lobby server missing -
+  # which is a real configuration and worth checking, but it is the one the live site is moving
+  # AWAY from, and nothing in CI had ever run the one it is moving to.
+  #
+  # Its own job, for the reason the host job gives above: a step added to an existing job blocks
+  # every pull request the first time it is flaky. This is the heaviest thing here - a mono build
+  # of the Framework lobby server, a site image, and both started against SQL Server - and it runs
+  # in about five and a half minutes.
+  #
+  # **Its name is a required status check on master since 2026-09-29**, as the host job's is.
+  # That makes the name load-bearing: branch protection matches it as an exact string, so
+  # renaming this job - even to describe it better - leaves protection waiting for a context
+  # nothing reports any more, and every pull request blocks forever on a check that will never
+  # appear. Change it only together with the protection setting, and prefer not to.
+  #
+  # What it covers that nothing else does:
+  #   * the LobbyApiUrl switch, end to end, over the HTTP+JSON transport rather than in-process
+  #   * the negative control - the front page answers 200 with the lobby server up and 500 with
+  #     it stopped, so a passing run cannot mean the two never spoke
+  #   * the site's OWN harness checks with a lobby server attached, which is the only place
+  #     /Planetwars/MatchMaker renders at all, options loop and Join form included
+  stack:
+    name: Site and lobby server as two containers (SQL Server 2022)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      DB_NAME: zk_test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Both caches, because this job builds both halves: the site on the .NET 9 SDK and the
+      # lobby server under mono. The host job needs only the first and the test job only the
+      # second, which is why neither of them warms this one.
+      - name: Cache NuGet packages for the .NET 9 SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: zk-net9-nuget-${{ hashFiles('**/*.csproj', 'port-sources.props', 'port-views.props') }}
+          restore-keys: zk-net9-nuget-
+
+      # Key and paths identical to the test job's above, deliberately: a different key would
+      # miss its cache and then write a second one beside it, and both jobs would pay for a
+      # restore neither of them shared.
+      - name: Cache NuGet packages for the mono build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/zk-mono-nuget
+            ~/.cache/zk-website-build
+          key: zk-mono-nuget-${{ hashFiles('**/*.csproj', '**/packages.config') }}
+          restore-keys: zk-mono-nuget-
+
+      - name: Start SQL Server
+        run: |
+          docker compose -f db/docker-compose.yml up -d
+          ./db/wait-for-db.sh
+
+      - name: Create the schema
+        run: ./db/dbsetup.sh latest
+
+      - name: Load the test fixture
+        run: ./db/load-fixture.sh
+
+      # Builds both images, seeds a PlanetWars round, starts both processes, runs the site's own
+      # checks against the running lobby server, and tears all of it down. It leaves the fixture
+      # as it found it, which the step after this one is what actually says.
+      - name: Bring up both processes and check they talk
+        run: ./tools/stack.sh
+
+      # The teardown is part of what is being checked, not housekeeping. stack.sh seeds a galaxy,
+      # two planets, a link, a faction and a MiscVar, and a run that left any of them behind would
+      # quietly change what every later run of this fixture measures.
+      #
+      # It has to name every table the harness seeds, and it did not: WithFactionAndClan seeds a
+      # clan as well as a faction and only the faction was counted, and WithPoll and WithForumThread
+      # came later still. A cleanup that stopped working in those tables would have left the rows
+      # and the count at zero. Tables the fixture leaves empty are counted whole; ForumCategories
+      # is not one - the fixture has 23 - so that term asks for the harness's own row by name.
+      - name: The fixture is as it was found
+        run: |
+          set -euo pipefail
+          left=$(docker exec zk-db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa \
+              -P 'ZkLocal!Dev2026' -C -d zk_test -h -1 -W \
+              -Q "SET NOCOUNT ON; SELECT (SELECT COUNT(*) FROM Galaxies) + (SELECT COUNT(*) FROM Planets) + (SELECT COUNT(*) FROM Links) + (SELECT COUNT(*) FROM Factions) + (SELECT COUNT(*) FROM Clans) + (SELECT COUNT(*) FROM Polls) + (SELECT COUNT(*) FROM PollOptions) + (SELECT COUNT(*) FROM ForumThreads) + (SELECT COUNT(*) FROM ForumPosts) + (SELECT COUNT(*) FROM ForumCategories WHERE Title = 'Harness Category') + (SELECT COUNT(*) FROM MiscVars WHERE VarName IN ('planetWarsMode', 'LobbyApiUrl', 'LobbyApiSecret'))")
+          echo "rows the stack could have left behind: $left"
+          [ "$left" = "0" ] || { echo "the stack did not clean up after itself"; exit 1; }
+
+      - name: SQL Server log
+        if: failure()
+        run: docker logs zk-db --tail 80
+
+      - name: Make the NuGet cache readable by the runner
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" ~/.cache/zk-mono-nuget || true
+
+      - name: Stop SQL Server
+        if: always()
+        run: docker compose -f db/docker-compose.yml down -v

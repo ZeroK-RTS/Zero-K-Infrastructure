@@ -1,0 +1,12 @@
+# Native libraries ZkLobbyServer.Core P/Invokes, and what each does when the lobby server runs
+# on Linux. Checked by tools/check-native-calls.py, which fails if this set changes either way.
+#
+#   <library>  <verdict>
+#
+# A new entry here is a decision, not a formality: the failure mode is a call that compiles, throws
+# DllNotFoundException at runtime, and gets swallowed by a catch somewhere up the stack. That is
+# exactly what happened with kernel32 below.
+
+kernel32.dll      TcpTransportServerListener.Bind (SetHandleInformation), guarded by Environment.OSVersion.Platform == PlatformID.Win32NT. Unguarded it threw, Bind retried 120x and gave up, and the server ran with NO player port. Unix opens sockets FD_CLOEXEC already, so nothing is lost.
+Kernel32.dll      MonoTorrent SparseFile (CreateFileW/DeviceIoControl/GetVolumeInformationW), an NTFS sparse-file optimisation. Safe unguarded: CreateSparse catches DllNotFoundException and sets SupportsSparse=false permanently, so it degrades once and never retries.
+unitsync          The Spring engine's own library, for map and mod metadata. Spelled without an extension, so .NET applies the platform's prefix and suffix: MEASURED on net9/Linux by Tests.Portable/UnitSyncResolutionTests. And CALLED for real - Tests.Portable/UnitSyncEngineTests runs against an engine fetched by tools/fetch-engine.sh: GetSpringVersion returns '105.1.1-2457-g8095d30 BAR105', Init succeeds, GetMapCount/GetPrimaryModCount marshal ints back, and GetMinimap returns a real 1024x1024 RGB565 buffer from a real map archive which MapImage unpacks with no GDI. Skipped when no engine is mounted, so CI stays green without one. SEVEN of the 135 entry points are reached that way, counting the two behind managed wrappers; the other 128 are declared and untried, and nothing drives AutoRegistrator's own use of them end to end. This line said map archives were untouched long after fetch-engine.sh began fetching a map for exactly that reason.

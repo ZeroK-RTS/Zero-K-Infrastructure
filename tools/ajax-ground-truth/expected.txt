@@ -1,0 +1,100 @@
+### encoding
+<form action="/Planetwars/E" data-ajax="true" data-ajax-complete="a &lt; b &amp;&amp; c > d &quot; &#39; ü © 中" data-ajax-mode="replace" data-ajax-update="#t" method="post"></form>
+### BeginForm(action, routeValues, options)
+<form action="/Planetwars/Events?accountID=42&amp;partial=True&amp;pageSize=40" data-ajax="true" data-ajax-loading="#ajaxScrollProgress" data-ajax-mode="replace" data-ajax-update="#events" method="post"></form>
+### BeginForm(action, options)
+<form action="/Planetwars" data-ajax="true" data-ajax-complete="GlobalPageInit($(&#39;#events&#39;))" data-ajax-mode="replace" data-ajax-success="ReplaceHistory($(&#39;#events&#39;).find(&#39;form&#39;).serialize())" data-ajax-update="#events" method="post"></form>
+### BeginForm(action, controller, options)
+<form action="/Clans" data-ajax="true" data-ajax-complete="GlobalPageInit($(&#39;#events&#39;))" data-ajax-mode="replace" data-ajax-success="ReplaceHistory($(&#39;#events&#39;).find(&#39;form&#39;).serialize())" data-ajax-update="#events" method="post"></form>
+### BeginForm(action, controller, routeValues, options, htmlAttributes)
+<form action="/PlanetWars/MatchMaker" data-ajax="true" data-ajax-complete="GlobalPageInit($(&#39;#events&#39;))" data-ajax-mode="replace" data-ajax-success="ReplaceHistory($(&#39;#events&#39;).find(&#39;form&#39;).serialize())" data-ajax-update="#events" id="mmForm" method="post"></form>
+### BeginForm(action, routeValues, options) with method
+<form action="/Planetwars/CommanderProfile?profileNumber=1" data-ajax="true" data-ajax-loading="#busy" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#com1" method="post"></form>
+### PostLink(text, action)
+<form action="" class="postlink" method="post"><button class="postlink-button" type="submit">Delete</button></form>
+### PostLink(text, action, controller, routeValues)
+<form action="" class="postlink" method="post"><button class="postlink-button" type="submit">Select</button></form>
+### PostLink with cssClass and nicetitle
+<form action="" class="postlink" method="post"><button class="js_confirm postlink-button" nicetitle="Really?" type="submit">Delete</button></form>
+### PostLink with a confirm message
+<form action="" class="postlink" method="post"><button class="postlink-button" data-confirm="WARNING: it&#39;s gone after this. Proceed?" type="submit">Activate</button></form>
+### PostLink encodes its text
+<form action="" class="postlink" method="post"><button class="postlink-button" type="submit">a &lt; b &amp; c &quot; d &#39; e</button></form>
+### PostImageLink(src, height, action)
+<form action="" class="postlink" method="post"><button class="postlink-button" type="submit"><img alt="" height="24" src="/img/x.png" /></button></form>
+### PostImageLink with height 0 omits the attribute
+<form action="" class="postlink" method="post"><button class="postlink-button" type="submit"><img alt="" src="/img/x.png" /></button></form>
+### ActionLink(text, action, routeValues, options)
+<a data-ajax="true" data-ajax-mode="replace" data-ajax-update="#matchMaker" href="/Planetwars/MatchMakerJoin?planetID=7&amp;attackerFaction=Dyn">Join</a>
+### EnumDropDownListFor(plain enum)
+<select id="Plain" name="Plain"><option selected="selected" value="1">Casual</option>
+<option value="2">MatchMaking</option>
+<option value="4">Planetwars</option>
+</select>
+### EnumDropDownListFor(enum with [Description])
+<select id="Described" name="Described"><option selected="selected" value="0">AllOffline</option>
+<option value="1">PreGame</option>
+<option value="2">Running</option>
+</select>
+### EnumDropDownListFor(enum with [Display])
+<select id="Displayed" name="Displayed"><option selected="selected" value="0">shown first</option>
+<option value="1">Second</option>
+</select>
+### EnumDropDownListFor(nullable enum, null)
+<select id="NullableEmpty" name="NullableEmpty"><option selected="selected" value=""></option>
+<option value="0">None</option>
+<option value="1">Supported</option>
+<option value="2">Featured</option>
+<option value="3">MatchMaker</option>
+</select>
+### EnumDropDownListFor(nullable enum, with a value)
+<select id="NullableSet" name="NullableSet"><option value=""></option>
+<option value="0">None</option>
+<option value="1">Supported</option>
+<option selected="selected" value="2">Featured</option>
+<option value="3">MatchMaker</option>
+</select>
+### EnumDropDownListFor(non-default selected)
+<select id="Selected" name="Selected"><option value="1">Casual</option>
+<option value="2">MatchMaking</option>
+<option selected="selected" value="4">Planetwars</option>
+</select>
+### EnumDropDownListFor(expression, htmlAttributes)
+<select class="width-100" id="Plain" name="Plain"><option selected="selected" value="1">Casual</option>
+<option value="2">MatchMaking</option>
+<option value="4">Planetwars</option>
+</select>
+### EnumDropDownListFor(declaration order != numeric order)
+<select id="Unordered" name="Unordered"><option value="30">Third</option>
+<option value="10">First</option>
+<option selected="selected" value="20">Second</option>
+</select>
+### HttpUtility.HtmlEncode
+a &lt; b &amp; c &quot; d &#39; e &gt; f &#252; &#169; 中
+### DropDownList(EnumHelper.GetSelectList(enum, value))
+<select id="mapSupportLevel" name="mapSupportLevel"><option value="0">None</option>
+<option value="1">Supported</option>
+<option selected="selected" value="2">Featured</option>
+<option value="3">MatchMaker</option>
+</select>
+### DropDownList(EnumHelper.GetSelectList(enum, null))
+<select id="mapSupportLevel" name="mapSupportLevel"><option selected="selected" value="0">None</option>
+<option value="1">Supported</option>
+<option value="2">Featured</option>
+<option value="3">MatchMaker</option>
+</select>
+### DropDownList(EnumHelper.GetSelectList(enum starting at 1, null))
+<select id="mapSupportLevel" name="mapSupportLevel"><option selected="selected" value="0"></option>
+<option value="1">Casual</option>
+<option value="2">MatchMaking</option>
+<option value="4">Planetwars</option>
+</select>
+### DropDownList(EnumHelper.GetSelectList(enum starting at 1, value))
+<select id="mapSupportLevel" name="mapSupportLevel"><option value="1">Casual</option>
+<option value="2">MatchMaking</option>
+<option selected="selected" value="4">Planetwars</option>
+</select>
+### ExpressionHelper.GetExpressionText(x => x.UserId)
+name=UserId model=[4,11]
+### ExpressionHelper.GetExpressionText(x => x.Types)
+name=Types model=[Featured]

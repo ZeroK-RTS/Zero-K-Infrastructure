@@ -51,8 +51,31 @@ namespace ZeroKWeb.Controllers
         /// <param name="chassis">The <see cref="Unlock"/> ID of the commander chassis to use</param>
         /// <param name="deleteCommander">If not null or empty, delete the <see cref="Commander"/></param>
         /// <returns></returns>
+		/// <summary>
+		/// Renders one commander profile, and only renders it.
+		///
+		/// Commanders.cshtml used to get its markup by calling CommanderProfile itself through
+		/// Html.RenderAction - the same method that deletes commanders and saves modules. That made
+		/// the write reachable by GET, and it ran on every page load: with an existing commander the
+		/// action reached SaveChanges and completed its TransactionScope while merely drawing the
+		/// page.
+		///
+		/// The .NET 9 side already worked this way. MyCommanderProfileViewComponent calls
+		/// BuildCommanderProfileModel and says in its own comment that "the mutating half stays in
+		/// the controller, where a POST reaches it" - this is the MVC 5 half catching up.
+		/// </summary>
 		[Auth]
-		public ActionResult CommanderProfile(int profileNumber, string name, int? chassis, string deleteCommander)
+		[HttpGet]
+		public ActionResult CommanderProfileView(int profileNumber)
+		{
+			if (profileNumber < 1 || profileNumber > GlobalConst.CommanderProfileCount) return Content("WTF! get lost");
+			return GetCommanderProfileView(profileNumber);
+		}
+
+		[Auth]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult CommanderProfile(int profileNumber, string name, int? chassis, string deleteCommander)
 		{
 			if (profileNumber < 1 || profileNumber > GlobalConst.CommanderProfileCount) return Content("WTF! get lost");
 
@@ -98,7 +121,7 @@ namespace ZeroKWeb.Controllers
                 }
 
                 // process modules
-				foreach (var key in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
+				foreach (var key in Request.Form.Keys.Cast<string>().Where(x => !string.IsNullOrEmpty(x)))
 				{
 					var m = Regex.Match(key, "m([0-9]+)");
 					if (m.Success)
@@ -142,7 +165,7 @@ namespace ZeroKWeb.Controllers
 				}
 
                 // process decorations
-                foreach (var key in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
+                foreach (var key in Request.Form.Keys.Cast<string>().Where(x => !string.IsNullOrEmpty(x)))
                 {
                     var d = Regex.Match(key, "d([0-9]+)");
                     if (d.Success)
@@ -183,7 +206,7 @@ namespace ZeroKWeb.Controllers
                 }
 
                 // remove a module/decoration if ordered to
-                foreach (var toDel in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
+                foreach (var toDel in Request.Form.Keys.Cast<string>().Where(x => !string.IsNullOrEmpty(x)))
                 {
 					var m = Regex.Match(toDel, "deleteSlot([0-9]+)");
 					if (m.Success)
@@ -252,6 +275,9 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Reset all the user's unlocks
         /// </summary>
+		[Auth]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public ActionResult Reset()
 		{
 			var db = new ZkDataContext();
@@ -265,6 +291,8 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="id">The ID of the <see cref="Unlock"/> to unlock</param>
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Unlock(int id, bool useKudos = false)
         {
             using (var db = new ZkDataContext())
@@ -318,31 +346,40 @@ namespace ZeroKWeb.Controllers
 			return View("UnlockList", new UnlockListResult() { Account = Global.Account, Unlocks = unlocks, FutureUnlocks = future, AlreadyUnlockedCounts = GetUserUnlockCountsListIncludingFree(db) });
 		}
 
-		PartialViewResult GetCommanderProfileView(int profile)
+		/// <summary>
+		/// The model MyCommanderProfileViewComponent also builds. Extracted rather than copied:
+		/// it is twenty lines of unlock filtering, and this port has put two defects into ten
+		/// lines of helper by transcribing them.
+		/// </summary>
+		public static CommanderProfileModel BuildCommanderProfileModel(ZkDataContext db, int profile)
 		{
-            var db = new ZkDataContext();
 			var com = db.Commanders.SingleOrDefault(x => x.AccountID == Global.AccountID && x.ProfileNumber == profile);
 
-            return PartialView("CommanderProfile",
-                               new CommanderProfileModel
-                               {
-                                   ProfileID = profile,
-                                   Commander = com,
-                                   Slots = db.CommanderSlots.ToList().Where(x=> x.ChassisID == null || (com !=null && x.ChassisID == com.ChassisUnlockID)).ToList(),
-                                   DecorationSlots = db.CommanderDecorationSlots.ToList(),
-			                   	   Unlocks =
-								        GetUserUnlockCountsListIncludingFree(db).Where(
-			                   			   x =>
-			                   			   (x.Unlock.UnlockType != UnlockTypes.Unit)).ToList().Where(
-			                   			 	   x =>
-			                   			 	   (com == null || x.Unlock.LimitForChassis == null || x.Unlock.LimitForChassis.Contains(com.Unlock.Code)) &&
-							   			 	   (com == null || x.Count > com.CommanderModules.Count(y => y.ModuleUnlockID == x.Unlock.UnlockID)) &&
-											   (com == null || x.Count > com.CommanderDecorations.Count(y => y.DecorationUnlockID == x.Unlock.UnlockID))
-											   ).ToList()
-			                   });
+			return new CommanderProfileModel
+			{
+				ProfileID = profile,
+				Commander = com,
+				Slots = db.CommanderSlots.ToList().Where(x => x.ChassisID == null || (com != null && x.ChassisID == com.ChassisUnlockID)).ToList(),
+				DecorationSlots = db.CommanderDecorationSlots.ToList(),
+				Unlocks =
+					GetUserUnlockCountsListIncludingFree(db).Where(
+						x =>
+						(x.Unlock.UnlockType != UnlockTypes.Unit)).ToList().Where(
+							x =>
+							(com == null || x.Unlock.LimitForChassis == null || x.Unlock.LimitForChassis.Contains(com.Unlock.Code)) &&
+							(com == null || x.Count > com.CommanderModules.Count(y => y.ModuleUnlockID == x.Unlock.UnlockID)) &&
+							(com == null || x.Count > com.CommanderDecorations.Count(y => y.DecorationUnlockID == x.Unlock.UnlockID))
+							).ToList()
+			};
 		}
 
-		Dictionary<Unlock, int> GetUserUnlockCountsDictIncludingFree(ZkDataContext db)
+		PartialViewResult GetCommanderProfileView(int profile)
+		{
+			var db = new ZkDataContext();
+			return PartialView("CommanderProfile", BuildCommanderProfileModel(db, profile));
+		}
+
+		static Dictionary<Unlock, int> GetUserUnlockCountsDictIncludingFree(ZkDataContext db)
 		{
 			Account account = db.Accounts.FirstOrDefault(x => x.AccountID == Global.AccountID);
 			Dictionary<ZkData.Unlock, int> unlocks = account.AccountUnlocks.Select(x => new {x.Unlock, x.Count}).ToDictionary(x=> x.Unlock, x=> x.Count);
@@ -354,7 +391,7 @@ namespace ZeroKWeb.Controllers
 			return unlocks;
 		}
 
-		List<UnlockCountEntry> GetUserUnlockCountsListIncludingFree(ZkDataContext db)
+		public static List<UnlockCountEntry> GetUserUnlockCountsListIncludingFree(ZkDataContext db)
 		{
 			return GetUserUnlockCountsDictIncludingFree(db).Select(x => new UnlockCountEntry() {Unlock = x.Key, Count = x.Value}).ToList();
 		}

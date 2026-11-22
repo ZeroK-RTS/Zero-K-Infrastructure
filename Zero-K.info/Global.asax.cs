@@ -172,10 +172,10 @@ namespace ZeroKWeb
             if (FormsAuthentication.IsEnabled && User.Identity.IsAuthenticated) acc = Account.AccountByName(new ZkDataContext(), User.Identity.Name);
             else if (Request[GlobalConst.SessionTokenVariable] != null)
             {
-                int id = 0;
-                if (Global.Server?.SessionTokens.TryRemove(Request[GlobalConst.SessionTokenVariable], out id) == true)
+                var accountID = Global.LobbyApi?.RedeemSessionToken(Request[GlobalConst.SessionTokenVariable]);
+                if (accountID != null)
                 {
-                    acc = new ZkDataContext().Accounts.Find(id);
+                    acc = new ZkDataContext().Accounts.Find(accountID.Value);
                 }
             }
 

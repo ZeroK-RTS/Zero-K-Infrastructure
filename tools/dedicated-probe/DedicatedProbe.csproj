@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Starts a real Spring dedicated server through the port's own code.
+
+    Not a reimplementation: it calls LobbyClient's DedicatedServer.HostGame, the same method
+    ZkLobbyServer calls when a battle starts, so the script generation, the paths, the environment
+    variables and the process launch are all the production ones.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>13.0</LangVersion>
+    <AssemblyName>DedicatedProbe</AssemblyName>
+    <RootNamespace>DedicatedProbe</RootNamespace>
+    <NoWarn>$(NoWarn);CS0618;CS0612</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ZkLobbyServer.Core\ZkLobbyServer.Core.csproj" />
+  </ItemGroup>
+
+</Project>

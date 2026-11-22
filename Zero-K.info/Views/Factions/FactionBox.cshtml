@@ -19,10 +19,10 @@
         <span style="font-size: 120%; color:@f.Color;">@f.Name</span></a>
     @if (Global.Account != null) {
         if (Global.Account.FactionID == null && Global.Clan == null) {
-            @Html.ActionLink("Join!", "JoinFaction", "Factions", new { id = f.FactionID }, null)
+            @Html.PostLink("Join!", "JoinFaction", "Factions", new { id = f.FactionID })
         }
         else if (Global.Account.FactionID == f.FactionID && Global.Clan == null) {
-            @Html.ActionLink("Leave", "LeaveFaction", "Factions", null, new { @class = "delete" })
+            @Html.PostLink("Leave", "LeaveFaction", "Factions", null, "delete")
         }
     }
     <table>

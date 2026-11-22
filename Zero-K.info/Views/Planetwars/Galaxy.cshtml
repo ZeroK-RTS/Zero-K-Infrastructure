@@ -1,4 +1,4 @@
-@using PlasmaShared
+﻿@using PlasmaShared
 @using ZeroKWeb
 @using ZkData
 @model ZkData.Galaxy
@@ -12,6 +12,15 @@
 	{
 		maxDropships = 1;
 	}
+
+	// Once, not once per planet. The loop below used to call GetPlanetBattles(p) for every
+	// planet in the galaxy, and each of those calls walked the server's whole battle list.
+	//
+	// Guarded because hoisting it changed WHEN the lobby server is needed: the per-planet call
+	// only ran if the galaxy had planets, and this runs always. Global.LobbyApi is never null in
+	// production, so this changes nothing there; it is the same guard PlanetwarsEventCreator
+	// already uses, and it lets the page render without battle overlays instead of failing.
+	var pwBattles = Global.LobbyApi?.GetPlanetWarsBattles() ?? new List<ZkLobbyServer.PlanetBattleInfo>();
 	
 }
 
@@ -19,50 +28,6 @@
 
 @functions {
 }
-
-@section head {
-	<script type="text/javascript">
-		/*
-		window.onload = function () */
-		$(function()
-		{
-			var paper = Raphael(document.getElementById("linkMap"), @Model.Width, @Model.Height);
-
-			@foreach (var link in Model.Links)
-			{
-				var p1 = link.PlanetByPlanetID1;
-				var p2 = link.PlanetByPlanetID2;
-
-				var x1 = p1.X * Model.Width;
-				var y1 = p1.Y * Model.Height;
-				var x2 = p2.X * Model.Width;
-				var y2 = p2.Y * Model.Height;
-
-
-				// lines don't support gradients, so use rectangles instead
-				double width = 2;
-				var color1 = p1.GetColor(Global.Account);
-				var color2 = p2.GetColor(Global.Account);
-				var angle = -Math.Atan2(x2 - x1, y2 - y1) / Math.PI * 180;
-				var length = Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-				var lineX = x1 - width / 2;
-				var lineY = y1 + width / 2;
-
-				// don't let the line cover the planets
-				lineY += p1.Resource.PlanetWarsIconSize / 2 * 1.5;
-				length -= p2.Resource.PlanetWarsIconSize * 1.5;
-
-				@: var r = paper.rect(@String.Format("{0:0}, {1:0}, {2:0}, {3:0}", lineX, lineY, width, length));
-				@: r.attr({
-				@:	"fill": "90-@color2-@color1",
-				@:	"stroke": "none"
-				@: });
-				@: r.rotate(@angle, @String.Format("{0:0}", x1), @String.Format("{0:0}", y1));
-			}
-		} )
-	</script>
-}
-
 
 <div class="">
     <center>
@@ -115,7 +80,46 @@
 <br class="clearfloat" />
 
 <div style="position: relative; z-index: 100" >
-	<div id="linkMap" style="position: absolute; z-index: 0"> </div>
+	<div id="linkMap" style="position: absolute; z-index: 0">
+		@* Planet links, drawn as native SVG. This used to be a Raphael script block that
+		   emitted one paper.rect() call per link; Raphael was an SVG shim for IE6-8. *@
+		<svg xmlns="http://www.w3.org/2000/svg" width="@Model.Width" height="@Model.Height"
+		     viewBox="0 0 @Model.Width @Model.Height" role="img" aria-label="Galaxy map links">
+			<defs>
+				@foreach (var link in Model.Links)
+				{
+					var c1 = link.PlanetByPlanetID1.GetColor(Global.Account);
+					var c2 = link.PlanetByPlanetID2.GetColor(Global.Account);
+					<linearGradient id="lg@(link.PlanetID1)_@(link.PlanetID2)" x1="0" y1="0" x2="0" y2="1">
+						<stop offset="0" stop-color="@c1" />
+						<stop offset="1" stop-color="@c2" />
+					</linearGradient>
+				}
+			</defs>
+			@foreach (var link in Model.Links)
+			{
+				var p1 = link.PlanetByPlanetID1;
+				var p2 = link.PlanetByPlanetID2;
+				var x1 = p1.X * Model.Width;
+				var y1 = p1.Y * Model.Height;
+				const double linkWidth = 2;
+
+				// keep the bar clear of both planet icons, as the Raphael version did
+				var r = GalaxyMapGeometry.Link(x1,
+					y1,
+					p2.X * Model.Width,
+					p2.Y * Model.Height,
+					linkWidth,
+					startOffset: linkWidth / 2 + p1.Resource.PlanetWarsIconSize / 2 * 1.5,
+					endTrim: p2.Resource.PlanetWarsIconSize * 1.5);
+
+				<rect x="@GalaxyMapGeometry.N(r.X)" y="@GalaxyMapGeometry.N(r.Y)"
+				      width="@GalaxyMapGeometry.N(r.Width)" height="@GalaxyMapGeometry.N(r.Length)"
+				      fill="url(#lg@(link.PlanetID1)_@(link.PlanetID2))"
+				      transform="rotate(@GalaxyMapGeometry.N(r.AngleDegrees) @GalaxyMapGeometry.N(x1) @GalaxyMapGeometry.N(y1))" />
+			}
+		</svg>
+	</div>
 	<img src="/img/galaxies/render_@(g.GalaxyID).jpg" style="position: relative; top: 0; left: 0; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
 	
 
@@ -124,7 +128,7 @@
 	var por = p.PlanetOverlayRectangle(Model);
 	Clan clan = null;
     Faction faction = p.Faction;
-	var autohost = Global.Server.GetPlanetBattles(p).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
+	var autohost = pwBattles.Where(x => x.MapName == p.Resource.InternalName).OrderByDescending(x=>x.UserCount).FirstOrDefault();
 
 	int shipCount = p.PlanetFactions.Sum(x => (int?)x.Dropships) ?? 0;
 
@@ -144,7 +148,7 @@
 			</a>
 		</div></td></tr></table>
 
-		@if (autohost != null && autohost.Users.Count > 1)
+		@if (autohost != null && autohost.UserCount > 1)
 		{ 
 			<img src='/img/planetstatus/@(autohost.IsInGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute; left: 0;'/>
 		}

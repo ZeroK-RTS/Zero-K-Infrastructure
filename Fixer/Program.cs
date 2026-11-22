@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Linq;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -21,9 +20,7 @@ using System.Xml.Serialization;
 using AutoRegistrator;
 using EntityFramework.Extensions;
 //using LobbyClient;
-//using NightWatch;
 using LobbyClient;
-using Microsoft.Linq.Translations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PlasmaDownloader;
@@ -936,7 +933,7 @@ namespace Fixer
 
                 foreach (var resource in db.Resources.Where(x => x.TypeID == ResourceType.Map))//&&x.MapSizeSquared == null))
                 {
-                    var file = String.Format("{0}/{1}.metadata.xml.gz", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
+                    var file = Path.Combine(GlobalConst.SiteDiskPath, GlobalConst.ResourceFolder, resource.InternalName.EscapePath() + ".metadata.xml.gz");
                     var map = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(File.ReadAllBytes(file).Decompress()));
 
                     resource.MapWidth = map.Size.Width / 512;
@@ -960,7 +957,7 @@ namespace Fixer
                     resource.MapSizeSquared = (map.Size.Width / 512) * (map.Size.Height / 512);
                     resource.MapSizeRatio = (float)map.Size.Width / map.Size.Height;
 
-                    var minimap = String.Format("{0}/{1}.minimap.jpg", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
+                    var minimap = Path.Combine(GlobalConst.SiteDiskPath, GlobalConst.ResourceFolder, resource.InternalName.EscapePath() + ".minimap.jpg");
 
                     using (var im = Image.FromFile(minimap))
                     {
@@ -989,7 +986,7 @@ namespace Fixer
                             var encoderParams = new EncoderParameters(1);
                             encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
 
-                            var target = String.Format("{0}/{1}.thumbnail.jpg", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
+                            var target = Path.Combine(GlobalConst.SiteDiskPath, GlobalConst.ResourceFolder, resource.InternalName.EscapePath() + ".thumbnail.jpg");
                             correctMinimap.Save(target, jgpEncoder, encoderParams);
                         }
                     }

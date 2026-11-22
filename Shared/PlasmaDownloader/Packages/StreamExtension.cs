@@ -5,13 +5,13 @@ namespace PlasmaDownloader.Packages
 {
     public static class StreamExtension
     {
-        public static bool ReadExactly(this Stream stream, byte[] buffer, int offset, int count)
+        public static bool TryReadExactly(this Stream stream, byte[] buffer, int offset, int count)
         {
             long val = 0;
-            return ReadExactly(stream, buffer, offset, count, ref val);
+            return TryReadExactly(stream, buffer, offset, count, ref val);
         }
 
-        public static bool ReadExactly(this Stream stream, byte[] buffer, int offset, int count, ref long valueToIncrement)
+        public static bool TryReadExactly(this Stream stream, byte[] buffer, int offset, int count, ref long valueToIncrement)
         {
             var read = 0;
             do

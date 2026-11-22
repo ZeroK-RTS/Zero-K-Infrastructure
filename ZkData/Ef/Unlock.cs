@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -80,7 +80,7 @@ namespace ZkData
         [NotMapped]
         public string ImageUrl
         {
-            get { return string.Format((string)"/img/avatars/{0}.png", (object)Code); }
+            get { return string.Format((string)"/img/{0}/{1}.png", (object)GlobalConst.AvatarFolder, (object)Code); }
         }
     }
 }

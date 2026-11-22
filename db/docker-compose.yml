@@ -1,0 +1,37 @@
+# Local SQL Server for Zero-K development and, later, automated tests.
+#
+# The application's Local mode expects SQL Server LocalDB, which is Windows-only. This
+# container is the cross-platform stand-in: same engine, reachable over TCP, so the same
+# connection string shape works from Windows, Linux and CI.
+#
+#   docker compose -f db/docker-compose.yml up -d
+#   ./db/wait-for-db.sh
+#
+# The password is a local development secret and is deliberately committed: this database
+# holds no production data and is not reachable from outside the machine. Do not reuse it
+# anywhere else.
+
+services:
+  zk-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: zk-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "ZkLocal!Dev2026"
+      MSSQL_PID: Developer
+    ports:
+      # 14330, not 1433, so it cannot collide with a real SQL Server on the machine
+      - "127.0.0.1:14330:1433"
+    volumes:
+      - zk-db-data:/var/opt/mssql
+      # dumps you drop into db/dumps/ show up inside the container here
+      - ./dumps:/dumps:ro
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  zk-db-data:

@@ -1,0 +1,38 @@
+<Project>
+  <!--
+    The views the .NET 9 port compiles INSTEAD of the linked originals. See PortedViews/README.md.
+
+    Imported by ZeroKWeb.Core, ZeroKWeb.Host and ZeroKWeb.Render, after each one's
+    Content Include of ..\Zero-K.info\Views\**, because it removes from it.
+
+    Each Remove below must have a counterpart file under PortedViews\ at the same path, and vice
+    versa: two files landing at the same Views\... link is how ZeroKWeb.Host ended up with a
+    Razor generator that fails outright and produces NO views at all (CS8785, duplicate hintName).
+  -->
+  <ItemGroup>
+    <Content Remove="..\Zero-K.info\Views\Shared\CommentList.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Clans\Detail.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Factions\Detail.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Forum\NewPost.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Forum\Thread.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Planetwars\Planet.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\My\Commanders.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Shared\TopMenu.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Planetwars\Galaxy.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Battles\BattleDetail.cshtml" />
+    <Content Remove="..\Zero-K.info\Views\Shared\UserDetail.cshtml" />
+
+    <!--
+      Link uses a FORWARD slash after Views, and it matters. %(RecursiveDir) comes back with
+      forward slashes here, so "Views\" produced "Views\Planetwars/Galaxy.cshtml" - a mixed
+      separator the Razor SDK does not walk when it looks for _ViewImports.cshtml. The diverged
+      view then compiled with no imports at all: no @inherits ZkRazorPage, no System.Web.Mvc, so
+      Page, PrintDate, BBCode and the rest were all "does not exist in the current context".
+
+      Shared/CommentList.cshtml hid this for a whole commit because it is simple enough not to
+      need a single thing from _ViewImports. Galaxy.cshtml, the second diverged view, needed
+      seven of them.
+    -->
+    <Content Include="..\PortedViews\**\*.cshtml" Link="Views/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

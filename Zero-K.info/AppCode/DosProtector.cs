@@ -1,70 +1,43 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Web;
 
 namespace ZeroKWeb
 {
-    public class DosProtector
+    /// <summary>
+    /// The MVC 5 half of the rate limiter: everything that touches System.Web, and nothing else.
+    ///
+    /// The counting moved to DosProtector.Portable.cs unchanged, so that the .NET 9 host can
+    /// compile the same file rather than carry a second copy of it. What is left here is pulling
+    /// an address out of an HttpRequest, deciding what is exempt, and keeping the request id where
+    /// EndRequest can find it - three things that have no meaning off System.Web and a different
+    /// answer each on ASP.NET Core.
+    /// </summary>
+    public partial class DosProtector
     {
-        private long requestCounter;
-
-        private ConcurrentDictionary<long, DosEntry> requests = new ConcurrentDictionary<long, DosEntry>();
-
-
+        /// <summary>
+        /// Exempt: anything IIS is serving without a managed handler - which is how static files
+        /// present here - and the tooltip endpoint, which a page calls many times while a visitor
+        /// moves the mouse and which is cheap.
+        ///
+        /// On ASP.NET Core the first of these is positional instead: the middleware is registered
+        /// after UseStaticFiles, so a static file is answered before it is reached. Same exemption,
+        /// no equivalent line.
+        /// </summary>
         public bool CanQuery(HttpRequest request)
         {
-            if (request.RequestContext.HttpContext.Handler == null) return true; // static files are allowed
+            if (request.RequestContext.HttpContext.Handler == null) return true;
             if (request.Path.Contains("/Home/GetTooltip")) return true;
 
-
-            var ip = request.UserHostAddress;
-            var now = DateTime.UtcNow;
-            var limit = now.AddSeconds(-5);
-            var parallel = requests.Values.Count(x => x != null && x.IP == ip && x.RequestEnd > now);
-            if (parallel > 15) return false;
-
-            var totalTime =
-                requests.Values.Where(x => (x != null) && (x.IP == ip) && (x.RequestEnd >= limit))
-                    .Select(x => x.RequestEnd < now ? x.RequestEnd.Subtract(x.RequestStart > limit ? x.RequestStart : limit).TotalSeconds : now.Subtract(x.RequestStart > limit ? x.RequestStart : limit).TotalSeconds)
-                    .Sum();
-            if (totalTime > 11) return false;
-            return true;
-        }
-
-
-        public void RequestEnd(HttpRequest request)
-        {
-            var requestID = request.RequestContext.HttpContext.Items["requestID"] as long?;
-            if (requestID.HasValue)
-            {
-                DosEntry entry;
-                if (requests.TryGetValue(requestID.Value, out entry)) entry.RequestEnd = DateTime.UtcNow;
-                var limit = DateTime.UtcNow.AddSeconds(-5);
-                var toDel = requests.Values.Where(x => (x != null) && (x.RequestEnd < limit)).ToList();
-
-                DosEntry dummy;
-                foreach (var td in toDel) requests.TryRemove(td.RequestID, out dummy);
-            }
+            return CanQuery(request.UserHostAddress);
         }
 
         public void RequestStart(HttpRequest request)
         {
-            var ip = request.UserHostAddress;
-            var requestID = Interlocked.Increment(ref requestCounter);
-            requests[requestID] = new DosEntry() { RequestID = requestID, RequestStart = DateTime.UtcNow, IP = ip };
-
-            request.RequestContext.HttpContext.Items["requestID"] = requestID;
+            request.RequestContext.HttpContext.Items["requestID"] = RequestStart(request.UserHostAddress);
         }
 
-        public class DosEntry
+        public void RequestEnd(HttpRequest request)
         {
-            public string IP;
-            public DateTime RequestEnd = DateTime.MaxValue;
-            public long RequestID;
-            public DateTime RequestStart;
+            RequestEnd(request.RequestContext.HttpContext.Items["requestID"] as long?);
         }
     }
 }

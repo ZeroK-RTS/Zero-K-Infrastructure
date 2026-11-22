@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Database-backed tests for the Whole History Rating pipeline.
+
+    Separate from Tests.Portable on purpose: that suite links pure sources, runs on .NET 9
+    in about 150ms and needs nothing installed. This one needs a SQL Server container and
+    the committed fixture, so it must never be what a developer runs by reflex.
+
+    It targets net48 because the pipeline it tests - WholeHistoryRating, SpringBattle,
+    ZkDataContext - is Entity Framework 6, which does not run on .NET 9. That is the
+    blocker described in ZkData/EFCORE-MIGRATION.md; when it lifts, this project can move.
+
+    OutputType is Exe so it can be run under mono, which has no working vstest runner.
+    Program.cs discovers and runs the same [TestMethod]s that Visual Studio and the
+    Windows CI runner would.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <Platforms>x64</Platforms>
+    <Configurations>Debug;Release</Configurations>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NoWarn>$(NoWarn);CS0618</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.7" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ZkData\ZkData.csproj" />
+  </ItemGroup>
+
+  <!--
+    The lobby API transport, LINKED rather than referenced.
+
+    Referencing ZkLobbyServer drags its whole package graph in - MaxMind, Azure.Storage, Dataflow -
+    and NuGet refuses the result with NU1605 downgrades that the server's own build never sees.
+    None of it is needed: the transport depends on the interface, its DTOs and Newtonsoft, and on
+    nothing in the running server. Linking the files is the same thing port-sources.props does for
+    the same interface, and it has the same useful side effect - these files are proven to compile
+    without the server behind them.
+  -->
+  <ItemGroup>
+    <Compile Include="..\ZkLobbyServer\ILobbyServerApi.cs" Link="Linked\ILobbyServerApi.cs" />
+    <Compile Include="..\ZkLobbyServer\PlanetWarsApi.cs" Link="Linked\PlanetWarsApi.cs" />
+    <Compile Include="..\ZkLobbyServer\TourneyApi.cs" Link="Linked\TourneyApi.cs" />
+    <Compile Include="..\ZkLobbyServer\RatingApi.cs" Link="Linked\RatingApi.cs" />
+    <Compile Include="..\ZkLobbyServer\SessionTokenStore.cs" Link="Linked\SessionTokenStore.cs" />
+    <Compile Include="..\ZkLobbyServer\Api\LobbyApiConfiguration.cs" Link="Linked\LobbyApiConfiguration.cs" />
+    <Compile Include="..\ZkLobbyServer\Api\LobbyApiProtocol.cs" Link="Linked\LobbyApiProtocol.cs" />
+    <Compile Include="..\ZkLobbyServer\Api\LobbyApiHost.cs" Link="Linked\LobbyApiHost.cs" />
+    <Compile Include="..\ZkLobbyServer\Api\RemoteLobbyServerApi.cs" Link="Linked\RemoteLobbyServerApi.cs" />
+
+  </ItemGroup>
+
+</Project>

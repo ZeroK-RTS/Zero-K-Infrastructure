@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using ZkData;
 using PlasmaShared;
+using PlasmaShared.Imaging;
 
 namespace ZeroKWeb.Controllers
 {
@@ -34,6 +35,7 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="nn">The existing <see cref="News"/> item, if editing</param>
         /// <remarks>Also makes or edits a <see cref="ForumThread"/> and its starting <see cref="ForumPost"/></remarks>
+		[HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         [ValidateInput(false)]
@@ -55,10 +57,10 @@ namespace ZeroKWeb.Controllers
                 news.Title=  nn.Title;
                 news.Text = nn.Text;
 
-				Image im = null;
+				byte[] uploadedImage = null;
 				if (image != null && image.ContentLength > 0)
 				{
-					im = Image.FromStream(image.InputStream);
+					uploadedImage = Images.ReadAll(image.InputStream);
 					news.ImageExtension = Path.GetExtension(image.FileName);
 					news.ImageContentType = image.ContentType;
 					news.ImageLength = image.ContentLength;
@@ -99,11 +101,13 @@ namespace ZeroKWeb.Controllers
                     db.SaveChanges();
                 }
 
-				if (im != null)
+				if (uploadedImage != null)
 				{
-					im.Save(Server.MapPath(news.ImageRelativeUrl));
-                    Image thumb = im.GetResized(120, (int)Math.Round(120.0 / im.Width * im.Height), InterpolationMode.HighQualityBicubic);
-                    thumb.Save(Server.MapPath(news.ThumbRelativeUrl));
+					Images.Processor.Save(uploadedImage, this.MapPath(news.ImageRelativeUrl));
+					var uploadedSize = Images.Processor.Measure(uploadedImage);
+					Images.Processor.SaveResized(uploadedImage,
+					    new Size(120, ImageSizing.ProportionalHeight(uploadedSize.Width, uploadedSize.Height, 120)),
+					    this.MapPath(news.ThumbRelativeUrl));
 				}
 				scope.Complete();
 			}

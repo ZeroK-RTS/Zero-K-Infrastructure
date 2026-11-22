@@ -1,0 +1,8 @@
+# Database dumps are NEVER committed.
+#
+# A dump of the live database contains real accounts: password hashes, e-mail addresses,
+# IP addresses and private messages. This repository is public. Keep dumps here on your
+# machine; git must not see them.
+dumps/*
+!dumps/.gitkeep
+!dumps/README.md

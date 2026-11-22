@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
@@ -51,10 +51,18 @@ namespace ZkData
             return Name;
         }
 
+        /// <summary>
+        /// <paramref name="viewer"/> may be null, and the one caller passes Global.Account -
+        /// which is null for anybody not signed in. /Home/GetTooltip is anonymous, so asking it
+        /// for a campaign planet threw a NullReferenceException at every visitor who was not
+        /// logged in. Account 0 owns no progress, so it reads as locked, which is what a stranger
+        /// should see anyway. Planet.GetColor takes the same argument and ignores it.
+        /// </summary>
         public string GetColor(Account viewer)
         {
-            bool isUnlocked = IsUnlocked(viewer.AccountID);
-            bool isCompleted = IsCompleted(viewer.AccountID);
+            var accountID = viewer != null ? viewer.AccountID : 0;
+            bool isUnlocked = IsUnlocked(accountID);
+            bool isCompleted = IsCompleted(accountID);
 
             if (isCompleted)
             {

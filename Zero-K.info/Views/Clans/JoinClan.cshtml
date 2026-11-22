@@ -3,6 +3,7 @@
 @model int
 
 <form method="post" action="@Url.Action("JoinClan", new { id = Model})">
+@Html.AntiForgeryToken()
 Password to join the clan: <input type="password" name="password" /><br />
 <input type="submit" value="Join"/>
 </form>

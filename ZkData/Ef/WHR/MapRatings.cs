@@ -80,7 +80,7 @@ namespace Ratings
                 using (var db = new ZkDataContext())
                 {
 
-                    db.Database.CommandTimeout = 300;
+                    db.Database.SetCommandTimeoutCompat(300);
                     var endPollId = lastPollId + 10000;
                     outcomes = db.MapPollOutcomes
                         .Where(x => x.MapPollID > lastPollId && x.MapPollID < endPollId && x.MapPollOptions.All(o => o.Resource.MapSupportLevel >= MapSupportLevel.Supported))

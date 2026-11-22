@@ -18,9 +18,16 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var poll = db.Polls.FirstOrDefault(x => x.PollID == pollID);
             if (poll != null) return PartialView("PollView", poll);
-            return null;
+
+            // EmptyResult, not null. MVC 5 substitutes EmptyResult.Instance for a null action
+            // result, so asking for a poll that is not there rendered nothing and answered 200.
+            // ASP.NET Core throws instead - "Cannot return null from an action method with a
+            // return type of 'ActionResult'" - so the same request answers 500 on the port.
+            // This is what MVC 5 did implicitly, written out, and it reads the same on both.
+            return new EmptyResult();
         }
 
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult NewPoll(string question, string answers, bool? isAnonymous)
@@ -56,7 +63,7 @@ namespace ZeroKWeb.Controllers
 
                         db.SaveChanges();
 
-                        Global.Server.GhostPm(acc.Name, string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
+                        Global.LobbyApi.GhostPm(acc.Name, string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
                     }
                     else
                     {
@@ -100,7 +107,7 @@ namespace ZeroKWeb.Controllers
                                                    yes,
                                                    no));
 
-                            Global.Server.GhostPm(acc.Name, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
+                            Global.LobbyApi.GhostPm(acc.Name, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
                         }
                     }
                 }
@@ -115,6 +122,8 @@ namespace ZeroKWeb.Controllers
         /// Starts a poll to elect someone to a <see cref="RoleType"/>, or remove an existing holder
         /// </summary>
         [Auth()]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult NominateRole(int roleTypeID, string text, bool isRemoval = false, int? removalAccountID = null)
         {
             var db = new ZkDataContext();
@@ -166,6 +175,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult PollVote(int pollID)
         {
             var db = new ZkDataContext();
@@ -173,7 +184,7 @@ namespace ZeroKWeb.Controllers
 
             if (Global.Account.Level >= GlobalConst.MinLevelForForumVote)
             {
-                var key = Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)).First(x => x.StartsWith("option"));
+                var key = Request.Form.AllKeysCompat().Where(x => !string.IsNullOrEmpty(x)).First(x => x.StartsWith("option"));
                 var optionID = Convert.ToInt32(key.Substring(6));
 
                 if (!poll.PollOptions.Any(x => x.OptionID == optionID)) return Content("Invalid option");
@@ -195,6 +206,8 @@ namespace ZeroKWeb.Controllers
         }
 
         //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SwapHeadline(int pollid)
         {
@@ -217,6 +230,8 @@ namespace ZeroKWeb.Controllers
             return View("PollUserVotes", acc);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SwapVisible(int pollid)
         {

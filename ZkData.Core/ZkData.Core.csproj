@@ -1,0 +1,148 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The .NET 9 port of the data layer, built alongside the running one rather than in
+    place of it.
+
+    It LINKS the entity classes out of ZkData instead of copying them. That is the whole
+    strategy: the same source files feed the EF6 model that production runs and the EF Core
+    model being built, so the two cannot drift while the port is in progress, and the
+    schema diff against db/schema/schema.txt measures a real difference rather than a
+    transcription error.
+
+    Progress is measured, not asserted:
+        ./db/efcore-schema.sh            builds a database from this model and diffs it
+                                         against the schema the EF6 migrations produce
+
+    Nothing references this project yet. It is not in Zero-K.sln.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!--
+      Pinned, not "latest". "latest" means whichever C# the machine's newest SDK happens to
+      support, and that is not a property this port can leave to chance: the CI runner has
+      SDK 10.0.12 installed alongside the 9.0.318 the workflow asks for, picks the higher one
+      because nothing says otherwise, and compiles as C# 14. Under C# 14 an array converts to
+      Span, which changes which extension method `array.Reverse()` binds to - it built here
+      and failed there, on identical source. The claim this project exists to make is
+      "compiles on .NET 9", so it compiles as C# 13 wherever it is built.
+    -->
+    <LangVersion>13.0</LangVersion>
+    <RootNamespace>ZkData.Core</RootNamespace>
+    <!-- linked legacy sources: their warnings belong to the original project -->
+    <NoWarn>$(NoWarn);CS0618;CS0649;CS0168;CS1998;CS0108;CS0114;CS0169;CS0067</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.13" />
+<!-- System.Drawing.Common used to be here, COMPILE-TIME ONLY, because
+         ZkData.UnitSyncLib.Map declared three Image/Bitmap members. It declares MapImage now -
+         a compat twin whose .NET 9 half keeps unitsync's RGB24 pixels and uses ImageSharp - so
+         the package is gone from this project entirely, and with it the last Windows-only
+         assembly the ported website compiled against. ImageSharp above is unchanged. -->
+  </ItemGroup>
+
+  <!-- the entity classes, linked from ZkData and unmodified -->
+  <ItemGroup>
+    <Compile Include="..\ZkData\Ef\*.cs" Link="Linked\Ef\%(Filename).cs" />
+    <Compile Include="..\ZkData\Enums\*.cs" Link="Linked\Enums\%(Filename).cs" />
+  </ItemGroup>
+
+  <!-- supporting types those entities need, also linked -->
+  <ItemGroup>
+    <Compile Include="..\Shared\PlasmaShared\ISpringieService\RatingCategory.cs" Link="Linked\RatingCategory.cs" />
+    <Compile Include="..\Shared\PlasmaShared\ISpringieService\AutohostMode.cs" Link="Linked\AutohostMode.cs" />
+    <Compile Include="..\Shared\PlasmaShared\MapSupportLevel.cs" Link="Linked\MapSupportLevel.cs" />
+    <Compile Include="..\Shared\PlasmaShared\GlobalConst.Portable.cs" Link="Linked\GlobalConst.Portable.cs" />
+    <Compile Include="..\Shared\PlasmaShared\ModeType.cs" Link="Linked\ModeType.cs" />
+    <Compile Include="..\Shared\PlasmaShared\PlanetWarsModes.cs" Link="Linked\PlanetWarsModes.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Utils.Enumerable.cs" Link="Linked\Utils.Enumerable.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Imaging\ImageSizing.cs" Link="Linked\ImageSizing.cs" />
+    <Compile Include="..\Zero-K.info\AppCode\LegacyCallAudit.cs" Link="Linked\LegacyCallAudit.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Imaging\IImageProcessor.cs" Link="Linked\IImageProcessor.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Imaging\ImageSharpImageProcessor.cs" Link="Linked\ImageSharpImageProcessor.cs" />
+    <Compile Include="..\Shared\PlasmaShared\IContentService\ClientMissionInfo.cs" Link="Linked\ClientMissionInfo.cs" />
+    <Compile Include="..\Shared\PlasmaShared\CommandJsonSerializer.cs" Link="Linked\CommandJsonSerializer.cs" />
+    <!-- PlasmaShared's ResourceType. This used to link Shared/ZkData/ResourceType.cs instead -
+         a second file declaring ZkData.ResourceType, in no project, which stopped at Mod = 1
+         where production has Helper = 2.
+         Nothing broke, because the column is an int either way and the two agree on Map and
+         Mod, so the schema diff and every read still passed. It surfaced only when
+         ResourceInfo.cs - which says `= ResourceType.Helper` - was linked for MapsController.
+         The tree that held it is deleted now, so there is only one of these again. -->
+    <Compile Include="..\Shared\PlasmaShared\IContentService\ResourceType.cs" Link="Linked\ResourceType.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\PlayerRating.cs" Link="Linked\WHR\PlayerRating.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\MapRatings.cs" Link="Linked\WHR\MapRatings.cs" />
+    <Compile Include="..\Shared\PlasmaShared\CsvTable.cs" Link="Linked\CsvTable.cs" />
+    <!-- The unitsync DATA types, for MapsController: it deserialises a Map out of the
+         metadata the registrar wrote. NativeMethods.cs and UnitSync.cs are deliberately NOT
+         here - those are the P/Invoke into unitsync itself, which is what makes the registrar
+         unportable, and nothing the website does needs them. -->
+    <Compile Include="..\Shared\PlasmaShared\SerializableDictionary.cs" Link="Linked\SerializableDictionary.cs" />
+    <Compile Include="..\Shared\PlasmaShared\ResourceInfo.cs" Link="Linked\UnitSyncLib\ResourceInfo.cs" />
+    <!-- The .NET 9 half of the MapImage compat twin, which is what Map declares now. -->
+    <Compile Include="..\Shared\PlasmaShared\Imaging\MapImageCore.cs" Link="Linked\Imaging\MapImageCore.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\Map.cs" Link="Linked\UnitSyncLib\Map.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\Mod.cs" Link="Linked\UnitSyncLib\Mod.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\Option.cs" Link="Linked\UnitSyncLib\Option.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\ListOption.cs" Link="Linked\UnitSyncLib\ListOption.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\StartPos.cs" Link="Linked\UnitSyncLib\StartPos.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\Ai.cs" Link="Linked\UnitSyncLib\Ai.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\AiInfoPair.cs" Link="Linked\UnitSyncLib\AiInfoPair.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\UnitInfo.cs" Link="Linked\UnitSyncLib\UnitInfo.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\MapInfo.cs" Link="Linked\UnitSyncLib\MapInfo.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\ModMissionSlot.cs" Link="Linked\UnitSyncLib\ModMissionSlot.cs" />
+    <Compile Include="..\Shared\PlasmaShared\UnitSyncLib\VfsMode.cs" Link="Linked\UnitSyncLib\VfsMode.cs" />
+    <Compile Include="..\ZkData\PayPal\PayPalInterface.cs" Link="Linked\PayPalInterface.cs" />
+    <Compile Include="..\ZkData\MissionService\IMissionService.cs" Link="Linked\MissionService\IMissionService.cs" />
+    <Compile Include="..\ZkData\MissionService\MissionServiceApi.cs" Link="Linked\MissionService\MissionServiceApi.cs" />
+    <Compile Include="..\ZkLobbyServer\PlanetWarsApi.cs" Link="Linked\PlanetWarsApi.cs" />
+    <Compile Include="..\ZkLobbyServer\TourneyApi.cs" Link="Linked\TourneyApi.cs" />
+    <Compile Include="..\ZkLobbyServer\RatingApi.cs" Link="Linked\RatingApi.cs" />
+    <Compile Include="..\ZkLobbyServer\ILobbyServerApi.cs" Link="Linked\ILobbyServerApi.cs" />
+    <Compile Include="..\ZkLobbyServer\ZkServerTraceListener.cs" Link="Linked\ZkServerTraceListener.cs" />
+    <Compile Include="..\ZkData\SpringFilesUnitsyncAttempt.cs" Link="Linked\SpringFilesUnitsyncAttempt.cs" />
+    <Compile Include="..\ZkData\SteamWebApi.cs" Link="Linked\SteamWebApi.cs" />
+    <Compile Include="..\ZkData\Secrets.cs" Link="Linked\Secrets.cs" />
+    <Compile Include="..\ZkData\ZkHtmlFormat.cs" Link="Linked\ZkHtmlFormat.cs" />
+    <Compile Include="..\ZkData\PlanetwarsEventFormatter.cs" Link="Linked\PlanetwarsEventFormatter.cs" />
+    <Compile Include="..\Shared\PlasmaShared\PriorityScheduler.cs" Link="Linked\PriorityScheduler.cs" />
+    <Compile Include="..\Shared\PlasmaShared\Relation.cs" Link="Linked\Relation.cs" />
+    <Compile Include="..\Shared\LobbyClient\Protocol\Messages.cs" Link="Linked\Protocol\Messages.cs" />
+    <Compile Include="..\Shared\LobbyClient\Protocol\MatchMakerMessages.cs" Link="Linked\Protocol\MatchMakerMessages.cs" />
+    <Compile Include="..\Shared\LobbyClient\Protocol\PartyMessages.cs" Link="Linked\Protocol\PartyMessages.cs" />
+    <Compile Include="..\Shared\LobbyClient\UserBattleStatus.cs" Link="Linked\UserBattleStatus.cs" />
+    <Compile Include="..\Shared\LobbyClient\Spring.SpringBattleContext.cs" Link="Linked\SpringBattleContext.cs" />
+    <Compile Include="..\Shared\PlasmaShared\IContentService\IContentService.cs" Link="Linked\ContentServiceDtos.cs" />
+    <Compile Include="..\ZkData\LogEntry.cs" Link="Linked\LogEntry.cs" />
+    <Compile Include="..\ZkData\IPlanetwarsEventCreator.cs" Link="Linked\IPlanetwarsEventCreator.cs" />
+    <Compile Include="..\ZkData\IEntityAfterChange.cs" Link="Linked\IEntityAfterChange.cs" />
+    <Compile Include="..\ZkData\IEntityBeforeChange.cs" Link="Linked\IEntityBeforeChange.cs" />
+    <Compile Include="..\Shared\PlasmaShared\IContentService\ResourceData.cs" Link="Linked\ResourceData.cs" />
+    <Compile Include="..\Shared\PlasmaShared\IContentService\ScriptMissionData.cs" Link="Linked\ScriptMissionData.cs" />
+    <Compile Include="..\Shared\PlasmaShared\IContentService\ReturnValue.cs" Link="Linked\ReturnValue.cs" />
+    <Compile Include="..\Shared\PlasmaShared\ISpringieService\PlayerTeam.cs" Link="Linked\PlayerTeam.cs" />
+    <Compile Include="..\Shared\PlasmaShared\ISpringieService\LobbyHostingContext.cs" Link="Linked\LobbyHostingContext.cs" />
+    <Compile Include="..\Shared\PlasmaShared\ISpringieService\BattlePlayerResult.cs" Link="Linked\BattlePlayerResult.cs" />
+    <Compile Include="..\Shared\PlasmaShared\ISpringieService\BotTeam.cs" Link="Linked\BotTeam.cs" />
+    <Compile Include="..\Shared\PlasmaShared\ISpringieService\BalanceTeamsResult.cs" Link="Linked\BalanceTeamsResult.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\Player.cs" Link="Linked\WHR\Player.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\PlayerDay.cs" Link="Linked\WHR\PlayerDay.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\Game.cs" Link="Linked\WHR\Game.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\RatingSystems.Dates.cs" Link="Linked\WHR\RatingSystems.Dates.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\IRatingSystem.cs" Link="Linked\WHR\IRatingSystem.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\ITopPlayersUpdateListener.cs" Link="Linked\WHR\ITopPlayersUpdateListener.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\Ranks.cs" Link="Linked\WHR\Ranks.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\RatingSystems.cs" Link="Linked\WHR\RatingSystems.cs" />
+    <Compile Include="..\ZkData\Ef\WHR\WholeHistoryRating.cs" Link="Linked\WHR\WholeHistoryRating.cs" />
+  </ItemGroup>
+
+</Project>

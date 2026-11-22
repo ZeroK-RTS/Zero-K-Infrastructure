@@ -1,12 +1,9 @@
-#region using
+﻿#region using
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -18,7 +15,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Encoder = System.Drawing.Imaging.Encoder;
+using PlasmaShared.Imaging;
 
 #endregion
 
@@ -27,7 +24,7 @@ namespace PlasmaShared
     /// <summary>
     /// General purpose static functions here
     /// </summary>
-    public static class Utils
+    public static partial class Utils
     {
         public static void SafeDispose(this IDisposable o)
         {
@@ -39,38 +36,6 @@ namespace PlasmaShared
             var floored = new DateTime(d.Year, d.Month, d.Day, d.Hour, d.Minute, 0, d.Kind);
             return d == floored ? d : floored.AddMinutes(1);
         }
-
-        public static IEnumerable<Indexed<T>> ToIndexedList<T>(this IEnumerable<T> enumeration)
-        {
-            return enumeration.Select((x, i) => new Indexed<T>(x, i));
-        }
-
-        public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
-        {
-            foreach (T item in enumeration)
-            {
-                action(item);
-            }
-        }
-
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            //from https://stackoverflow.com/questions/489258/linqs-distinct-on-a-particular-property
-            HashSet<TKey> seenKeys = new HashSet<TKey>();
-            foreach (TSource element in source)
-            {
-                if (seenKeys.Add(keySelector(element)))
-                {
-                    yield return element;
-                }
-            }
-        }
-
-        public static string StringJoin(this IEnumerable<string> enumeration)
-        {
-            return string.Join(", ", enumeration);
-        }
-
 
         public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source, IEqualityComparer<T> comparer = null)
         {
@@ -309,52 +274,10 @@ namespace PlasmaShared
             }
         }
 
-        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
-        {
-            var resized = new Bitmap(newWidth, newHeight);
-            using (var g = Graphics.FromImage(resized))
-            {
-                g.InterpolationMode = mode;
-                g.DrawImage(original, 0, 0, newWidth, newHeight);
-            }
-            return resized;
-        }
-
-        public static Image GetResizedWithCache(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
-        {
-            return ResizedImageCache.Instance.GetResizedWithCache(original, newWidth, newHeight, mode);
-        }
 
 
-        private static ImageCodecInfo GetEncoderInfo(string mimeType)
-        {
-            // Get image codecs for all image formats 
-            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
-
-            // Find the correct image codec 
-            for (int i = 0; i < codecs.Length; i++)
-                if (codecs[i].MimeType == mimeType)
-                    return codecs[i];
-            return null;
-        }
-
-        public static void SaveJpeg(this Image img, string path, int quality)
-        {
-            if (quality < 0 || quality > 100)
-                throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
 
 
-            // Encoder parameter for image quality 
-            EncoderParameter qualityParam =
-                    new EncoderParameter(Encoder.Quality, quality);
-            // Jpeg image codec 
-            ImageCodecInfo jpegCodec = GetEncoderInfo("image/jpeg");
-
-            EncoderParameters encoderParams = new EncoderParameters(1);
-            encoderParams.Param[0] = qualityParam;
-
-            img.Save(path, jpegCodec, encoderParams);
-        }
 
 
         public static int Constrain(this int value, int min, int max)
@@ -372,30 +295,7 @@ namespace PlasmaShared
             return Math.Max(min, Math.Min(max, value));
         }
 
-        public static byte[] Decompress(this byte[] data)
-        {
-            using (var compressedStream = new MemoryStream(data))
-            using (var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
-            using (var resultStream = new MemoryStream())
-            {
-                var buffer = new byte[4096];
-                int read;
-                while ((read = zipStream.Read(buffer, 0, buffer.Length)) > 0) resultStream.Write(buffer, 0, read);
-                return resultStream.ToArray();
-            }
-        }
 
-        public static string EscapePath(this string path)
-        {
-            if (String.IsNullOrEmpty(path)) return path;
-            var escaped = new StringBuilder();
-            foreach (var c in path)
-            {
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '(' || c == ')' || c == '.') escaped.Append(c);
-                else escaped.Append('_');
-            }
-            return escaped.ToString();
-        }
 
         public static string GetAlternativeDirectoryName(string to)
         {
@@ -448,11 +348,6 @@ namespace PlasmaShared
             return Glue(args, 0);
         }
 
-        public static string[] Lines(this string source)
-        {
-            if (source == null) return new string[] { };
-            else return source.Replace("\r\n", "\n").Split('\n');
-        }
 
         public static IEnumerable<string> SplitEvery(this string s, int length)
         {
@@ -480,18 +375,7 @@ namespace PlasmaShared
             return ((double)bytes / 1024 / 1024 / 1024).ToString("F2") + "G";
         }
 
-        public static string PrintTimeRemaining(long secs)
-        {
-            if (secs <= 0) return "";
-            if (secs < 60) return String.Format("{0}s", secs);
-            if (secs < 3600) return String.Format("{0}m {1}s", secs / 60, secs % 60);
-            return String.Format("{0}h {1}m {2}s", secs / 3600, secs / 60 % 60, secs % 60);
-        }
-
-        public static string PrintTimeRemaining(this TimeSpan timeSpan)
-        {
-            return PrintTimeRemaining((int)timeSpan.TotalSeconds);
-        }
+        // PrintTimeRemaining moved to Utils.Enumerable.cs, which the .NET 9 port links.
 
         public static void RaiseAsyncEvent<T>(this EventHandler<T> e, object o, T args) where T : EventArgs
         {
@@ -556,28 +440,6 @@ namespace PlasmaShared
             return val;
         }
 
-
-        public static List<T> Shuffle<T>(this IEnumerable<T> source)
-        {
-            var list = source.ToList();
-            ShuffleInPlace(list);
-            return list;
-        }
-
-        public static void ShuffleInPlace<T>(IList<T> array)
-        {
-            var rng = new Random();
-            var n = array.Count;
-            while (n > 1)
-            {
-                var k = rng.Next(n);
-                n--;
-                var temp = array[n];
-                array[n] = array[k];
-                array[k] = temp;
-            }
-        }
-
         public static string ExecuteConsoleCommand(string command, string args = null)
         {
             string response = null;
@@ -617,22 +479,6 @@ namespace PlasmaShared
 
 
 
-        public static byte[] ToBytes(this Image image, int size)
-        {
-            var stream = new MemoryStream();
-
-            var ratio = (float)image.Size.Width / image.Size.Height;
-            var newSize = ratio > 1 ? new Size(image.Size.Width, (int)(image.Size.Height / ratio)) : new Size((int)(image.Size.Width * ratio), image.Size.Height);
-            var resizedImage = new Bitmap(newSize.Width, newSize.Height, PixelFormat.Format24bppRgb);
-            using (var graphics = Graphics.FromImage(resizedImage))
-            {
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.DrawImage(image, new Rectangle(Point.Empty, newSize), new Rectangle(Point.Empty, image.Size), GraphicsUnit.Pixel);
-            }
-            resizedImage.Save(stream, ImageFormat.Jpeg);
-            stream.Position = 0;
-            return stream.ToArray();
-        }
 
 
 
@@ -641,13 +487,7 @@ namespace PlasmaShared
         /// </summary>
         /// <param Name="pass">string with password</param>
         /// <returns>hash string</returns>
-        public static string HashLobbyPassword(string pass)
-        {
-            var md5 = (MD5)HashAlgorithm.Create("MD5");
-            md5.Initialize();
-            var hashed = md5.ComputeHash(Encoding.ASCII.GetBytes(pass ?? ""));
-            return Convert.ToBase64String(hashed);
-        }
+
 
         static char[] numbers = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
@@ -656,31 +496,7 @@ namespace PlasmaShared
             return input.TrimEnd(numbers);
         }
 
-        public static void SafeDelete(string path)
-        {
-            try
-            {
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-            }
-            catch { }
-        }
 
-
-        public static string ToHex(this byte[] array)
-        {
-            var sb = new StringBuilder();
-
-            for (var i = 0; i < array.Length; i++)
-            {
-                var hex = array[i].ToString("X");
-                if (hex.Length != 2) sb.Append("0");
-                sb.Append(hex);
-            }
-            return sb.ToString();
-        }
 
 
         public class FileResponse<T>
@@ -782,40 +598,10 @@ namespace PlasmaShared
             };
         }
 
-        public static string Description(this Enum e)
-        {
-            var da = (DescriptionAttribute[])(e.GetType().GetField(e.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false));
-            return da.Length > 0 ? da[0].Description : e.ToString();
-        }
 
-        public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
-        {
-            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
-            try
-            {
-                return assembly.GetTypes();
-            }
-            catch (ReflectionTypeLoadException e)
-            {
-                return e.Types.Where(t => t != null);
-            }
-        }
 
-        public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
-        {
-            var allowedAssemblies = new string[]
-            {
-                typeof(T).Assembly.GetName().Name,
-                Assembly.GetEntryAssembly()?.GetName().Name, Assembly.GetExecutingAssembly().GetName().Name,
-                Assembly.GetCallingAssembly().GetName().Name
-            };
-            
-            return from a in AppDomain.CurrentDomain.GetAssemblies().Where(x=> allowedAssemblies.Contains(x.GetName().Name)).ToList().AsParallel()
-                   from t in a.GetLoadableTypes()
-                   let attributes = t.GetCustomAttributes(typeof(T), true)
-                   where attributes != null && attributes.Length > 0
-                   select t;
-        }
+
+
 
         /// <summary>
         /// shifts array by given number of indexes
@@ -878,23 +664,8 @@ namespace PlasmaShared
             return input.Substring(0, length);
         }
 
-        public static bool ValidLobbyNameCharacter(char c)
-        {
-            if (c >= 'a' && c <= 'z') return true;
-            if (c >= 'A' && c <= 'Z') return true;
-            if (c >= '0' && c <= '9') return true;
-            if (c == '_') return true;
-            if (c == '[' || c == ']') return true;
-            return false;
-        }
 
-        public static string StripInvalidLobbyNameChars(string name)
-        {
-            if (String.IsNullOrEmpty(name)) return name;
-            var sb = new StringBuilder();
-            foreach (var c in name.Where(Utils.ValidLobbyNameCharacter)) sb.Append(c);
-            return sb.ToString();
-        }
+
 
         public static string GetMyInstallID()
         {
@@ -1029,17 +800,5 @@ namespace PlasmaShared
                 }
             }
         }        
-    }
-
-    public struct Indexed<T>
-    {
-        public readonly T Item;
-        public readonly int Index;
-
-        public Indexed(T item, int index)
-        {
-            Item = item;
-            Index = index;
-        }
     }
 }

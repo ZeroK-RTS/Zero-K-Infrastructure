@@ -8,7 +8,6 @@ using System.Net.Mime;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Mono.Unix.Native;
 using PlasmaShared;
 using SharpCompress.Archives;
 using SharpCompress.Common;
@@ -16,7 +15,7 @@ using ZkData;
 
 namespace PlasmaDownloader
 {
-    public class EngineDownload : Download
+    public partial class EngineDownload : Download
     {
         readonly SpringPaths springPaths;
 
@@ -136,8 +135,7 @@ namespace PlasmaDownloader
                 var tpath = Path.Combine(targetDir, "spring");
                 try
                 {
-                    Syscall.chmod(tpath,
-    FilePermissions.S_IRWXU | FilePermissions.S_IRGRP | FilePermissions.S_IXGRP | FilePermissions.S_IROTH | FilePermissions.S_IXOTH);
+                    UnixPermissions.MakeExecutable(tpath);
                     //Process.Start("chmod u+x " + tpath);
                 }
                 catch (Exception ex)
@@ -179,24 +177,6 @@ namespace PlasmaDownloader
             catch (Exception ex)
             {
                 return false;
-            }
-        }
-
-        public class VersionNumberComparer : IComparer<string>
-        {
-            public int Compare(string a, string b)
-            {
-                var pa = a.Split(new char[] { '.', '-' });
-                var pb = b.Split(new char[] { '.', '-' });
-
-                for (var i = 0; i < Math.Min(pa.Length, pb.Length); i++)
-                {
-                    int va;
-                    int vb;
-                    if (int.TryParse(pa[i], out va) && int.TryParse(pb[i], out vb) && va != vb) return va.CompareTo(vb);
-                    else if (pa[i] != pb[i]) return String.Compare(pa[i], pb[i], StringComparison.Ordinal);
-                }
-                return pa.Length.CompareTo(pb.Length);
             }
         }
 

@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The lobby server as its own process - the thing Phase 1 exists to make possible.
+
+    net48 because that is what ZkLobbyServer is; this project adds an entry point and nothing
+    else. It is compile-checked by tools/build-website.sh, which takes a project as its argument:
+
+        ./tools/build-website.sh ZkLobbyServer.Standalone/ZkLobbyServer.Standalone.csproj
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <Platforms>x64</Platforms>
+    <!--
+      PlatformTarget is normally left to default from Platform, and that is exactly the
+      problem: the solution build restores and compiles with different values of it.
+
+      Microsoft.NET.RuntimeIdentifierInference.targets gives every .NETFramework project
+      with a runtime output a RuntimeIdentifier when built ON Windows, chosen from
+      PlatformTarget - win-x64 for x64, win-x86 for empty. CI runs
+      `nuget restore Zero-K.sln` (no Platform, so PlatformTarget is empty -> win-x86) and
+      then `msbuild /p:Platform=x64` (-> win-x64), so the build asks the assets file for a
+      target restore never wrote, and fails with NETSDK1047.
+
+      Saying x64 here is what restore is missing: this project IS x64-only, Platforms says
+      so, and now both halves of the solution build agree without either being told about
+      RIDs. This is the ONLY Exe/net48/SDK-style project in Zero-K.sln, which is why it is
+      the only one affected - Tests.csproj is a library and Tests.Database is not in the
+      solution. The condition also requires a Windows host, so tools/build-website.sh under
+      mono never saw it, and neither did any check in this fork.
+    -->
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>ZkLobbyServer.Standalone</AssemblyName>
+    <RootNamespace>ZkLobbyServer.Standalone</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ZkLobbyServer\ZkLobbyServer.csproj" />
+  </ItemGroup>
+
+  <!--
+    ZkLobbyServer pins these below what MaxMind.GeoIP2 asks for transitively. Its own build never
+    notices; a new consumer gets NU1605 downgrade errors. Naming the higher versions here is what
+    NuGet asks for, and is what Tests.Database would have needed had it referenced the project
+    rather than linking the files.
+  -->
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>

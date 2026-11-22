@@ -5,7 +5,10 @@
 @{
 	ViewBag.Title = "Planet";
 	Page.Title = "Planet " + Model.Name;
-	var autohost = Global.Server.GetPlanetBattles(Model).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
+	// Guarded like Galaxy.cshtml's call above it, and for the same reason: Global.LobbyApi is
+	// never null in production, so this changes nothing there, and without it the planet page
+	// is a 500 rather than a page without its battle box whenever no lobby server is attached.
+	var autohost = (Global.LobbyApi?.GetPlanetBattles(Model.Resource.InternalName) ?? new List<ZkLobbyServer.PlanetBattleInfo>()).OrderByDescending(x=>x.UserCount).FirstOrDefault();
     ZkDataContext db = ViewBag.Db;
 
     var colorStyle = "";
@@ -38,16 +41,16 @@
     </tr>
 </table>
 
-@if (Global.IsAccountAuthorized && db.CurrentAccount().CanPlayerPlanetWars() && Global.Server.PlanetWarsMatchMaker != null && Global.Server.PlanetWarsMatchMaker.Phase == ZeroKWeb.PwPhase.AttackCollect && Model.OwnerFactionID != Global.FactionID && Model.CanMatchMakerPlay(db.CurrentAccount().Faction))
+@if (Global.IsAccountAuthorized && db.CurrentAccount().CanPlayerPlanetWars() && Global.LobbyApi.PlanetWarsPhase == ZeroKWeb.PwPhase.AttackCollect && Model.OwnerFactionID != Global.FactionID && Model.CanMatchMakerPlay(db.CurrentAccount().Faction))
 {
-    <a href="@Url.Action("MatchMakerAttack", "Planetwars", new { planetID = Model.PlanetID })">ATTACK PLANET</a>
+    @Html.PostLink("ATTACK PLANET", "MatchMakerAttack", "Planetwars", new { planetID = Model.PlanetID })
 }
 
 
 @if (autohost != null && autohost.IsInGame) { 
 	<b>
 		@if (autohost.IsInGame) {
-            <a href="@Url.Action("WatchPlanetBattle", "Lobby", new {id=Model.PlanetID})">Battle in progress, JOIN TO WATCH</a>
+            @Html.PostLink("Battle in progress, JOIN TO WATCH", "WatchPlanetBattle", "Lobby", new { id = Model.PlanetID })
         }
 	</b>
 }
@@ -56,61 +59,13 @@
 	var mapWidth = 700;
 	var mapHeight = 500;
 }
-@section head {
-	<script type="text/javascript">
-        window.onload = function () 
-        {
-            var paper = Raphael(document.getElementById("minimap"), @mapWidth, @mapHeight);
-
-            @foreach (var link in galaxy.Links) {
-							var p1 = link.PlanetByPlanetID1;
-							var p2 = link.PlanetByPlanetID2;
-
-							var x1 = p1.X * mapWidth;
-							var y1 = p1.Y * mapHeight;
-							var x2 = p2.X * mapWidth;
-							var y2 = p2.Y * mapHeight;
-
-
-							
-								var width = 2;
-								var color1 = p1.GetColor(Global.Account);
-								var color2 = p2.GetColor(Global.Account);
-								var angle = -Math.Atan2(x2 - x1, y2 - y1) / Math.PI * 180;
-								var length = Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-                    @: var r = paper.rect(@x1-@width/2, @y1, @width, @length);
-                    @: r.attr({
-                    @:  "fill": "90-@color2-@color1",
-                    @:  "stroke": "none"
-                    @: });
-                    @: r.rotate(@angle, @x1, @y1);
-                
-
-						} 
-
-            @foreach (var planet in galaxy.Planets) {
-							var mapIconSize = 10;
-							var stroke = "#000000";
-							if (planet.PlanetID == Model.PlanetID) {
-								mapIconSize *= 2;
-								stroke = "#ffffff";
-							}
-                @: var circle = paper.circle(@(planet.X * mapWidth), @(planet.Y * mapHeight), @mapIconSize);
-                @: circle.attr({
-                @:  "fill": "@planet.GetColor(Global.Account)",
-                @:  "stroke": "@stroke",
-                @:  "stroke-width": "3"
-                @: });
-            }
-        };
-	</script>
-}
 @Html.Partial("PlanetSummary", Model)
 
 @if (Global.Account != null && Global.IsModerator)
 {
     <div class="admin">
         <form method="post" action="@Url.Action("SubmitRenamePlanet")">
+        @Html.AntiForgeryToken()
             <input type="hidden" name="planetID" value="@Model.PlanetID"/>
             <table>
                 <tr>
@@ -155,6 +110,7 @@
 			if (isAccessible) {
                 var avail = Global.Account.GetDropshipsAvailable();
                 <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
+                    @Html.AntiForgeryToken()
                     Invade planet (@Html.PrintDropships(avail, Global.Account.Faction)):
                     <input type="text" name="count" />
                     <input type="submit" value="send" />
@@ -165,6 +121,7 @@
                 var availD = Global.Account.GetDropshipsAvailable();
                 var availW = Global.Account.GetWarpAvailable();
                 <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID, useWarp = true })' method="post">
+                    @Html.AntiForgeryToken()
                     Warp to planet (@Html.PrintDropships(availD, Global.Account.Faction) @Html.PrintWarps(availW)):
                     <input type="text" name="count" />
                     <input type="submit" value="send" />
@@ -189,6 +146,7 @@
 			if (isAccessible) {
                 var avail = Global.Account.GetBombersAvailable();
                 <form action='@Url.Action("BombPlanet", "Planetwars", new { planetID = Model.PlanetID })' method="post">
+                    @Html.AntiForgeryToken()
                     <span>Bomb planet (@Html.PrintBombers(avail)):</span>
                     <input type="text" name="count" />
                     <input type="submit" value="send" />
@@ -199,6 +157,7 @@
                 var availB = Global.Account.GetBombersAvailable();
                 var availW = Global.Account.GetWarpAvailable();
                 <form action='@Url.Action("BombPlanet", "Planetwars", new { planetID = Model.PlanetID, useWarp = true })' method="post">
+                    @Html.AntiForgeryToken()
                     Warp bombers (@Html.PrintBombers(availB) @Html.PrintWarps(availW)):
                     <input type="text" name="count" />
                     <input type="submit" value="send" />
@@ -210,7 +169,41 @@
 		}
 	}
 	</div>
+	@* Galaxy minimap, drawn as native SVG. This was a Raphael script block emitting one
+	   paper.rect()/paper.circle() call per link and planet. *@
 	<div id="minimap">
+		<svg xmlns="http://www.w3.org/2000/svg" width="@mapWidth" height="@mapHeight"
+		     viewBox="0 0 @mapWidth @mapHeight" role="img" aria-label="Galaxy minimap">
+			<defs>
+				@foreach (var link in galaxy.Links)
+				{
+					<linearGradient id="pm@(link.PlanetID1)_@(link.PlanetID2)" x1="0" y1="0" x2="0" y2="1">
+						<stop offset="0" stop-color="@link.PlanetByPlanetID1.GetColor(Global.Account)" />
+						<stop offset="1" stop-color="@link.PlanetByPlanetID2.GetColor(Global.Account)" />
+					</linearGradient>
+				}
+			</defs>
+			@foreach (var link in galaxy.Links)
+			{
+				var lx = link.PlanetByPlanetID1.X * mapWidth;
+				var ly = link.PlanetByPlanetID1.Y * mapHeight;
+				var r = GalaxyMapGeometry.Link(lx, ly, link.PlanetByPlanetID2.X * mapWidth, link.PlanetByPlanetID2.Y * mapHeight, 2);
+
+				<rect x="@GalaxyMapGeometry.N(r.X)" y="@GalaxyMapGeometry.N(r.Y)"
+				      width="@GalaxyMapGeometry.N(r.Width)" height="@GalaxyMapGeometry.N(r.Length)"
+				      fill="url(#pm@(link.PlanetID1)_@(link.PlanetID2))"
+				      transform="rotate(@GalaxyMapGeometry.N(r.AngleDegrees) @GalaxyMapGeometry.N(lx) @GalaxyMapGeometry.N(ly))" />
+			}
+			@foreach (var planet in galaxy.Planets)
+			{
+				// the planet being viewed is drawn double size, outlined white
+				var isCurrent = planet.PlanetID == Model.PlanetID;
+				<circle cx="@GalaxyMapGeometry.N(planet.X * mapWidth)" cy="@GalaxyMapGeometry.N(planet.Y * mapHeight)"
+				        r="@(isCurrent ? 20 : 10)"
+				        fill="@planet.GetColor(Global.Account)"
+				        stroke="@(isCurrent ? "#ffffff" : "#000000")" stroke-width="3" />
+			}
+		</svg>
 	</div>
 	<div id="structures">
         <h2>Installed</h2>
@@ -224,11 +217,14 @@
                 {
                     if (Global.Account.HasFactionRight(x => x.RightMetalQuota > 0))
                     {
-                        <a href="@Url.Action("ConfiscateStructure", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })"><span> - confiscate</span></a>
+                        @Html.PostLink(" - confiscate", "ConfiscateStructure", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })
                     }
                     else if (Model.Account.GetMetalAvailable() >= structure.StructureType.Cost)
                     {
-                        <a href="@Url.Action("ConfiscateStructure", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })"><span> - confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span></a>
+                        <form class="postlink" method="post" action="@Url.Action("ConfiscateStructure", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="postlink-button"> - confiscate (@Html.PrintMetal(structure.StructureType.Cost))</button>
+                        </form>
                         
                     }
                     else
@@ -244,6 +240,7 @@
                     {
                         var priority = structure.EnergyPriority;
                         <form method="POST" action="@Url.Action("SetEnergyPriority", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
+                            @Html.AntiForgeryToken()
                             Energy priority: @Html.EditorFor(x => priority, "Enum") <input type="submit" value="change"/>
                         </form>
                     }
@@ -258,9 +255,10 @@
                 {
                     if (structure.CanRush(Global.Account))
                      {
-                         <a href="@Url.Action("RushActivation", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
-                             <span>Rush activation @structure.StructureType.RushActivationTime turn(s) (@Html.PrintMetal(structure.StructureType.MetalToRushActivation))</span>
-                         </a>
+                         <form class="postlink" method="post" action="@Url.Action("RushActivation", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
+                             @Html.AntiForgeryToken()
+                             <button type="submit" class="postlink-button">Rush activation @structure.StructureType.RushActivationTime turn(s) (@Html.PrintMetal(structure.StructureType.MetalToRushActivation))</button>
+                         </form>
                      }
                      else
                      {
@@ -276,6 +274,7 @@
                     if (Global.Account != null && Global.Account.CanSetStructureTarget(structure))
                     {
                     <form method="POST" action="@Url.Action("SetStructureTarget", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
+                        @Html.AntiForgeryToken()
                         Target planet: @Html.DropDownList("targetPlanetID", structure.Planet.Galaxy.Planets.OrderBy(x=>x.Name).Select(x => new SelectListItem() { Text = x.Name, Value = x.PlanetID.ToString() }))
                     <input type="submit" value="change"/>
 
@@ -283,8 +282,9 @@
                         if (structure.StructureType.IsSingleUse && structure.IsActive && structure.TargetPlanetID != null)
                         {
                         string question = String.Format("WARNING: {0} will be used once on the specified target {1}, after which it will be removed. Proceed?", structure.StructureType.Name, structure.PlanetByTargetPlanetID);
-                        @Html.ActionLink("Activate", "ActivateTargetedStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID},
-                            new { @onclick = String.Format("return confirm('{0}')", question) })
+                        @Html.PostLink("Activate", "ActivateTargetedStructure", "Planetwars",
+                            new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID },
+                            confirmMessage: question)
                         }
                     }
                 }
@@ -309,7 +309,10 @@
               }
               else
               {
-                        <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })">Build @structureType.Name (@Html.PrintMetal(structureType.Cost))</a><br />
+                        <form class="postlink" method="post" action="@Url.Action("BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="postlink-button" nicetitle="$structuretype$@structureType.StructureTypeID">Build @structureType.Name (@Html.PrintMetal(structureType.Cost))</button>
+                        </form><br />
               }
           }
       }
@@ -320,7 +323,10 @@
       {
           if (planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID && x.IsActive))
           {
-                    <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="js_confirm">Destroy @structureType.Name (@Html.PrintMetal(structureType.Cost * GlobalConst.SelfDestructRefund))</a><br />
+                    <form class="postlink" method="post" action="@Url.Action("DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="js_confirm postlink-button" nicetitle="$structuretype$@structureType.StructureTypeID">Destroy @structureType.Name (@Html.PrintMetal(structureType.Cost * GlobalConst.SelfDestructRefund))</button>
+                    </form><br />
           }
       }
   }

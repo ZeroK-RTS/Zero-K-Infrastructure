@@ -62,6 +62,8 @@ namespace ZeroKWeb.Views.Forum
 
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult RevertTo(int id, bool? isAfter = false) {
             var db = new ZkDataContext();
             var edit = db.ForumPostEdits.Find(id);
@@ -70,7 +72,7 @@ namespace ZeroKWeb.Views.Forum
             var thread = post.ForumThread;
             if (edit.ForumPost.CanEdit(Global.Account))
             {
-                var fc = (ForumController)DependencyResolver.Current.GetService(typeof(ForumController));
+                var fc = this.BorrowController<ForumController>();
                 return fc.SubmitPost(
                     thread.ForumThreadID,
                     null,

@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
 using ZkData;
+using PlasmaShared.Imaging;
 
 namespace ZeroKWeb.Controllers
 {
@@ -55,6 +56,7 @@ namespace ZeroKWeb.Controllers
         /// Shows clan page
         /// </summary>
         /// <returns></returns>
+        [WritesOnGetByDesign("the clan's forum thread is marked read by looking at the page")]
         public ActionResult Detail(int? id)
         {
             if (id == null)
@@ -136,7 +138,7 @@ namespace ZeroKWeb.Controllers
             }
 
             db.SaveChanges();
-            Global.Server.PublishAccountUpdate(acc);
+            Global.LobbyApi.PublishAccountUpdate(acc.AccountID);
             return clan;
         }
 
@@ -144,6 +146,8 @@ namespace ZeroKWeb.Controllers
         /// Clan leaving (<see cref="PerformLeaveClan"/>) + redirect
         /// </summary>
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult LeaveClan()
         {
             var clan = PerformLeaveClan(Global.AccountID);
@@ -154,6 +158,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult JoinClan(int id, string password)
         {
             var db = new ZkDataContext();
@@ -178,7 +184,7 @@ namespace ZeroKWeb.Controllers
                     }
 
                     db.SaveChanges();
-                    Global.Server.PublishAccountUpdate(acc);
+                    Global.LobbyApi.PublishAccountUpdate(acc.AccountID);
                     return RedirectToAction("Detail", new { id = clan.ClanID });
                 }
             }
@@ -186,6 +192,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> KickPlayerFromClan(int accountID)
         {
             var db = new ZkDataContext();
@@ -203,13 +211,13 @@ namespace ZeroKWeb.Controllers
             }
             else
             {
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} kicked {1} from clan {2}", Global.Account.Name, kickee_acc.Name, db.Clans.Single(x => x.ClanID == clanID).ClanName));
+                await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} kicked {1} from clan {2}", Global.Account.Name, kickee_acc.Name, db.Clans.Single(x => x.ClanID == clanID).ClanName));
             }
 
             PerformLeaveClan(accountID);
             db.SaveChanges();
             PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator());
-            await Global.Server.PublishAccountUpdate(kickee_acc);
+            await Global.LobbyApi.PublishAccountUpdate(kickee_acc.AccountID);
             return RedirectToAction("Detail", new { id = clanID });
         }
 
@@ -217,6 +225,8 @@ namespace ZeroKWeb.Controllers
         /// Creates a clan and redirects to the new clan page
         /// </summary>
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction = false)
         {
             //using (var scope = new TransactionScope())
@@ -250,18 +260,18 @@ namespace ZeroKWeb.Controllers
                 }
 
                 orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
-                string orgImageUrl = Server.MapPath(orgClan.GetImageUrl());
-                string orgBGImageUrl = Server.MapPath(orgClan.GetBGImageUrl());
+                string orgImageUrl = this.MapPath(orgClan.GetImageUrl());
+                string orgBGImageUrl = this.MapPath(orgClan.GetBGImageUrl());
                 string orgShortcut = orgClan.Shortcut;
-                string newImageUrl = Server.MapPath(clan.GetImageUrl());
-                string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
+                string newImageUrl = this.MapPath(clan.GetImageUrl());
+                string newBGImageUrl = this.MapPath(clan.GetBGImageUrl());
 
                 if (Global.IsModerator && (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID))
                 {
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
+                    await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
                     if (orgClan.ClanName != clan.ClanName)
                     {
-                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} => {1}", orgClan.ClanName, clan.ClanName));
+                        await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} => {1}", orgClan.ClanName, clan.ClanName));
                     }
                 }
 
@@ -274,9 +284,10 @@ namespace ZeroKWeb.Controllers
 
                 if (image != null && image.ContentLength > 0)
                 {
-                    var im = Image.FromStream(image.InputStream);
-                    if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-                    im.Save(newImageUrl);
+                    var uploaded = Images.ReadAll(image.InputStream);
+                    if (Images.Processor.Measure(uploaded) != new Size(64, 64))
+                        Images.Processor.SaveResized(uploaded, new Size(64, 64), newImageUrl);
+                    else Images.Processor.Save(uploaded, newImageUrl);
                 }
                 else if (shortcutChanged)
                 {
@@ -294,8 +305,7 @@ namespace ZeroKWeb.Controllers
 
                 if (bgimage != null && bgimage.ContentLength > 0)
                 {
-                    var im = Image.FromStream(bgimage.InputStream);
-                    im.Save(newBGImageUrl);
+                    Images.Processor.Save(Images.ReadAll(bgimage.InputStream), newBGImageUrl);
                 }
                 else if (shortcutChanged)
                 {
@@ -356,8 +366,33 @@ namespace ZeroKWeb.Controllers
                     clan.Description = inputClan.Description;
                     clan.SecretTopic = inputClan.SecretTopic;
                 }
-                else 
-                    db.Clans.InsertOnSubmit(clan);
+                else
+                {
+                    // Only the fields the form offers, copied onto a fresh row.
+                    //
+                    // The bound Clan used to be inserted whole, and model binding fills every
+                    // public settable property it finds a form field for - so a request could
+                    // carry ForumThreadID and claim any thread on the site. That is not cosmetic:
+                    // ForumController treats a thread a clan points at as that clan's own and
+                    // answers "you cannot post in their clan thread" to everyone else, so one
+                    // extra field in one POST locks the site out of any thread. IsDeleted was
+                    // settable the same way.
+                    //
+                    // The site's other four entity-bound actions already do it this way -
+                    // LobbyNews, News, GameMode and DynamicConfig each copy named fields onto a
+                    // loaded or new row. This was the one that did not.
+                    var fresh = new Clan
+                    {
+                        ClanName = clan.ClanName,
+                        Shortcut = clan.Shortcut,
+                        Description = clan.Description,
+                        SecretTopic = clan.SecretTopic,
+                        Password = clan.Password,
+                        FactionID = clan.FactionID,
+                    };
+                    db.Clans.InsertOnSubmit(fresh);
+                    clan = fresh;
+                }
 
                 db.SaveChanges();
 
@@ -370,23 +405,23 @@ namespace ZeroKWeb.Controllers
 
                 if (image != null && image.ContentLength > 0)
                 {
-                    var im = Image.FromStream(image.InputStream);
-                    if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-                    im.Save(Server.MapPath(clan.GetImageUrl()));
+                    var uploaded = Images.ReadAll(image.InputStream);
+                    if (Images.Processor.Measure(uploaded) != new Size(64, 64))
+                        Images.Processor.SaveResized(uploaded, new Size(64, 64), this.MapPath(clan.GetImageUrl()));
+                    else Images.Processor.Save(uploaded, this.MapPath(clan.GetImageUrl()));
                 }
                 if (bgimage != null && bgimage.ContentLength > 0)
                 {
-                    var im = Image.FromStream(bgimage.InputStream);
-                    im.Save(Server.MapPath(clan.GetBGImageUrl()));
+                    Images.Processor.Save(Images.ReadAll(bgimage.InputStream), this.MapPath(clan.GetBGImageUrl()));
                 }
 
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("New clan {0} formed by {1}", clan, acc));
                 db.SaveChanges();
             }
 
-            await Global.Server.PublishAccountUpdate(acc);
-            Global.Server.ChannelManager.AddClanChannel(clan);
-            await Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
+            await Global.LobbyApi.PublishAccountUpdate(acc.AccountID);
+            Global.LobbyApi.AddClanChannel(clan.ClanID);
+            await Global.LobbyApi.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }
 

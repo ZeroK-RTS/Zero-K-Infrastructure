@@ -123,7 +123,7 @@ namespace PlasmaDownloader
           var sha = SHA1.Create();
           for (var i = 0; i < torrent.Pieces.Count; i++)
           {
-            file.ReadExactly(buf, 0, GetPieceLength(i));
+            file.TryReadExactly(buf, 0, GetPieceLength(i));
             if (torrent.Pieces.IsValid(sha.ComputeHash(buf), i))
             {
               pieceStates[i] = PieceState.Done;
@@ -298,7 +298,7 @@ namespace PlasmaDownloader
 
           var buf = new byte[size];
           buffer = buf;
-          stream.ReadExactly(buf, 0, buf.Length, ref done);
+          stream.TryReadExactly(buf, 0, buf.Length, ref done);
           return true;
         }
       }

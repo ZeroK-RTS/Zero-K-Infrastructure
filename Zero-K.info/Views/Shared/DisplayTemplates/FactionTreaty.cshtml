@@ -59,13 +59,13 @@
     @if (tr.CanCancel(Global.Account))
     {
         <span>
-            @Html.ActionLink("(cancel treaty)", "CancelTreaty", "Factions", new { id = tr.FactionTreatyID }, null) |
+            @Html.PostLink("(cancel treaty)", "CancelTreaty", "Factions", new { id = tr.FactionTreatyID }, "js_confirm") |
             @if (tr.TreatyState == TreatyState.Proposed)
             {
-                @Html.ActionLink("(counter proposal)", "CounterProposal", "Factions", new { id = tr.FactionTreatyID }, null) @:&nbsp;|&nbsp;
+                @Html.PostLink("(counter proposal)", "CounterProposal", "Factions", new { id = tr.FactionTreatyID }) @:&nbsp;|&nbsp;
                 if (tr.CanAccept(Global.Account))
                 {
-                    @Html.ActionLink("(accept)", "AcceptTreaty", "Factions", new { id = tr.FactionTreatyID }, new { @class = "delete" })
+                    @Html.PostLink("(accept)", "AcceptTreaty", "Factions", new { id = tr.FactionTreatyID })
 
                 }
             }

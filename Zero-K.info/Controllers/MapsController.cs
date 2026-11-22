@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -122,7 +122,7 @@ namespace ZeroKWeb.Controllers
         {
             public override void OnActionExecuting(ActionExecutingContext filterContext)
             {
-                filterContext.RequestContext.HttpContext.Response.AddHeader("Access-Control-Allow-Origin", "*");
+                filterContext.HttpContext.Response.AddHeader("Access-Control-Allow-Origin", "*");
                 base.OnActionExecuting(filterContext);
             }
         }
@@ -207,17 +207,20 @@ namespace ZeroKWeb.Controllers
         /// Brings up the planet image selector page
         /// </summary>
         /// <param name="resourceID">The ID of the map to assign a planet image to</param>
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult PlanetImageSelect(int resourceID) {
             var res = new PlanetImageSelectData();
             var db = new ZkDataContext();
             var map = db.Resources.Single(x => x.ResourceID == resourceID);
             res.ResourceID = resourceID;
             res.IconSize = map.PlanetWarsIconSize;
-            res.Icons = Directory.GetFiles(Server.MapPath("/img/planets")).Select(Path.GetFileName).ToList();
+            res.Icons = Directory.GetFiles(this.MapPath("/img/planets")).Select(Path.GetFileName).ToList();
             return View("PlanetImageSelect", res);
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Rate(int id, int rating) {
             var db = new ZkDataContext();
             var rat = db.MapRatings.SingleOrDefault(x => x.ResourceID == id && x.AccountID == Global.Account.AccountID);
@@ -239,6 +242,9 @@ namespace ZeroKWeb.Controllers
             return Content("");
         }
 
+        [Auth(Role = AdminLevel.Moderator)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult RemovePlanetIcon(int resourceID) {
             var db = new ZkDataContext();
             var res = db.Resources.Single(x => x.ResourceID == resourceID);
@@ -247,6 +253,9 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", new { id = res.ResourceID });
         }
 
+        [Auth(Role = AdminLevel.Moderator)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SubmitPlanetIcon(int resourceID, string icon) {
             var db = new ZkDataContext();
             var res = db.Resources.Single(x => x.ResourceID == resourceID);
@@ -276,7 +285,7 @@ namespace ZeroKWeb.Controllers
             var r = db.Resources.Single(x => x.ResourceID == id);
 
             if (r.MapSupportLevel != mapSupportLevel)
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} has changed level of map {1} from {2} to {3}", Global.Account.Name, r.InternalName, r.MapSupportLevel, mapSupportLevel));
+                await Global.LobbyApi.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} has changed level of map {1} from {2} to {3}", Global.Account.Name, r.InternalName, r.MapSupportLevel, mapSupportLevel));
 
             r.TaggedByAccountID = Global.AccountID;
             r.MapIsSpecial = special;
@@ -292,7 +301,7 @@ namespace ZeroKWeb.Controllers
             r.MapFFAMaxTeams = ffaTeams;
             r.MapSpringieCommands = springieCommands;
             db.SaveChanges();
-            await Global.Server.OnServerMapsChanged();
+            await Global.LobbyApi.OnServerMapsChanged();
             return RedirectToAction("Detail", new { id = id });
         }
 
@@ -368,6 +377,12 @@ namespace ZeroKWeb.Controllers
         }
 
         MapDetailData GetMapDetailData(Resource res, ZkDataContext db) {
+            // Both Detail and DetailName come through here, which is why the hook is here and
+            // not in either of them. It returns immediately: if this map still has the
+            // doubly-squashed images described in IMAGING-MIGRATION.md, correcting them is
+            // queued and happens on a worker, and this page is served either way.
+            LegacyMinimapUpdater.Notice(res.InternalName);
+
             // opportunistically reconcile mirror state on each view. Local file check is a cheap stat;
             // springfiles probe is gated by the 24 h cache + dedup so this only HEADs once a day at most.
             // Fixes the case where a file is on disk in content/maps but LinkCount is stale 0 — see #3057.
@@ -383,20 +398,20 @@ namespace ZeroKWeb.Controllers
             };
 
             // load map info from disk - or used cached copy if its in memory
-            var cachedEntry = HttpContext.Application["mapinfo_" + res.ResourceID] as Map;
+            var cachedEntry = this.ApplicationState()["mapinfo_" + res.ResourceID] as Map;
             if (cachedEntry != null) data.MapInfo = cachedEntry;
             else {
-                var path = Server.MapPath("~/Resources/") + res.MetadataName;
+                var path = Path.Combine(this.MapPath("~/" + GlobalConst.ResourceFolder), res.MetadataName);
 
                 if (System.IO.File.Exists(path)) {
                     try {
                         data.MapInfo =
                             (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(System.IO.File.ReadAllBytes(path).Decompress()));
-                        HttpContext.Application["mapinfo_" + res.ResourceID] = data.MapInfo;
+                        this.ApplicationState()["mapinfo_" + res.ResourceID] = data.MapInfo;
                     } catch (Exception ex) {
                         Trace.TraceWarning("Failed to get map metedata {0}:{1}", res.MetadataName, ex);
                         data.MapInfo = new Map();
-                        HttpContext.Application["mapinfo_" + res.ResourceID] = data.MapInfo;
+                        this.ApplicationState()["mapinfo_" + res.ResourceID] = data.MapInfo;
                     }
                 }
             }
@@ -435,6 +450,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult UploadResource(HttpPostedFileBase file, bool specialMap)
         {
             var tmp = Path.Combine(Global.AutoRegistrator.Paths.WritableDirectory, "maps", file.FileName);
@@ -464,7 +481,7 @@ namespace ZeroKWeb.Controllers
                             var isMap = resource?.TypeID == ResourceType.Map
                                         || (resource == null && res.ResourceInfo is Map);
                             var subfolder = isMap ? "maps" : "games";
-                            var contentFolder = Path.Combine(Server.MapPath("~/content"), subfolder);
+                            var contentFolder = Path.Combine(this.MapPath("~/content"), subfolder);
                             if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
 
                             // case-insensitive FileName match: DB row may have different casing than the

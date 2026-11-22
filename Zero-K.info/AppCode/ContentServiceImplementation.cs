@@ -46,9 +46,32 @@ namespace ZeroKWeb
             return response;
         }
 
+        /// <summary>
+        /// A resource the server does not have is an EMPTY response, not a null one.
+        ///
+        /// PlasmaServer.DownloadFile returns null when ResourceLinkProvider finds nothing, and
+        /// that null was returned straight to Process(string), where
+        /// CommandJsonSerializer.SerializeToLine dereferences it. So asking this endpoint - the
+        /// one the GAME CLIENT uses to resolve a map before downloading it - for a name the
+        /// server does not know answered 500 with an empty body.
+        ///
+        /// The client already has the branch for an empty answer and does not have one for a
+        /// 500. TorrentDownloader.cs:66 reads
+        ///
+        ///     if (e == null || e.links == null || e.torrent == null || e.links.Count == 0)
+        ///         Trace.TraceWarning("Cannot download {0}, not registered or has no links");
+        ///
+        /// while today's 500 throws inside Query and lands in the generic "Error downloading"
+        /// catch above it. Both end at down.Finish(false), so no client changes behaviour in any
+        /// way that matters - it just stops being told the wrong reason.
+        ///
+        /// Only this JSON endpoint changes. ContentService.svc, the deprecated WCF one, calls
+        /// PlasmaServer.DownloadFile through its own path and keeps returning null there, which
+        /// is a legal WCF answer and what its callers already handle.
+        /// </summary>
         async Task<DownloadFileResponse> Process(DownloadFileRequest request)
         {
-            return PlasmaServer.DownloadFile(request.InternalName);
+            return PlasmaServer.DownloadFile(request.InternalName) ?? new DownloadFileResponse();
         }
 
         async Task<GetEngineListResponse> Process(GetEngineListRequest request)
@@ -192,8 +215,8 @@ namespace ZeroKWeb
                     {
                         acc.CanPlayMultiplayer = true;
                         db.SaveChanges();
-                        Global.Server.PublishAccountUpdate(acc);
-                        Global.Server.GhostPm(acc.Name, "Congratulations! You are now authorized to play MultiPlayer games!");
+                        Global.LobbyApi.PublishAccountUpdate(acc.AccountID);
+                        Global.LobbyApi.GhostPm(acc.Name, "Congratulations! You are now authorized to play MultiPlayer games!");
                     }
                 }
             }
@@ -237,9 +260,9 @@ namespace ZeroKWeb
         async Task<PublicCommunityInfo> Process(GetPublicCommunityInfo r)
         {
             var info = new PublicCommunityInfo();
-            info.NewsItems = Global.Server.NewsListManager.GetCurrentNewsList().NewsItems;
-            info.LadderItems = Global.Server.LadderListManager.GetCurrentLadderList().LadderItems;
-            info.ForumItems = Global.Server.ForumListManager.GetCurrentForumList(null).ForumItems;
+            info.NewsItems = Global.LobbyApi.GetCurrentNewsList().NewsItems;
+            info.LadderItems = Global.LobbyApi.GetCurrentLadderList().LadderItems;
+            info.ForumItems = Global.LobbyApi.GetCurrentForumList(null).ForumItems;
             info.UserCountLimited = MiscVar.ZklsMaxUsers > 0;
             info.MapItems = MemCache.GetCached<List<MapItem>>("featuredMapItems",
                 () =>

@@ -4,11 +4,7 @@ using System.Linq;
 
 namespace ZeroKWeb
 {
-    public enum PwPhase
-    {
-        AttackCollect = 0,
-        DefendCollect = 1
-    }
+    // PwPhase moved to ZkLobbyServer/PlanetWarsApi.cs, which the .NET 9 port links.
 
     public class PlanetWarsMatchMakerState
     {

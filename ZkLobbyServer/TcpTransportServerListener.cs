@@ -35,7 +35,23 @@ namespace ZkLobbyServer
                     listener = new TcpListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
                     listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(GlobalConst.TcpLingerStateEnabled, GlobalConst.TcpLingerStateSeconds));
                     listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 0);
-                    if (!SetHandleInformation(listener.Server.Handle, HANDLE_FLAGS.INHERIT | HANDLE_FLAGS.PROTECT_FROM_CLOSE, 0)) throw new ApplicationException("Unable to set socket flags: " + Marshal.GetLastWin32Error());
+                    // Windows only, and not merely as a nicety: SetHandleInformation is kernel32,
+                    // so off Windows the P/Invoke throws DllNotFoundException, Bind catches it,
+                    // retries, and fails - the lobby server comes up with its API listening and
+                    // NO player port at all. Found by running ZkLobbyServer.Standalone.Core on
+                    // Linux; the Framework build under mono never reached here because mono maps
+                    // kernel32 for it.
+                    //
+                    // What the call does is clear HANDLE_FLAG_INHERIT so a spawned Spring server
+                    // does not inherit the listening socket. On Unix .NET already opens sockets
+                    // with FD_CLOEXEC, so there is nothing to clear and nothing to replace it with.
+                    // Environment.OSVersion and not RuntimeInformation.IsOSPlatform: this file
+                    // compiles in both stacks, and under net48 `RuntimeInformation` is ambiguous
+                    // between the System.Runtime.InteropServices.RuntimeInformation package this
+                    // project restores and the one mscorlib grew later. CS0433, in the Framework
+                    // build only. PlatformID.Win32NT is unambiguous in both.
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                        if (!SetHandleInformation(listener.Server.Handle, HANDLE_FLAGS.INHERIT | HANDLE_FLAGS.PROTECT_FROM_CLOSE, 0)) throw new ApplicationException("Unable to set socket flags: " + Marshal.GetLastWin32Error());
 
                     listener.Start();
                     Trace.TraceInformation("Listening at port {0}", GlobalConst.LobbyServerPort);

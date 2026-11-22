@@ -26,10 +26,10 @@
 		@Html.BBCode(unlock.Description)
 		<br />
         @if (unlock.IsKudosOnly != true) {
-            <a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID })" class="clearfloat">Unlock</a>
+            @Html.PostLink("Unlock", "Unlock", "My", new { id = unlock.UnlockID }, "clearfloat")
         }
         @if (unlock.KudosCost != null) {
-            <a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID, useKudos = true })" class="clearfloat">Unlock (kudos)</a>
+            @Html.PostLink("Unlock (kudos)", "Unlock", "My", new { id = unlock.UnlockID, useKudos = true }, "clearfloat")
         }
 		
 	</div>

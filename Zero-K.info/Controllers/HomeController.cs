@@ -8,11 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
-using DotNetOpenAuth.Messaging;
-using DotNetOpenAuth.OpenId;
-using DotNetOpenAuth.OpenId.Extensions.SimpleRegistration;
-using DotNetOpenAuth.OpenId.RelyingParty;
 using LobbyClient;
 using PlasmaShared;
 using Ratings;
@@ -39,7 +34,7 @@ namespace ZeroKWeb.Controllers
 			if (r.MapIsSpecial == true) sb.AppendFormat("<img src='/img/map_tags/special.png' class='icon32' />");
 			if (r.MapIsAssymetrical == true) sb.AppendFormat("<img src='/img/map_tags/assymetrical.png' class='icon32' />");
 			sb.Append("<br/>");
-			sb.AppendFormat("<img src='/Resources/{0}' /><br/>", r.ThumbnailName);
+			sb.AppendFormat("<img src='/{0}/{1}' /><br/>", GlobalConst.ResourceFolder, r.ThumbnailName);
 			sb.AppendFormat("Rating: {0}", HtmlHelperExtensions.Stars(null, StarType.GreenStarSmall, r.MapRating).ToHtmlString());
 
 			sb.Append("</span>");
@@ -148,20 +143,15 @@ namespace ZeroKWeb.Controllers
         static CurrentLobbyStats GetCurrentLobbyStats()
         {
             var ret = new CurrentLobbyStats();
-            if (Global.Server != null)
+            if (Global.LobbyApi != null)
             {
-                ret.UsersOnline = Global.Server.ConnectedUsers.Count;
+                ret.UsersOnline = Global.LobbyApi.ConnectedUserCount;
 
-                foreach (var b in Global.Server.Battles.Values)
-                {
-                    if (b.IsInGame)
-                    {
-                        ret.BattlesRunning++;
-                        ret.UsersFighting += b.NonSpectatorCount + b.SpectatorCount;
-                    }
-                }
+                var battleStats = Global.LobbyApi.GetBattleStats();
+                ret.BattlesRunning = battleStats.BattlesRunning;
+                ret.UsersFighting = battleStats.UsersFighting;
 
-                ret.UsersDiscord = Global.Server.GetDiscordUserCount();
+                ret.UsersDiscord = Global.LobbyApi.GetDiscordUserCount();
             }
 
             return ret;
@@ -173,6 +163,7 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Go to home page; also updates news read dates
         /// </summary>
+		[WritesOnGetByDesign("the headlines on the front page are marked read by being shown")]
 		public ActionResult Index()
 		{
 			var db = new ZkDataContext();
@@ -230,19 +221,70 @@ namespace ZeroKWeb.Controllers
 			return View();
 		}
 
-        [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
+        /// <summary>
+        /// Sign-in, by GET. Steam and nothing else.
+        ///
+        /// **Logon used to be [AcceptVerbs("GET","POST")] across all three of its paths**, which made
+        /// the password one a login CSRF: a hidden form - or a bare link - submitting the ATTACKER's
+        /// credentials signs the visitor into the attacker's account, and everything they do next
+        /// happens there. It is the one CSRF worth doing to somebody who is not logged in at all.
+        ///
+        /// The password path moved to the POST twin below, where an anti-forgery token is required.
+        /// This half keeps what cannot ask for a token: Steam's OpenID return, which is a redirect
+        /// from Steam and arrives as a GET carrying nothing of ours, and the request that starts it.
+        ///
+        /// **Nothing was signing in by GET.** zklogin comes from one place, the submit button in
+        /// LoginBar.cshtml, and that is a POST. ZeroKLobby/BrowserInterop does fetch
+        /// /Home/Logon?login=&amp;password= at startup, but it sends no zklogin, so it has always taken
+        /// the Steam branch - the lobby client authenticates by planting the session-token cookie
+        /// beside it, not through this.
+        /// </summary>
+        [HttpGet]
         public ActionResult Logon(string login, string password, string referer, string zklogin)
 		{
-		    if (!Global.Server.LoginChecker.VerifyIp(Request.UserHostAddress)) return Content("Too many login failures, access blocked");
+            // Refused rather than quietly treated as a Steam request: a GET carrying credentials is
+            // either the old behaviour being relied on somewhere this says it is not, or it is the
+            // attack. Both are worth seeing rather than redirecting away.
+            if (!string.IsNullOrEmpty(zklogin))
+                return Content("Sign in by submitting the login form, not by following a link.");
 
-		    var openid = new OpenIdRelyingParty();
-            IAuthenticationResponse response = openid.GetResponse();
+            return LogonCore(login, password, referer, null);
+		}
 
-		    if (response != null) // return from steam openid 
-		        return ProcessSteamOpenIDResponse(response);
+        /// <summary>
+        /// The same sign-in by POST, with the anti-forgery token that closes the hole.
+        ///
+        /// [ActionName] so both halves answer on /Home/Logon and the verb chooses between them - the
+        /// form's action, and the return_to handed to Steam, are unchanged.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Logon")]
+        public ActionResult LogonPost(string login, string password, string referer, string zklogin)
+		{
+            return LogonCore(login, password, referer, zklogin);
+		}
+
+        /// <summary>Private: a public method on a controller is an action, which is how CreateLink got out.</summary>
+        private ActionResult LogonCore(string login, string password, string referer, string zklogin)
+		{
+		    // PHASE 1: the login rate limiter counts failures in the LOBBY SERVER's memory, so
+		    // this line is sign-in depending on the two processes being one. The null-conditional
+		    // changes nothing where a server is attached - `null == false` is false, so a running
+		    // server still blocks exactly as before - and lets the .NET 9 port, which has no server
+		    // yet, serve the page. It does mean the port has NO login rate limiting; see
+		    // ZkData/EFCORE-MIGRATION.md, which lists it as a blocker rather than a detail.
+		    if (Global.LobbyApi?.VerifyIp(Request.UserHostAddressCompat()) == false) return Content("Too many login failures, access blocked");
+
+		    // Steam sign-in goes through a twin pair - DotNetOpenAuth here, the protocol
+		    // written out on .NET 9, which has no DotNetOpenAuth. See AppCode/SteamOpenId.cs.
+		    var steam = SteamOpenId.TryCompleteLogin(this);
+
+		    if (steam != null) // return from steam openid 
+		        return ProcessSteamOpenIDResponse(steam);
 
 		    if (string.IsNullOrEmpty(zklogin)) // steam login request
-		        return RedirectToSteamOpenID(login, referer, openid);
+		        return RedirectToSteamOpenID(login, referer);
 
 
 		    // standard login
@@ -255,63 +297,45 @@ namespace ZeroKWeb.Controllers
 			acc = AuthServiceClient.VerifyAccountHashed(acc.Name, hashed);
 		    if (acc != null)
 		    {
-		        FormsAuthentication.SetAuthCookie(acc.Name, true);
+		        this.SignInCompat(acc);
 		        if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
 		        return Redirect(referer);
 		    }
 		    else
 		    {
 		        Trace.TraceWarning("Invalid login attempt for {0}", login);
-		        Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
+		        Global.LobbyApi?.LogIpFailure(Request.UserHostAddressCompat());
 		        return Content("Invalid password");
 		    }
 		}
 
-	    private ActionResult RedirectToSteamOpenID(string login, string referer, OpenIdRelyingParty openid)
+	    private ActionResult RedirectToSteamOpenID(string login, string referer)
 	    {
-            IAuthenticationRequest request=null;
-	        int tries = 3;
-            while (request == null && tries > 0)
-                try
-                {
-                    tries--;
-                    request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Steam openid CreateRequest has failed: {0}", ex);
-                }
-	        if (request == null) return Content("Steam OpenID service is offline, cannot authorize, please try again later.");
-	        if (!string.IsNullOrEmpty(referer)) request.SetCallbackArgument("referer", referer);
-	        return request.RedirectingResponse.AsActionResultMvc5();
+	        return SteamOpenId.BeginLogin(this, referer)
+	               ?? Content("Steam OpenID service is offline, cannot authorize, please try again later.");
 	    }
 
-	    private ActionResult ProcessSteamOpenIDResponse(IAuthenticationResponse response)
+	    private ActionResult ProcessSteamOpenIDResponse(SteamOpenIdResult steam)
 	    {
-	        switch (response.Status)
+	        switch (steam.Status)
 	        {
-	            case AuthenticationStatus.Authenticated:
-	                var steamIDStr = response.FriendlyIdentifierForDisplay.Split('/').LastOrDefault();
-	                ulong steamID;
-	                if (ulong.TryParse(steamIDStr, out steamID))
+	            case SteamOpenIdStatus.Authenticated:
+	                var referer = steam.Referer;
+	                using (var db = new ZkDataContext())
 	                {
-                        var referer = response.GetCallbackArgument("referer");
-	                    using (var db = new ZkDataContext())
+	                    var acc = db.Accounts.FirstOrDefault(x => x.SteamID == steam.SteamID);
+	                    if (acc != null)
 	                    {
-	                        var acc = db.Accounts.FirstOrDefault(x => x.SteamID == steamID);
-	                        if (acc != null)
-	                        {
-	                            FormsAuthentication.SetAuthCookie(acc.Name, true);
-	                            if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
-	                            return Redirect(referer);
-	                        }
-	                        else return Content("Please download the game and create an account in-game first");
+	                        this.SignInCompat(acc);
+	                        if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
+	                        return Redirect(referer);
 	                    }
+	                    else return Content("Please download the game and create an account in-game first");
 	                }
-	                break;
-	            case AuthenticationStatus.Canceled:
+	            case SteamOpenIdStatus.Canceled:
 	                return Content("Login was cancelled at the provider");
-	            case AuthenticationStatus.Failed:
+	            case SteamOpenIdStatus.Failed:
+	                Trace.TraceWarning("Steam sign-in failed: {0}", steam.FailureReason);
 	                return Content("Login failed");
 	        }
 	        return View("HomeIndex");
@@ -321,7 +345,7 @@ namespace ZeroKWeb.Controllers
 		{
 			if (Global.IsAccountAuthorized)
 			{
-                FormsAuthentication.SignOut();
+                this.SignOutCompat();
 			}
             if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
 			return Redirect(referer);

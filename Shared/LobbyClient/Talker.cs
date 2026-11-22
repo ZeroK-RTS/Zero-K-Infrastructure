@@ -108,6 +108,13 @@ namespace LobbyClient
             var udclose = new UdpClient();
             udclose.Send(new byte[1] { (byte)SpringEventType.SERVER_QUIT }, 1, "127.0.0.1", loopbackPort);
             thread.Join(1000);
+
+            // The socket was never closed here, so every Talker - one per hosted battle - left a
+            // bound UDP port behind until a finalizer got to it. Closing after the join is also how
+            // a listener still blocked in Receive gets unblocked: the exception it throws is already
+            // caught, and the loop then sees `close` and exits. Pinned by Tests.Portable/TalkerTests.
+            udclose.Close();
+            udp.Close();
         }
 
 

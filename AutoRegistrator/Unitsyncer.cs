@@ -31,7 +31,10 @@ namespace AutoRegistrator
         {
             AlreadyExists = 0,
             Registered = 1,
-            RegistrationError= 2
+            RegistrationError= 2,
+
+            /// <summary>Registered again although it was already known - see the force argument to Scan.</summary>
+            Reregistered = 3
         }
         
         
@@ -50,8 +53,23 @@ namespace AutoRegistrator
 
         
         
-        public List<ScanResult> Scan()
+        /// <summary>
+        /// Registers every archive that is not registered yet.
+        ///
+        /// <paramref name="forceReregister"/> names resources to register AGAIN even though the
+        /// database already has them, which is how a map's stored images get regenerated from its
+        /// archive - the lossless half of the ToBytes backfill. Null, the default, is the ordinary
+        /// scan and behaves exactly as before.
+        ///
+        /// The archive has to be present locally for this to find it, which is why
+        /// AutoRegistrator.ReregisterResource downloads it first.
+        /// </summary>
+        public List<ScanResult> Scan(ICollection<string> forceReregister = null)
         {
+            var force = forceReregister == null
+                ? null
+                : new HashSet<string>(forceReregister, StringComparer.OrdinalIgnoreCase);
+
             var results = new List<ScanResult>();
             using (var unitsync = new UnitSync(Paths, Engine))
             {
@@ -64,7 +82,10 @@ namespace AutoRegistrator
                     {
                         if (!UnitSync.DependencyExceptions.Contains(archive.Name))
                         {
-                            if (registered.ContainsKey(archive.Name))
+                            var known = registered.ContainsKey(archive.Name);
+                            var forced = force != null && force.Contains(archive.Name);
+
+                            if (known && !forced)
                             {
                                 results.Add(new ScanResult() { ResourceInfo = archive, Status = ResourceFileStatus.AlreadyExists, });
                             }
@@ -74,7 +95,9 @@ namespace AutoRegistrator
                                 results.Add(new ScanResult()
                                 {
                                     ResourceInfo = fullInfo ?? archive,
-                                    Status = fullInfo != null ? ResourceFileStatus.Registered : ResourceFileStatus.RegistrationError
+                                    Status = fullInfo == null
+                                        ? ResourceFileStatus.RegistrationError
+                                        : known ? ResourceFileStatus.Reregistered : ResourceFileStatus.Registered
                                 });
                             }
                         }
