@@ -256,17 +256,20 @@ namespace Ratings
             float avgElo = 0;
             float weightSum = 0;
             float varSum = 0;
-            int minAveDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderAverageDays;
-            int minActiveDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderActivityDays;
-            if (this.category != RatingCategory.MatchMaking)
+            bool onLadder = false;
+            int currentDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow);
+            int minAveDay = currentDay - GlobalConst.LadderAverageDays;
+            int minActiveDay = currentDay - GlobalConst.LadderActivityDays;
+            if (this.category == RatingCategory.MatchMaking)
             {
-                minAveDay = minActiveDay;
+                minAveDay = currentDay - GlobalConst.MatchMakingLadderAverageDays;
+                minActiveDay = currentDay - GlobalConst.MatchMakingLadderActivityDays;
             }
             for (int i = 0; i < days.Count; i++)
             {
-                if (days[i].weight > 0 && days[i].day >= minAveDay) // if any game played that day
+                if (days[i].weight > 0 && days[i].day >= minActiveDay) // if any game played that day
                 {
-                    this.onLadder = true;
+                    onLadder = true;
                 }
                 if (days[i].day >= minAveDay)
                 {
@@ -279,6 +282,7 @@ namespace Ratings
             varSum /= weightSum;
             this.avgEloVar = varSum;
             this.avgElo = avgElo;
+            this.onLadder = onLadder;
         }
 
         private void UpdateRatingVariance()
