@@ -81,7 +81,7 @@ namespace ZeroKWeb.Controllers
             if (string.IsNullOrWhiteSpace(body)) return "";
             body = body.Trim();
             if (body.Length <= maxLength) return body;
-            return body.Substring(0, maxLength).TrimEnd() + "...";
+            return body.Truncate(maxLength).TrimEnd() + "...";
         }
     }
 }
