@@ -106,6 +106,14 @@ namespace ZkLobbyServer
             }
         }
 
+        /// <summary>
+        ///     Relays a message as if said in the lobby, for when the lobby itself got different text
+        /// </summary>
+        public void RelayFromLobby(ChatRelayMessage msg)
+        {
+            OnAnySourceMessage(zklsRelay, msg);
+        }
+
         private void OnAnySourceMessage(IChatRelaySource source, ChatRelayMessage msg)
         {
             if (channels.Contains(msg.Channel))
