@@ -523,6 +523,10 @@
     <Compile Include="Migrations\202604290948595_AddPwPhaseMinutes.Designer.cs">
       <DependentUpon>202604290948595_AddPwPhaseMinutes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202611220800540_AddMmLadderDecay.cs" />
+    <Compile Include="Migrations\202611220800540_AddMmLadderDecay.Designer.cs">
+      <DependentUpon>202611220800540_AddMmLadderDecay.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -994,6 +998,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202604290948595_AddPwPhaseMinutes.resx">
       <DependentUpon>202604290948595_AddPwPhaseMinutes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202611220800540_AddMmLadderDecay.resx">
+      <DependentUpon>202611220800540_AddMmLadderDecay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -64,6 +64,12 @@ namespace ZkData
         [Description("PlanetWars: length in minutes of the defend-collect phase (defenders accept).")]
         public int PwDefendPhaseMinutes { get; set; } = 2;
 
+        [Description("Matchmaking ladder: ladder rating lost every hour by players on the matchmaking ladder. 0 disables the decay.")]
+        public double MmLadderDecayPerHour { get; set; } = 1.0;
+
+        [Description("Matchmaking ladder: the hourly decay stops this far below the player's current rating.")]
+        public int MmLadderMaxDecay { get; set; } = 500;
+
 
         public static DynamicConfig Instance;
 
