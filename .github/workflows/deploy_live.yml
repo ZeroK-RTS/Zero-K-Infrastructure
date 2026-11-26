@@ -51,6 +51,7 @@ jobs:
       - name: Copy steam pipeline files
         run: |
           robocopy SteamRoot c:\projekty\zero-k.info\steamworks\tools\ContentBuilder\content /e
+          if ErrorLevel 8 (exit /B 1)
           robocopy SteamScripts c:\projekty\zero-k.info\steamworks\tools\ContentBuilder\scripts /e
           if ErrorLevel 8 (exit /B 1) else (exit /B 0)
         shell: cmd
@@ -70,6 +71,7 @@ jobs:
       - name: Deploy ZKL
         run: |
           copy /Y ChobbyLauncher\bin\release\Zero-K.exe c:\projekty\zero-k.info\www\lobby
+          if ErrorLevel 1 (exit /B 1)
           copy /Y ChobbyLauncher\bin\release\Zero-K.version.txt c:\projekty\zero-k.info\www\lobby
         shell: cmd
             
