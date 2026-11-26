@@ -91,10 +91,11 @@ namespace ZkLobbyServer
 
             if (response.Accepted)
             {
-                var inv = partyInvites.FirstOrDefault(x => x.PartyID == response.PartyID);
-                if ((inv != null) && (inv.Invitee == usr.Name))
+                var inv = partyInvites.FirstOrDefault(x => (x.PartyID == response.PartyID) && (x.Invitee == usr.Name));
+                if (inv != null)
                 {
-                    
+                    partyInvites.Remove(inv);
+
                     var inviteeUser = usr;
                     var inviterUser = server.ConnectedUsers.Get(inv.Inviter);
 
