@@ -120,8 +120,10 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
         public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
-        public static int LadderAverageDays = 3;
-        public static int LadderActivityDays => mode == ModeType.Live ? 30 : 90;
+        public static int MatchMakingLadderAverageDays = 3;
+        public static int MatchMakingLadderActivityDays => mode == ModeType.Live ? 21 : 90;
+        public static int LadderAverageDays => mode == ModeType.Live ? 30 : 90;
+        public static int LadderActivityDays => mode == ModeType.Live ? 42 : 90;
         public const int LadderSize = 50; // Amount of players shown on ladders
         public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
         public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
