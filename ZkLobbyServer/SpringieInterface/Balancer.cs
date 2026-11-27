@@ -88,6 +88,24 @@ namespace ZeroKWeb.SpringieInterface
         }
 
 
+        // Keys for grouping players who must stay on the same team.
+        // Party, clan and account IDs are separate number sequences that overlap,
+        // so each key is prefixed to keep e.g. party 5 apart from account 5.
+        static string PartyGroupKey(Account acc, LobbyHostingContext b)
+        {
+            var partyID = b.Players.First(p => p.Name == acc.Name).PartyID;
+            if (partyID != null) return "party:" + partyID;
+            return "account:" + acc.AccountID;
+        }
+
+        static string ClanGroupKey(Account acc, LobbyHostingContext b)
+        {
+            var partyID = b.Players.First(p => p.Name == acc.Name).PartyID;
+            if (partyID != null) return "party:" + partyID;
+            if (acc.ClanID != null) return "clan:" + acc.ClanID;
+            return "account:" + acc.AccountID;
+        }
+
         /// <summary>
         ///     The function that actually moves players arounds
         /// </summary>
@@ -139,18 +157,23 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 balanceItems = new List<BalanceItem>();
-                if (mode == BalanceMode.Party)
-                {
-                    var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.AccountID).ToList();
-                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
-                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
-                }
+
+                // Fallback order: ClanWise -> Party -> Normal.
+                // Normal balance still keeps parties together whenever they fit on one team.
+                if (mode == BalanceMode.Normal) mode = BalanceMode.Party;
 
                 if (mode == BalanceMode.ClanWise)
                 {
-                    var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.ClanID ?? x.AccountID).ToList();
-                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
+                    var clanGroups = accs.GroupBy(x => ClanGroupKey(x, b)).ToList();
+                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Party;
                     else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
+                }
+
+                if (mode == BalanceMode.Party)
+                {
+                    var partyGroups = accs.GroupBy(x => PartyGroupKey(x, b)).ToList();
+                    if (teamCount > partyGroups.Count() || partyGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
+                    else balanceItems.AddRange(partyGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
                 }
                 if (mode == BalanceMode.FactionWise)
                 {
@@ -181,7 +204,7 @@ namespace ZeroKWeb.SpringieInterface
                 var maxSize = bestTeams.Max(x => x.Count);
                 var sizesWrong = maxSize / (double)minSize > MaxTeamSizeDifferenceRatio;
 
-                // cbalance failed, rebalance using normal
+                // cbalance failed, rebalance using normal (which still keeps parties together)
                 if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference || sizesWrong)) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers);
                 // cbalance failed, rebalance using normal
 

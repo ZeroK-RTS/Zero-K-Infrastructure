@@ -25,6 +25,22 @@ namespace ZeroKWeb.SpringieInterface
                 if (!string.IsNullOrEmpty(Clan)) this.Clan = Clan.GetHashCode();
                 Party = PartyID;
             }
+
+            // Keys for grouping players who must stay on the same team.
+            // Party, clan and account IDs are separate number sequences that overlap,
+            // so each key is prefixed to keep e.g. party 5 apart from account 5.
+            public string PartyGroupKey()
+            {
+                if (Party != null) return "party:" + Party;
+                return "account:" + Account;
+            }
+
+            public string ClanGroupKey()
+            {
+                if (Party != null) return "party:" + Party;
+                if (Clan != null) return "clan:" + Clan;
+                return "account:" + Account;
+            }
         }
 
 
@@ -99,33 +115,37 @@ namespace ZeroKWeb.SpringieInterface
             }
             int maxTeamSize = players.Count / 2;
 
+            // Fallback order: ClanWise -> Party -> Normal.
+            // Normal balance still keeps parties together whenever they fit on one team.
+            if (mode == BalanceMode.Normal) mode = BalanceMode.Party;
+
+            if (mode == BalanceMode.ClanWise)
+            {
+                var clanGroups = players.GroupBy(x => x.ClanGroupKey()).ToList();
+                if (2 > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize))
+                {
+                    //Clan or party too big, fall through to party balance
+                    mode = BalanceMode.Party;
+                }
+                else
+                {
+                    playerGroups = clanGroups.Select(x => x.Select(p => p.Account).ToList()).ToList();
+                    groupSkill = clanGroups.Select(x => x.Sum(g => g.Elo)).ToList();
+                }
+            }
+
             if (mode == BalanceMode.Party)
             {
-                var partyGroups = players.GroupBy(x => x.Party ?? x.Account).ToList();
+                var partyGroups = players.GroupBy(x => x.PartyGroupKey()).ToList();
                 if (2 > partyGroups.Count() || partyGroups.Any(x => x.Count() > maxTeamSize))
                 {
-                    //Party too big, fall through
+                    //Party too big, fall through to per-player balance
                     mode = BalanceMode.Normal;
                 }
                 else
                 {
                     playerGroups = partyGroups.Select(x => x.Select(p => p.Account).ToList()).ToList();
                     groupSkill = partyGroups.Select(x => x.Sum(g => g.Elo)).ToList();
-                }
-            }
-
-            if (mode == BalanceMode.ClanWise)
-            {
-                var clanGroups = players.GroupBy(x => x.Party ?? x.Clan ?? x.Account).ToList();
-                if (2 > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize))
-                {
-                    //Clan or party too big, fall through
-                    mode = BalanceMode.Normal;
-                }
-                else
-                {
-                    playerGroups = clanGroups.Select(x => x.Select(p => p.Account).ToList()).ToList();
-                    groupSkill = clanGroups.Select(x => x.Sum(g => g.Elo)).ToList();
                 }
             }
 
@@ -174,7 +194,7 @@ namespace ZeroKWeb.SpringieInterface
 
             if (mode == BalanceMode.ClanWise && (bestDiff > MaxCbalanceDifference))
             {
-                //Not very balanced, fall back
+                //Not very balanced, fall back (Normal still keeps parties together)
                 return Balance(BalanceMode.Normal, unmodifiedPlayers);
             }
 
