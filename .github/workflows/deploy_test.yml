@@ -56,7 +56,10 @@ jobs:
         shell: cmd
           
       - name: Stop IIS
-        run: c:\Windows\System32\inetsrv\appcmd.exe stop apppool test.zero-k.info
+        run: |
+          $state = c:\Windows\System32\inetsrv\appcmd.exe list apppool test.zero-k.info /text:state
+          echo "Application pool state: $state"
+          if ($state -ne "Stopped") { c:\Windows\System32\inetsrv\appcmd.exe stop apppool test.zero-k.info }
         
       - name: Migrate database
         run: MigrateDatabase\bin\release\MigrateDatabase.exe
