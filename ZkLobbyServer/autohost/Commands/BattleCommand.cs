@@ -63,7 +63,7 @@ namespace ZkLobbyServer
             return x =>
             {
                 string reason;
-                if (GetRunPermissions(battle, x, out reason) >= BattleCommand.RunPermission.Vote && !IsSpectator(battle, x, battle.Users[x])) return null;
+                if (GetRunPermissions(battle, x, out reason) >= BattleCommand.RunPermission.Vote && !IsSpectator(battle, x, null)) return null; // IsSpectator looks the user up itself; they may not be in the battle room
                 return reason;
             };
         }
