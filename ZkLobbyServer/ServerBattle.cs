@@ -546,6 +546,22 @@ namespace ZkLobbyServer
             if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
         }
 
+        public bool IsInWaitlist(string username)
+        {
+            
+            if (!TimeQueueEnabled) return false;
+            var context = GetContext();
+            int allowedPlayers = MaxPlayers;
+            if (context.Players.Where(x => !x.IsSpectator).Count() <= MaxEvenPlayers)
+            {
+                allowedPlayers = context.Players.Where(x => !x.IsSpectator).Count() & ~0x1;
+            }
+            var waitlist = context.Players.Where(x => !x.IsSpectator).OrderBy(x => x.QueueOrder).Skip(allowedPlayers).ToList();
+            var isInWaitlist = waitlist.Exists(x => x.Name == username);
+            return isInWaitlist;
+            
+        }
+
 
         public async Task<bool> StartGame()
         {
